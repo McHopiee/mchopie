@@ -1,6 +1,13 @@
 # moving bacground lesson infograph 
 Title: "Moving Background Fundamentals"
 Description: "JavaScript items you must know before beginning this project."
+Buttons:
+  - text: Homework 
+    link: https://mchopiee.github.io/mchopie/lessons/MovingBackgroundHomework
+  - text: Hacks
+    link: https://mchopiee.github.io/mchopie/lessons/Hacks
+  - text: Demo 
+    link: https://mchopiee.github.io/mchopie/background
 Topics:
   - title: <span style="color:#a81b11"><strong>Canvas</strong></span>
     subtitle: "Your drawing board"
