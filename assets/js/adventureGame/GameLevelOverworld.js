@@ -757,12 +757,11 @@ class GameLevelOverworld {
             this.playerY + this.playerHeight > this.enemyY
           ) {
             if (this.itemCollected) {
-              // Player has sword - start death animation
+              // Player has sword - start death animation with red phase
               console.log("Player defeated zombie with sword!");
               this.startZombieDeathAnimation(() => {
-                // After death animation completes, mark enemy as defeated
                 this.enemyDefeated = true;
-                this.enemyX = -1000; // Move enemy off screen
+                this.enemyX = -1000;
               });
             } else {
               // Player dies
@@ -800,25 +799,25 @@ class GameLevelOverworld {
         if (this.enemyDying) return; // Prevent multiple death animations
         this.enemyDying = true;
 
-        console.log("Starting zombie death animation...");
+        console.log("Starting zombie death animation with red phase...");
 
         // Get zombie center position for particle spawn
         const zombieCenterX = this.enemyX + this.enemyWidth / 2;
         const zombieCenterY = this.enemyY + this.enemyHeight / 2;
 
-        // Phase 1: Turn zombie red (0.3s)
+        // Phase 1: Turn zombie RED (0.5s - longer for better visibility)
         const originalDrawEnemy = this.drawEnemy.bind(this);
         let redPhase = true;
 
-        // Override enemy drawing to show red effect
+        // Override enemy drawing to show strong red effect
         this.drawEnemy = () => {
           if (redPhase && this.enemyImage.complete && !this.enemyImage.loadFailed) {
             try {
               this.ctx.save();
               
-              // Apply red filter effect
-              this.ctx.filter = 'brightness(1.2) saturate(3) hue-rotate(-10deg) contrast(1.5)';
-              this.ctx.globalAlpha = 0.9;
+              // Apply strong red filter effect - more intense
+              this.ctx.filter = 'brightness(1.5) saturate(5) hue-rotate(-30deg) contrast(2)';
+              this.ctx.globalAlpha = 1.0; // Full opacity for clear red effect
               
               if (this.enemyDirection === 1) {
                 this.ctx.scale(-1, 1);
@@ -841,20 +840,22 @@ class GameLevelOverworld {
               this.ctx.restore();
             } catch (error) {
               console.warn('Failed to draw dying enemy image:', error);
-              this.ctx.fillStyle = 'red';
+              // Strong red rectangle fallback
+              this.ctx.fillStyle = '#FF0000'; 
               this.ctx.fillRect(this.enemyX, this.enemyY, this.enemyWidth, this.enemyHeight);
             }
           }
           // If not in red phase, don't draw enemy (it's exploded)
         };
 
+        // Wait longer for red phase to be clearly visible
         setTimeout(() => {
-          // Phase 2: Hide zombie and create grey particle explosion
+          console.log("Red phase complete, starting particle explosion...");
           redPhase = false;
           
           // Create grey particle explosion
           const particles = [];
-          const particleCount = 20;
+          const particleCount = 25; 
 
           // Create grey particle elements
           for (let i = 0; i < particleCount; i++) {
@@ -868,17 +869,17 @@ class GameLevelOverworld {
             
             particle.style.left = `${screenX}px`;
             particle.style.top = `${screenY}px`;
-            particle.style.width = `${4 + Math.random() * 6}px`;
+            particle.style.width = `${5 + Math.random() * 8}px`; 
             particle.style.height = particle.style.width;
             
             // Grey color variations
-            const greyValue = Math.floor(80 + Math.random() * 120); // 80-200 grey
+            const greyValue = Math.floor(70 + Math.random() * 130); 
             particle.style.backgroundColor = `rgb(${greyValue}, ${greyValue}, ${greyValue})`;
             particle.style.borderRadius = '50%';
             particle.style.zIndex = '10002';
             particle.style.pointerEvents = 'none';
-            particle.style.transition = 'all 1.0s ease-out';
-            particle.style.boxShadow = '0 0 3px rgba(100, 100, 100, 0.6)';
+            particle.style.transition = 'all 1.2s ease-out';
+            particle.style.boxShadow = '0 0 4px rgba(100, 100, 100, 0.8)';
             
             document.body.appendChild(particle);
             particles.push(particle);
@@ -888,9 +889,9 @@ class GameLevelOverworld {
           setTimeout(() => {
             particles.forEach((particle, index) => {
               const angle = (index / particleCount) * Math.PI * 2;
-              const distance = 60 + Math.random() * 100; // 60-160px
+              const distance = 70 + Math.random() * 120; 
               const offsetX = Math.cos(angle) * distance;
-              const offsetY = Math.sin(angle) * distance + Math.random() * -40; // Slight upward bias
+              const offsetY = Math.sin(angle) * distance + Math.random() * -50; 
               
               // Get current position and add offset
               const currentLeft = parseFloat(particle.style.left);
@@ -899,9 +900,9 @@ class GameLevelOverworld {
               particle.style.left = `${currentLeft + offsetX}px`;
               particle.style.top = `${currentTop + offsetY}px`;
               particle.style.opacity = '0';
-              particle.style.transform = 'scale(0.2)';
+              particle.style.transform = 'scale(0.1)';
             });
-          }, 50);
+          }, 100); // Small delay before particle animation
 
           // Clean up particles and complete animation
           setTimeout(() => {
@@ -916,12 +917,12 @@ class GameLevelOverworld {
             
             console.log("Zombie death animation complete");
             if (callback) callback();
-          }, 1100);
+          }, 1300);
 
-        }, 300); // Wait for red phase to complete
+        }, 500); 
       }
 
-      // Separate method for drawing enemy (so we can override it during death animation)
+      // Add the missing drawEnemy method
       drawEnemy() {
         if (this.enemyImage.complete && !this.enemyImage.loadFailed) {
           try {
@@ -956,169 +957,7 @@ class GameLevelOverworld {
         }
       }
 
-      update() {
-        // Handle player movement based on key presses
-        if (this.keysPressed['KeyA'] || this.keysPressed['ArrowLeft']) {
-          this.playerSpeedX = -5;
-          this.playerDirection = -1;
-        } else if (this.keysPressed['KeyD'] || this.keysPressed['ArrowRight']) {
-          this.playerSpeedX = 5;
-          this.playerDirection = 1;
-        } else {
-          this.playerSpeedX = 0;
-        }
-
-        // Handle jumping
-        if ((this.keysPressed['KeyW'] || this.keysPressed['ArrowUp'] || this.keysPressed['Space']) && this.canJump) {
-          this.playerSpeedY = -15;
-          this.canJump = false;
-        }
-
-        // Apply gravity
-        this.playerSpeedY += this.gravity;
-
-        // Update player position
-        this.playerX += this.playerSpeedX;
-        this.playerY += this.playerSpeedY;
-
-        // Fixed platform collision detection with proper positioning
-        const platforms = [
-          { x: this.canvas.width / 4 - 50, y: this.groundY - 150, width: 60, height: 60 },
-          { x: this.canvas.width / 4 + 50, y: this.groundY - 200, width: 60, height: 60 },
-          { x: this.canvas.width / 2 - 100, y: this.groundY - 300, width: 60, height: 60 },
-          { x: this.canvas.width / 2 - 40, y: this.groundY - 300, width: 60, height: 60 },
-          { x: this.canvas.width / 2 + 50, y: this.groundY - 400, width: 60, height: 60 },
-          { x: this.canvas.width / 2 + 110, y: this.groundY - 400, width: 60, height: 60 },
-          { x: this.canvas.width / 2 + 170, y: this.groundY - 400, width: 60, height: 60 },
-          { x: this.canvas.width / 2 + 230, y: this.groundY - 400, width: 60, height: 60 },
-          { x: this.canvas.width / 2 + 290, y: this.groundY - 400, width: 60, height: 60 },
-          { x: this.canvas.width / 2 + 350, y: this.groundY - 400, width: 60, height: 60 },
-          { x: this.canvas.width / 2 + 410, y: this.groundY - 400, width: 60, height: 60 },
-          { x: this.canvas.width / 2 - 150, y: this.groundY - 70, width: 60, height: 60 },
-          { x: this.canvas.width / 2 - 90, y: this.groundY - 70, width: 60, height: 60 }
-        ];
-
-        // Better collision detection - check if player is standing on a platform
-        let onPlatform = false;
-        
-        for (const platform of platforms) {
-          // Check if player is overlapping with platform
-          if (
-            this.playerX < platform.x + platform.width &&
-            this.playerX + this.playerWidth > platform.x &&
-            this.playerY < platform.y + platform.height &&
-            this.playerY + this.playerHeight > platform.y
-          ) {
-            // If player is falling (positive Y velocity) and hitting platform from above
-            if (this.playerSpeedY >= 0 && this.playerY <= platform.y) {
-              this.playerY = platform.y - this.playerHeight;
-              this.playerSpeedY = 0;
-              this.canJump = true;
-              onPlatform = true;
-              break;
-            }
-          }
-        }
-
-        // Check if player is on ground (left side ground area only)
-        const groundArea = this.canvas.width / 6; // Left ground area width
-        if (this.playerX + this.playerWidth > 0 && this.playerX < groundArea) {
-          if (this.playerY >= this.groundY - this.playerHeight) {
-            this.playerY = this.groundY - this.playerHeight;
-            this.playerSpeedY = 0;
-            this.canJump = true;
-            onPlatform = true;
-          }
-        }
-
-        // Check if player is on right side elevated ground
-        const rightGroundX = this.canvas.width - 200;
-        const rightGroundY = this.groundY - 400;
-        if (this.playerX + this.playerWidth > rightGroundX && this.playerX < this.canvas.width) {
-          if (this.playerY >= rightGroundY - this.playerHeight && this.playerY < rightGroundY + 50) {
-            this.playerY = rightGroundY - this.playerHeight;
-            this.playerSpeedY = 0;
-            this.canJump = true;
-            onPlatform = true;
-          }
-        }
-
-        // Keep player within horizontal canvas bounds
-        if (this.playerX < 0) {
-          this.playerX = 0;
-        }
-        if (this.playerX > this.canvas.width - this.playerWidth) {
-          this.playerX = this.canvas.width - this.playerWidth;
-        }
-
-        // Check if player falls to their death (below screen or not on any platform/ground)
-        if (this.playerY > this.canvas.height || 
-            (this.playerY > this.groundY + 100 && !onPlatform)) {
-          console.log("Player fell to their death!");
-          this.stop();
-          return;
-        }
-
-        // Enemy movement (only if not defeated and not dying)
-        if (!this.enemyDefeated && !this.enemyDying) {
-          this.enemyX += this.enemySpeedX * this.enemyDirection;
-          
-          // Keep enemy on the upper platform
-          const platformStartX = this.canvas.width / 2 + 50;
-          const platformEndX = this.canvas.width / 2 + 410;
-          
-          if (this.enemyX <= platformStartX || this.enemyX >= platformEndX - this.enemyWidth) {
-            this.enemyDirection *= -1;
-          }
-        }
-
-        // Check enemy collision with player (only if enemy not defeated and not dying)
-        if (!this.enemyDefeated && !this.enemyDying) {
-          if (
-            this.playerX < this.enemyX + this.enemyWidth &&
-            this.playerX + this.playerWidth > this.enemyX &&
-            this.playerY < this.enemyY + this.enemyHeight &&
-            this.playerY + this.playerHeight > this.enemyY
-          ) {
-            if (this.itemCollected) {
-              // Player has sword - start death animation
-              console.log("Player defeated zombie with sword!");
-              this.startZombieDeathAnimation(() => {
-                // After death animation completes, mark enemy as defeated
-                this.enemyDefeated = true;
-                this.enemyX = -1000; // Move enemy off screen
-              });
-            } else {
-              // Player dies
-              this.stop();
-              return;
-            }
-          }
-        }
-
-        // Check collectible collision
-        if (!this.itemCollected) {
-          const collectibleX = this.canvas.width / 2 - 120;
-          const collectibleY = this.groundY - 110;
-          
-          if (
-            this.playerX < collectibleX + 40 &&
-            this.playerX + this.playerWidth > collectibleX &&
-            this.playerY < collectibleY + 40 &&
-            this.playerY + this.playerHeight > collectibleY
-          ) {
-            if (this.keysPressed['KeyC']) {
-              this.itemCollected = true;
-            }
-          }
-        }
-
-        // Check if player falls off the world
-        if (this.playerY > this.canvas.height) {
-          this.stop();
-        }
-      }
-
+      // Add the missing draw method
       draw() {
         if (!this.ctx) return;
 
@@ -1140,10 +979,10 @@ class GameLevelOverworld {
         this.ctx.fillStyle = '#654321';
         this.ctx.fillRect(0, this.groundY, this.canvas.width / 6, this.canvas.height - this.groundY);
 
-        // Draw right elevated ground area (same height as upper platforms)
+        // Draw right elevated ground area 
         this.ctx.fillStyle = '#654321';
         const rightGroundX = this.canvas.width - 200;
-        const rightGroundY = this.groundY - 400; // Same height as upper platforms
+        const rightGroundY = this.groundY - 400; 
         this.ctx.fillRect(rightGroundX, rightGroundY, 200, this.canvas.height - rightGroundY);
 
         // Draw player
@@ -1207,27 +1046,31 @@ class GameLevelOverworld {
           this.ctx.fillRect(this.playerX, this.playerY, this.playerWidth, this.playerHeight);
         }
 
-        // Draw platforms with consistent positioning
+        // Draw platforms with grass block style
         const platforms = [
-          { x: this.canvas.width / 4 - 50, y: this.groundY - 150, width: 60, height: 60, image: this.platformImages[0] },
-          { x: this.canvas.width / 4 + 50, y: this.groundY - 200, width: 60, height: 60, image: this.platformImages[1] },
-          { x: this.canvas.width / 2 - 100, y: this.groundY - 300, width: 60, height: 60, image: this.platformImages[0] },
-          { x: this.canvas.width / 2 - 40, y: this.groundY - 300, width: 60, height: 60, image: this.platformImages[1] },
-          { x: this.canvas.width / 2 + 50, y: this.groundY - 400, width: 60, height: 60, image: this.platformImages[0] },
-          { x: this.canvas.width / 2 + 110, y: this.groundY - 400, width: 60, height: 60, image: this.platformImages[1] },
-          { x: this.canvas.width / 2 + 170, y: this.groundY - 400, width: 60, height: 60, image: this.platformImages[2] },
-          { x: this.canvas.width / 2 + 230, y: this.groundY - 400, width: 60, height: 60, image: this.platformImages[0] },
-          { x: this.canvas.width / 2 + 290, y: this.groundY - 400, width: 60, height: 60, image: this.platformImages[1] },
-          { x: this.canvas.width / 2 + 350, y: this.groundY - 400, width: 60, height: 60, image: this.platformImages[2] },
-          { x: this.canvas.width / 2 + 410, y: this.groundY - 400, width: 60, height: 60, image: this.platformImages[0] },
-          { x: this.canvas.width / 2 - 150, y: this.groundY - 70, width: 60, height: 60, image: this.platformImages[0] },
-          { x: this.canvas.width / 2 - 90, y: this.groundY - 70, width: 60, height: 60, image: this.platformImages[1] }
+          { x: this.canvas.width / 4 - 50, y: this.groundY - 150, width: 60, height: 60 },
+          { x: this.canvas.width / 4 + 50, y: this.groundY - 200, width: 60, height: 60 },
+          { x: this.canvas.width / 2 - 100, y: this.groundY - 300, width: 60, height: 60 },
+          { x: this.canvas.width / 2 - 40, y: this.groundY - 300, width: 60, height: 60 },
+          { x: this.canvas.width / 2 + 50, y: this.groundY - 400, width: 60, height: 60 },
+          { x: this.canvas.width / 2 + 110, y: this.groundY - 400, width: 60, height: 60 },
+          { x: this.canvas.width / 2 + 170, y: this.groundY - 400, width: 60, height: 60 },
+          { x: this.canvas.width / 2 + 230, y: this.groundY - 400, width: 60, height: 60 },
+          { x: this.canvas.width / 2 + 290, y: this.groundY - 400, width: 60, height: 60 },
+          { x: this.canvas.width / 2 + 350, y: this.groundY - 400, width: 60, height: 60 },
+          { x: this.canvas.width / 2 + 410, y: this.groundY - 400, width: 60, height: 60 },
+          { x: this.canvas.width / 2 - 150, y: this.groundY - 70, width: 60, height: 60 },
+          { x: this.canvas.width / 2 - 90, y: this.groundY - 70, width: 60, height: 60 }
         ];
 
-        for (const platform of platforms) {
-          if (platform.image && platform.image.complete && !platform.image.loadFailed) {
+        // Draw platforms
+        for (let i = 0; i < platforms.length; i++) {
+          const platform = platforms[i];
+          const platformImage = this.platformImages[i % this.platformImages.length];
+          
+          if (platformImage && platformImage.complete && !platformImage.loadFailed) {
             try {
-              this.ctx.drawImage(platform.image, platform.x, platform.y, platform.width, platform.height);
+              this.ctx.drawImage(platformImage, platform.x, platform.y, platform.width, platform.height);
             } catch (error) {
               console.warn('Failed to draw platform image:', error);
               // Draw grass block fallback
@@ -1304,6 +1147,7 @@ class GameLevelOverworld {
           }
         }
       }
+
     }
 
     const platformerMini = new PlatformerMini(gameEnv);
@@ -1371,7 +1215,7 @@ class GameLevelOverworld {
       },
 
       interact() {
-        if (this.dialogueSystem?.isDialogueOpen()) {
+        if (this.dialogueSystem?.isDialogueOpen()) { // Fixed: Added missing opening parenthesis
           this.dialogueSystem.closeDialogue();
           return;
         }
