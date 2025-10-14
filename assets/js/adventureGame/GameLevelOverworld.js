@@ -1,0 +1,1185 @@
+// To build GameLevels, each contains GameObjects from below imports
+import Background from './GameEngine/Background.js';
+import Player from './GameEngine/Player.js';
+import Npc from './GameEngine/Npc.js';
+import GameControl from './GameEngine/GameControl.js';
+import Creeper from './GameEngine/Creeper.js';
+import Game from './Game.js';
+import GameLevelDesert from './GameLevelDesert.js';
+
+class GameLevelOverworld {
+  constructor(gameEnv) {
+    const width = gameEnv.innerWidth;
+    const height = gameEnv.innerHeight;
+    const path = gameEnv.path;
+
+    // Background image info
+    const image_src_main = `${path}/images/gamify/maine_RPG.png`;
+    const image_data_main = {
+      name: 'main',
+      greeting: "Welcome to the main hub of Overworld.",
+      src: image_src_main,
+      pixels: { height: 320, width: 480 }
+    };
+
+    // Player sprite info and configuration
+    const sprite_src_player = `${path}/images/gamify/steve.png`;
+    const PLAYER_SCALE_FACTOR = 5;
+    const sprite_data_player = {
+      id: 'Player',
+      greeting: "I am Steve.",
+      src: sprite_src_player,
+      SCALE_FACTOR: PLAYER_SCALE_FACTOR,
+      STEP_FACTOR: 800,
+      ANIMATION_RATE: 50,
+      INIT_POSITION: { x: 0, y: height - (height / PLAYER_SCALE_FACTOR) - 40 }, // Bottom-left corner
+      pixels: { height: 1500, width: 600 },
+      orientation: { rows: 4, columns: 3 },
+      down: { row: 0, start: 0, columns: 3 },
+      downRight: { row: 2, start: 0, columns: 3, rotate: Math.PI / 16 },
+      downLeft: { row: 1, start: 0, columns: 3, rotate: -Math.PI / 16 },
+      left: { row: 1, start: 0, columns: 3 },
+      right: { row: 2, start: 0, columns: 3 },
+      up: { row: 3, start: 0, columns: 3 },
+      upLeft: { row: 1, start: 0, columns: 3, rotate: Math.PI / 16 },
+      upRight: { row: 2, start: 0, columns: 3, rotate: -Math.PI / 16 },
+      hitbox: { widthPercentage: 0.45, heightPercentage: 0.2 },
+      keypress: { up: 87, left: 65, down: 83, right: 68 },
+
+      // Velocity for movement handling
+      velocity: { x: 5, y: 5 },
+
+      // Bounds checking function for player movement inside canvas
+      canMoveTo(newX, newY, canvasWidth, canvasHeight) {
+        const leftBound = 0;
+        const rightBound = canvasWidth - (this.pixels.width / this.SCALE_FACTOR);
+        const topBound = 0;
+        const bottomBound = canvasHeight - (this.pixels.height / this.SCALE_FACTOR);
+        if (newX < leftBound || newX > rightBound) return false;
+        if (newY < topBound || newY > bottomBound) return false;
+        return true;
+      }
+    };
+
+    // Creeper sprite info with movement and animation logic
+    const sprite_src_creeper = `${path}/images/gamify/creepa.png`;
+    const sprite_greet_creeper = "KABOOM!!";
+    const sprite_data_creeper = {
+      id: 'Creeper',
+      greeting: sprite_greet_creeper,
+      src: sprite_src_creeper,
+      SCALE_FACTOR: 4,
+      ANIMATION_RATE: 25,
+      pixels: { height: 1200, width: 1600 },
+      INIT_POSITION: { x: 100, y: 100 },
+      orientation: { rows: 1, columns: 2 },
+      down: { row: 0, start: 0, columns: 2 },
+      right: { row: 0, start: 0, columns: 2 },
+      left: { row: 0, start: 0, columns: 2 },
+      up: { row: 0, start: 0, columns: 2 },
+      hitbox: { widthPercentage: 0.1, heightPercentage: 0.2 },
+
+      // Add missing properties
+      collisionEvents: [],
+      hasExploded: false,
+      lastCollisionCheck: 0, // Add cooldown for collision checks
+      
+      resize() {
+        // Optional: Add resize logic if needed
+      },
+
+      walkingArea: {
+        xMin: width / 10,
+        xMax: (width * 5) / 7,
+        yMin: height / 4,
+        yMax: (height * 8) / 15
+      },
+      speed: 10,
+      direction: { x: 1, y: 1 },
+
+      sound: new Audio(`${path}/assets/audio/creeper.mp3`),
+
+      explode() {
+        if (this.hasExploded) return;
+        this.hasExploded = true;
+
+        console.log("CREEPER EXPLODED!"); // Debug log
+
+        this.sound.play();
+        
+        const explosionMessage = document.createElement('div');
+        explosionMessage.innerHTML = 'KABOOM! You died!<br>Reloading...';
+        Object.assign(explosionMessage.style, {
+          position: 'fixed',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          backgroundColor: 'rgba(255, 0, 0, 0.9)',
+          color: 'white',
+          padding: '20px',
+          fontSize: '24px',
+          fontWeight: 'bold',
+          textAlign: 'center',
+          borderRadius: '10px',
+          zIndex: '10000',
+          fontFamily: 'Arial, sans-serif'
+        });
+        document.body.appendChild(explosionMessage);
+        
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+      },
+
+      // Improved collision detection with better position tracking
+      checkPlayerCollision(player) {
+        if (this.hasExploded) return false;
+
+        // Add a cooldown to prevent rapid collision checks
+        const now = Date.now();
+        if (now - this.lastCollisionCheck < 100) return false; // Only check every 100ms
+        this.lastCollisionCheck = now;
+
+        // Get creeper bounds - use actual rendered size
+        const creeperWidth = this.pixels.width / this.SCALE_FACTOR;
+        const creeperHeight = this.pixels.height / this.SCALE_FACTOR;
+        const creeperLeft = this.INIT_POSITION.x;
+        const creeperRight = this.INIT_POSITION.x + creeperWidth;
+        const creeperTop = this.INIT_POSITION.y;
+        const creeperBottom = this.INIT_POSITION.y + creeperHeight;
+        
+        // Get player position more accurately
+        let playerPos = null;
+        let playerWidth = 0;
+        let playerHeight = 0;
+        
+        // Try to get position from the actual Player object's canvas element
+        const playerElement = document.getElementById('Player');
+        if (playerElement) {
+          const rect = playerElement.getBoundingClientRect();
+          const gameCanvas = document.querySelector('canvas'); // Get the game canvas
+          const canvasRect = gameCanvas ? gameCanvas.getBoundingClientRect() : { left: 0, top: 0 };
+          
+          playerPos = {
+            x: rect.left - canvasRect.left,
+            y: rect.top - canvasRect.top
+          };
+          playerWidth = rect.width;
+          playerHeight = rect.height;
+        } else {
+          // Fallback to data-based position
+          playerPos = player.position || player.INIT_POSITION || { x: 0, y: 0 };
+          const playerPixels = player.pixels || { width: 600, height: 1500 };
+          const playerScale = player.SCALE_FACTOR || 5;
+          playerWidth = playerPixels.width / playerScale;
+          playerHeight = playerPixels.height / playerScale;
+        }
+        
+        const playerLeft = playerPos.x;
+        const playerRight = playerPos.x + playerWidth;
+        const playerTop = playerPos.y;
+        const playerBottom = playerPos.y + playerHeight;
+        
+        // Use smaller collision area - only check if they're really overlapping
+        const margin = 5; // Very small margin to prevent false positives
+        const isColliding = (
+          creeperLeft + margin < playerRight - margin && 
+          creeperRight - margin > playerLeft + margin && 
+          creeperTop + margin < playerBottom - margin && 
+          creeperBottom - margin > playerTop + margin
+        );
+        
+        // Debug logging with more detailed info
+        if (isColliding) {
+          console.log("COLLISION DETECTED!", {
+            creeper: { left: creeperLeft, right: creeperRight, top: creeperTop, bottom: creeperBottom },
+            player: { left: playerLeft, right: playerRight, top: playerTop, bottom: playerBottom },
+            playerElement: !!playerElement
+          });
+          this.explode();
+          return true;
+        }
+        return false;
+      },
+
+      updatePosition() {
+        if (this.hasExploded) return;
+
+        this.INIT_POSITION.x += this.direction.x * this.speed;
+        this.INIT_POSITION.y += this.direction.y * this.speed;
+
+        if (this.INIT_POSITION.x <= this.walkingArea.xMin) {
+          this.INIT_POSITION.x = this.walkingArea.xMin;
+          this.direction.x = 1;
+        }
+        if (this.INIT_POSITION.x >= this.walkingArea.xMax) {
+          this.INIT_POSITION.x = this.walkingArea.xMax;
+          this.direction.x = -1;
+        }
+        if (this.INIT_POSITION.y <= this.walkingArea.yMin) {
+          this.INIT_POSITION.y = this.walkingArea.yMin;
+          this.direction.y = 1;
+        }
+        if (this.INIT_POSITION.y >= this.walkingArea.yMax) {
+          this.INIT_POSITION.y = this.walkingArea.yMax;
+          this.direction.y = -1;
+        }
+
+        const spriteElement = document.getElementById(this.id);
+        if (spriteElement) {
+          spriteElement.style.transform = this.direction.x === -1 ? "scaleX(-1)" : "scaleX(1)";
+          spriteElement.style.left = `${this.INIT_POSITION.x}px`;
+          spriteElement.style.top = `${this.INIT_POSITION.y}px`;
+        }
+      },
+
+      isAnimating: false,
+      playAnimation() {
+        if (this.isAnimating) return;
+        this.isAnimating = true;
+
+        const spriteElement = document.getElementById(this.id);
+        if (!spriteElement) {
+          this.isAnimating = false;
+          return;
+        }
+
+        this.sound.play();
+
+        spriteElement.style.transition = 'filter 1s ease-in-out';
+        spriteElement.style.filter = 'brightness(3) saturate(0)';
+
+        setTimeout(() => {
+          spriteElement.style.filter = 'none';
+          setTimeout(() => {
+            spriteElement.style.transition = '';
+            this.isAnimating = false;
+          }, 1000);
+        }, 1000);
+      }
+    };
+
+    // Platformer mini-level inside overworld for exploration
+    class PlatformerMini {
+      constructor(gameEnv) {
+        this.gameEnv = gameEnv; // Pass gameEnv to PlatformerMini
+        this.isRunning = false;
+
+        // Initialize enemyDefeated flag
+        this.enemyDefeated = false;
+
+        // Create and initialize the canvas
+        this.canvas = document.createElement('canvas');
+        this.canvas.width = window.innerWidth; // Set canvas width
+        this.canvas.height = window.innerHeight; // Set canvas height
+        this.ctx = this.canvas.getContext('2d'); // Initialize context
+
+        // Load background image
+        this.backgroundImage = new Image();
+        this.backgroundImage.src = `${gameEnv.path}/images/gamify/mcbg.jpg`; // Replace with your image path
+
+        
+        // Load collectible item image
+        this.collectibleImage = new Image();
+        this.collectibleImage.src = `${gameEnv.path}/images/gamify/sword.png`; // Replace with your image path
+
+        // Load player image
+        this.playerImage = new Image();
+        this.playerImage.src = `${gameEnv.path}/images/gamify/stevelol.png`; // Replace with your player image path
+
+        // Player properties
+        this.playerX = 50; // Initial X position
+        this.playerY = 600; // Initial Y position
+        this.playerWidth = 85; // Width of the player
+        this.playerHeight = 85; // Height of the player
+        this.playerSpeedX = 0;
+        this.playerSpeedY = 0;
+        this.gravity = 0.5;
+        this.groundY = 700; // Ground level
+        this.keysPressed = {};
+        this.animationFrameId = null;
+        this.onExit = null; // callback when platformer stops
+        this.canJump = true; // Flag to track if the player can jump
+        this.playerDirection = 1; // 1 for right, -1 for left
+
+        // Load enemy image
+        this.enemyImage = new Image();
+        this.enemyImage.src = `${gameEnv.path}/images/gamify/mzombie.png`; // Replace with your enemy image path
+
+        // Enemy properties
+        const platformStartX = this.canvas.width / 2 + 50; // Start of the large platform
+        const platformEndX = this.canvas.width / 2 + 410; // End of the large platform
+        const platformMiddleX = (platformStartX + platformEndX) / 2; // Calculate the middle of the platform
+        this.enemyX = platformMiddleX - 50; // Center the enemy on the platform (adjusted for width)
+        this.enemyY = this.groundY - 400 - 100; // Align enemy with the top of the large platform
+        this.enemyWidth = 100; // Width of the enemy
+        this.enemyHeight = 100; // Height of the enemy
+        this.enemySpeedX = 1; // Horizontal movement speed
+        this.enemyDirection = -1; // Start facing left (-1 for left, 1 for right)
+
+        // Load NPC image
+        this.npcImage = new Image();
+        this.npcImage.src = `${gameEnv.path}/images/gamify/mchicken.png`; // Replace with your NPC image path
+        this.npcWidth = 50; // Initialize NPC width
+        this.npcHeight = 50; // Initialize NPC height
+        this.npcX = this.canvas.width - 150; // Place NPC on the ground on the right-hand side
+        this.npcY = this.canvas.height - 575; // Align NPC with the top of the ground
+      }
+
+      // Add this method to the PlatformerMini class after the constructor
+      loadImages() {
+        // Set up error handlers and onload handlers for all images
+        const images = [
+          this.backgroundImage,
+          this.collectibleImage, 
+          this.playerImage,
+          this.enemyImage,
+          this.npcImage,
+          ...this.platformImages
+        ];
+
+        images.forEach((img, index) => {
+          if (img) {
+            img.onerror = () => {
+              console.warn(`Image failed to load: ${img.src}`);
+              // Mark image as failed so we can skip drawing it
+              img.loadFailed = true;
+            };
+            
+            img.onload = () => {
+              console.log(`Image loaded successfully: ${img.src}`);
+              img.loadFailed = false;
+            };
+          }
+        });
+      }
+
+      start() {
+        if (this.isRunning) return;
+        this.isRunning = true;
+
+        // Pause the RPG game
+        pauseRpg();
+
+        // Reset player properties to ensure a clean start
+        this.playerX = 50;
+        this.playerY = this.groundY - 50;
+        this.playerSpeedX = 0;
+        this.playerSpeedY = 0;
+        this.keysPressed = {};
+        this.canJump = true;
+        this.itemCollected = false;
+
+        // Initialize platform images with error handling
+        this.platformImages = [
+          new Image(),
+          new Image(),
+          new Image()
+        ];
+        this.platformImages[0].src = `${path}/images/platformer/platforms/grassblock.jpg`;
+        this.platformImages[1].src = `${path}/images/platformer/platforms/grassblock.jpg`;
+        this.platformImages[2].src = `${path}/images/platformer/platforms/grassblock.jpg`;
+
+        // Load all images with error handling
+        this.loadImages();
+
+        // Create canvas overlay for mini platformer
+        this.canvas = document.createElement('canvas');
+        this.canvas.id = 'platformerMiniCanvas';
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+        Object.assign(this.canvas.style, {
+          position: 'fixed',
+          top: '0',
+          left: '0',
+          zIndex: '10000',
+          backgroundColor: 'rgba(135, 206, 235, 1)' // Sky blue
+        });
+        document.body.appendChild(this.canvas);
+
+        this.ctx = this.canvas.getContext('2d');
+
+        window.addEventListener('keydown', this.keyDownHandler);
+        window.addEventListener('keyup', this.keyUpHandler);
+
+        // Show instructions at the start of the platformer
+        this.showDialogue(
+          "Oh no! It seems that there is a chicken in danger!\n\nPress 'E' to talk\nPress 'C' to collect",
+          "Instructions"
+        );
+
+        this.loop();
+      }
+
+      stop() {
+        if (!this.isRunning) return;
+        this.isRunning = false;
+
+        window.removeEventListener('keydown', this.keyDownHandler);
+        window.removeEventListener('keyup', this.keyUpHandler);
+
+        if (this.canvas?.parentNode) {
+          this.canvas.parentNode.removeChild(this.canvas);
+          this.canvas = null;
+          this.ctx = null;
+        }
+
+        if (this.animationFrameId) {
+          cancelAnimationFrame(this.animationFrameId);
+          this.animationFrameId = null;
+        }
+
+        // Reset player position for retry
+        this.playerX = 50; // Reset to starting position
+        this.playerY = this.groundY - 50; // Reset to ground level
+        this.playerSpeedX = 0;
+        this.playerSpeedY = 0;
+        this.canJump = true;
+
+        // Show death screen
+        this.showDeathScreen();
+      }
+
+      showDeathScreen() {
+        // Create death screen overlay
+        const deathScreen = document.createElement('div');
+        deathScreen.id = 'deathScreen';
+        Object.assign(deathScreen.style, {
+          position: 'fixed',
+          top: '0',
+          left: '0',
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(0, 0, 0, 0.8)', // Semi-transparent black
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: '10001',
+          color: 'white',
+          fontFamily: 'Arial, sans-serif'
+        });
+
+        // Add death message
+        const message = document.createElement('h1');
+        message.textContent = 'You have died!';
+        message.style.marginBottom = '20px';
+        deathScreen.appendChild(message);
+
+        // Add button to close death screen and resume RPG
+        const button = document.createElement('button');
+        button.textContent = 'Return to RPG';
+        Object.assign(button.style, {
+          padding: '10px 20px',
+          fontSize: '16px',
+          cursor: 'pointer',
+          backgroundColor: '#ff0000',
+          color: 'white',
+          border: 'none',
+          borderRadius: '5px'
+        });
+        button.addEventListener('click', () => {
+          document.body.removeChild(deathScreen); // Remove death screen
+          if (this.onExit) this.onExit(); // Resume RPG
+        });
+        deathScreen.appendChild(button);
+
+        // Append death screen to the document
+        document.body.appendChild(deathScreen);
+      }
+
+      showDialogue(message, title, callback) {
+        // Create dialogue overlay
+        const dialogueOverlay = document.createElement('div');
+        Object.assign(dialogueOverlay.style, {
+          position: 'fixed',
+          top: '0',
+          left: '0',
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(0, 0, 0, 0.8)', // Semi-transparent black
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: '10001',
+          color: 'white',
+          fontFamily: 'Arial, sans-serif'
+        });
+
+        // Add title
+        const titleElement = document.createElement('h1');
+        titleElement.textContent = title;
+        titleElement.style.marginBottom = '20px';
+        dialogueOverlay.appendChild(titleElement);
+
+        // Add message
+        const messageElement = document.createElement('p');
+        messageElement.textContent = message;
+        messageElement.style.marginBottom = '20px';
+        dialogueOverlay.appendChild(messageElement);
+
+        // Add button to execute callback
+        const button = document.createElement('button');
+        button.textContent = 'Continue.';
+        Object.assign(button.style, {
+          padding: '10px 20px',
+          fontSize: '16px',
+          cursor: 'pointer',
+          backgroundColor: '#ff0000',
+          color: 'white',
+          border: 'none',
+          borderRadius: '5px'
+        });
+        button.addEventListener('click', () => {
+          document.body.removeChild(dialogueOverlay); // Remove dialogue overlay
+          if (callback) callback(); // Execute callback
+        });
+        dialogueOverlay.appendChild(button);
+
+        // Append dialogue overlay to the document
+        document.body.appendChild(dialogueOverlay);
+      }
+
+      returnToDesert() {
+        if (!this.isRunning) return;
+        this.isRunning = false;
+
+        // Clean up event listeners and canvas
+        window.removeEventListener('keydown', this.keyDownHandler);
+        window.removeEventListener('keyup', this.keyDownHandler);
+
+        if (this.canvas?.parentNode) {
+          this.canvas.parentNode.removeChild(this.canvas);
+          this.canvas = null;
+          this.ctx = null;
+        }
+
+        if (this.animationFrameId) {
+          cancelAnimationFrame(this.animationFrameId);
+          this.animationFrameId = null;
+        }
+
+        // Transition back to GameLevelDesert
+        const desertLevel = new GameLevelDesert(this.gameEnv); // Pass gameEnv to GameLevelDesert
+        desertLevel.start(); // Start the desert level
+      }
+
+      keyDownHandler = (e) => {
+        this.keysPressed[e.code] = true;
+
+        // Handle interaction with NPC when 't' is pressed
+        if (e.code === 'KeyE') {
+          if (
+            this.playerX + 50 > this.npcX && // Player's right edge is past NPC's left edge
+            this.playerX < this.npcX + this.npcWidth && // Player's left edge is before NPC's right edge
+            this.playerY + 50 > this.npcY && // Player's bottom edge is past NPC's top edge
+            this.playerY < this.npcY + this.npcHeight // Player's top edge is before NPC's bottom edge
+          ) {
+            if (!this.enemyDefeated) { // Enemy is still alive
+              this.showDialogue(
+                "BAWK! I'm too scared to move because of that monster over there! ( You have to defeat it first! )",
+                "Scared NPC"
+              );
+            } else { // Enemy is defeated
+              this.showDialogue(
+                "Hooray! You have slain the monster! Let's get out of here.. ( You will now be transported back to the Desert! )",
+                "Grateful NPC",
+                () => {
+                  window.location.reload(); // Reload the page
+                }
+              );
+            }
+          }
+        }
+
+        if (e.code === 'Escape') {
+          this.stop();
+        }
+      }
+
+      keyUpHandler = (e) => {
+        this.keysPressed[e.code] = false;
+      }
+
+      loop = () => {
+        this.update();
+        this.draw();
+        if (this.isRunning) {
+          this.animationFrameId = requestAnimationFrame(this.loop);
+        }
+      }
+
+      update() {
+        // Horizontal movement
+        if (this.keysPressed['ArrowRight'] || this.keysPressed['KeyD']) {
+          this.playerSpeedX = 5;
+          this.playerDirection = 1; // Facing right
+        } else if (this.keysPressed['ArrowLeft'] || this.keysPressed['KeyA']) {
+          this.playerSpeedX = -5;
+          this.playerDirection = -1; // Facing left
+        } else {
+          this.playerSpeedX = 0;
+        }
+
+        // Jump only if player is allowed to jump
+        if ((this.keysPressed['ArrowUp'] || this.keysPressed['KeyW'] || this.keysPressed['Space']) && this.canJump) {
+          this.playerSpeedY = -15; // Increased jump height
+          this.canJump = false; // Disable jumping until the player lands
+        }
+
+        // Gravity effect
+        this.playerSpeedY += this.gravity;
+
+        // Update player position
+        this.playerX += this.playerSpeedX;
+        this.playerY += this.playerSpeedY;
+
+        // Collision with ground
+        if (this.playerY + this.playerHeight > this.groundY && this.playerX < this.canvas.width / 6) {
+          this.playerY = this.groundY - this.playerHeight; // Ensure the player touches the ground
+          this.playerSpeedY = 0;
+          this.canJump = true; // Enable jumping when the player lands on the ground
+        }
+
+        // Collision with elevated ground on the right
+        if (
+          this.playerY + this.playerHeight > this.groundY - 400 && // Adjust collision to match the visual height of the elevated ground
+          this.playerX + this.playerWidth > this.canvas.width - 200 && // Ensure collision starts at the elevated ground's left edge
+          this.playerX < this.canvas.width // Ensure collision ends at the right edge of the canvas
+        ) {
+          this.playerY = this.groundY - 400 - this.playerHeight; // Adjust for elevated ground height
+          this.playerSpeedY = 0;
+          this.canJump = true; // Enable jumping when the player lands on the elevated ground
+        }
+
+        // Collision with platforms
+        const platforms = [
+          { x: this.canvas.width / 4 - 50, y: this.groundY - 150, width: 60, height: 60 },
+          { x: this.canvas.width / 4 + 50, y: this.groundY - 200, width: 60, height: 60 },
+          { x: this.canvas.width / 2 - 100, y: this.groundY - 300, width: 60, height: 60 },
+          { x: this.canvas.width / 2 - 40, y: this.groundY - 300, width: 60, height: 60 },
+          { x: this.canvas.width / 2 + 50, y: this.groundY - 400, width: 60, height: 60 },
+          { x: this.canvas.width / 2 + 110, y: this.groundY - 400, width: 60, height: 60 },
+          { x: this.canvas.width / 2 + 170, y: this.groundY - 400, width: 60, height: 60 },
+          { x: this.canvas.width / 2 + 230, y: this.groundY - 400, width: 60, height: 60 },
+          { x: this.canvas.width / 2 + 290, y: this.groundY - 400, width: 60, height: 60 },
+          { x: this.canvas.width / 2 + 350, y: this.groundY - 400, width: 60, height: 60 },
+          { x: this.canvas.width / 2 + 410, y: this.groundY - 400, width: 60, height: 60 }, // Last platform
+
+          // Bottom platforms
+          { x: this.canvas.width / 2 - 150, y: this.groundY - 70, width: 60, height: 60 },
+          { x: this.canvas.width / 2 - 90, y: this.groundY - 70, width: 60, height: 60 }
+        ];
+
+        for (const platform of platforms) {
+          // Check if the player is colliding with the platform from above
+          if (
+            this.playerX + this.playerWidth > platform.x && // Player's right edge is past platform's left edge
+            this.playerX < platform.x + platform.width && // Player's left edge is before platform's right edge
+            this.playerY + this.playerHeight > platform.y && // Player's bottom edge is past platform's top edge
+            this.playerY < platform.y + platform.height && // Player's top edge is before platform's bottom edge
+            this.playerSpeedY > 0 // Ensure the player is falling
+          ) {
+            this.playerY = platform.y - this.playerHeight; // Place player on top of the platform
+            this.playerSpeedY = 0; // Stop vertical movement
+            this.canJump = true; // Enable jumping when the player lands on a platform
+          }
+        }
+
+        // Check if the player is near the item and presses 'c' to collect it
+        if (
+          !this.itemCollected && // Ensure the item hasn't been collected yet
+          this.playerX + this.playerWidth > this.canvas.width / 2 - 120 && // Player's right edge is past item's left edge
+          this.playerX < this.canvas.width / 2 - 80 && // Player's left edge is before item's right edge
+          this.playerY + this.playerHeight > this.groundY - 110 && // Player's bottom edge is past item's top edge
+          this.playerY < this.groundY - 70 && // Player's top edge is before item's bottom edge
+          this.keysPressed['KeyC'] // Check if 'c' key is pressed
+        ) {
+          this.itemCollected = true; // Mark the item as collected
+          console.log('Item collected!'); // Log the collection event (optional)
+        }
+
+        // Check collision between player and enemy
+        if (
+          this.playerX + 50 > this.enemyX && // Player's right edge is past enemy's left edge
+          this.playerX < this.enemyX + this.enemyWidth && // Player's left edge is before enemy's right edge
+          this.playerY + 50 > this.enemyY && // Player's bottom edge is past enemy's top edge
+          this.playerY < this.enemyY + this.enemyHeight // Player's top edge is before enemy's bottom edge
+        ) {
+          if (!this.itemCollected) {
+            this.stop(); // Player dies if the item is not collected
+            console.log('Player died!');
+          } else {
+            // Play animation for zombie collision
+            if (this.itemCollected) {
+              // Stop the zombie's movement
+              this.enemySpeedX = 0; // Set horizontal speed to 0
+              this.enemyDirection = 0; // Prevent direction changes
+
+              // Clear the zombie's previous frame from the canvas
+              this.ctx.clearRect(this.enemyX, this.enemyY, this.enemyWidth, this.enemyHeight);
+
+              // If there's an existing enemy element, remove it
+              if (this.currentEnemyElement) {
+                this.currentEnemyElement.remove();
+              }
+
+              // Create a new enemy element
+              const enemyElement = document.createElement('img');
+              enemyElement.src = this.enemyImage.src; // Use the zombie PNG source
+              Object.assign(enemyElement.style, {
+                position: 'absolute',
+                left: `${this.enemyX}px`,
+                top: `${this.enemyY}px`,
+                width: `${this.enemyWidth}px`,
+                height: `${this.enemyHeight}px`,
+                transform: 'rotate(0deg)', // Initial rotation
+                opacity: '1',
+                transition: 'transform 1s ease-out, opacity 1s ease-out',
+                zIndex: '10000' // Ensure it appears above other elements
+              });
+
+              // Add the new element to the document
+              document.body.appendChild(enemyElement);
+
+              // Save a reference to this element for future removal
+              this.currentEnemyElement = enemyElement;
+
+              // Start the fall-over animation
+              setTimeout(() => {
+                enemyElement.style.transform = 'rotate(90deg)'; // Rotate 90 degrees
+                enemyElement.style.opacity = '0'; // Fade out
+              }, 0); // Start immediately
+
+              // Remove the element and reset enemy properties after the animation completes
+              setTimeout(() => {
+                enemyElement.remove(); // Remove element
+                this.currentEnemyElement = null; // Clear the reference
+                this.enemyX = -100; // Move enemy off-screen
+                this.enemyY = -100; // Move enemy off-screen vertically
+                this.enemyDefeated = true; // Mark the enemy as defeated
+                console.log('Enemy defeated!');
+              }, 1000); // Wait for animation to complete
+            }
+          }
+        }
+
+        // Check if the player falls off the platforms
+        if (this.playerY > this.groundY) {
+          this.stop(); // End the platformer
+        }
+
+        // Keep player inside canvas horizontally
+        this.playerX = Math.max(0, Math.min(this.playerX, this.canvas.width - 50));
+
+        // Enemy movement logic
+        const platformStartX = this.canvas.width / 2 + 50; // Start of the large platform
+        const platformEndX = this.canvas.width / 2 + 410; // End of the large platform
+
+        // Move enemy horizontally
+        this.enemyX += this.enemySpeedX * this.enemyDirection;
+
+        // Check if the enemy reaches the edges of the platform
+        if (this.enemyX <= platformStartX || this.enemyX + this.enemyWidth >= platformEndX) {
+          this.enemyDirection *= -1; // Switch direction
+        }
+
+        // Randomly switch direction (reduce probability)
+        if (Math.random() < 0.005) { // 0.5% chance per frame (less frequent)
+          this.enemyDirection *= -1;
+        }
+
+        // Prevent enemy from falling off the platform
+        this.enemyY = this.groundY - 400 - 100; // Keep enemy aligned with the platform
+      }
+
+      draw() {
+        if (!this.ctx) return;
+
+        // Draw background image with error checking
+        if (this.backgroundImage.complete && !this.backgroundImage.loadFailed) {
+          try {
+            this.ctx.drawImage(this.backgroundImage, 0, 0, this.canvas.width, this.canvas.height);
+          } catch (error) {
+            console.warn('Failed to draw background image:', error);
+            // Fallback to solid color
+            this.ctx.fillStyle = 'rgba(135, 206, 235, 1)';
+            this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+          }
+        } else {
+          // Fallback color if the image hasn't loaded yet or failed
+          this.ctx.fillStyle = 'rgba(135, 206, 235, 1)'; // Sky blue
+          this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        }
+
+        // Draw ground on the left
+        this.ctx.fillStyle = '#654321';
+        this.ctx.fillRect(0, this.groundY, this.canvas.width / 6, this.canvas.height - this.groundY);
+
+        // Draw elevated ground on the right
+        this.ctx.fillStyle = '#654321';
+        this.ctx.fillRect(this.canvas.width - 200, this.groundY - 400, 200, this.canvas.height - (this.groundY - 400));
+
+        // Draw player using the image and flip based on direction
+        if (this.playerImage.complete && !this.playerImage.loadFailed) {
+          try {
+            if (this.playerDirection === 1) {
+              this.ctx.save();
+              this.ctx.translate(this.playerX + this.playerWidth, 0);
+              this.ctx.scale(-1, 1);
+
+              // Draw player
+              this.ctx.drawImage(
+                this.playerImage,
+                0,
+                this.playerY,
+                this.playerWidth,
+                this.playerHeight
+              );
+
+              // Draw the item in the hand if collected
+              if (this.itemCollected && this.collectibleImage.complete && !this.collectibleImage.loadFailed) {
+                const swordOffsetY = 10;
+                let swordOffsetX = 50;
+
+                this.ctx.drawImage(
+                  this.collectibleImage,
+                  swordOffsetX,
+                  this.playerY + swordOffsetY,
+                  30,
+                  30
+                );
+              }
+
+              this.ctx.restore();
+            } else {
+              // Draw player facing left
+              this.ctx.drawImage(
+                this.playerImage,
+                this.playerX,
+                this.playerY,
+                this.playerWidth,
+                this.playerHeight
+              );
+
+              // Draw the item in the hand if collected
+              if (this.itemCollected && this.collectibleImage.complete && !this.collectibleImage.loadFailed) {
+                const swordOffsetX = -5;
+                const swordOffsetY = 10;
+                this.ctx.drawImage(
+                  this.collectibleImage,
+                  this.playerX + this.playerWidth + swordOffsetX - 30,
+                  this.playerY + swordOffsetY,
+                  30,
+                  30
+                );
+              }
+            }
+          } catch (error) {
+            console.warn('Failed to draw player image:', error);
+            // Fallback rectangle
+            this.ctx.fillStyle = 'red';
+            this.ctx.fillRect(this.playerX, this.playerY, this.playerWidth, this.playerHeight);
+          }
+        } else {
+          // Fallback if the image hasn't loaded yet or failed
+          this.ctx.fillStyle = 'red';
+          this.ctx.fillRect(this.playerX, this.playerY, this.playerWidth, this.playerHeight);
+        }
+
+        // Draw platforms with error checking
+        const platforms = [
+          { x: this.canvas.width / 4 - 50, y: this.groundY - 150, width: 60, height: 60, image: this.platformImages[0] },
+          { x: this.canvas.width / 4 + 50, y: this.groundY - 200, width: 60, height: 60, image: this.platformImages[1] },
+          { x: this.canvas.width / 2 - 100, y: this.groundY - 300, width: 60, height: 60, image: this.platformImages[0] },
+          { x: this.canvas.width / 2 - 40, y: this.groundY - 300, width: 60, height: 60, image: this.platformImages[1] },
+          { x: this.canvas.width / 2 + 50, y: this.groundY - 400, width: 60, height: 60, image: this.platformImages[0] },
+          { x: this.canvas.width / 2 + 110, y: this.groundY - 400, width: 60, height: 60, image: this.platformImages[1] },
+          { x: this.canvas.width / 2 + 170, y: this.groundY - 400, width: 60, height: 60, image: this.platformImages[2] },
+          { x: this.canvas.width / 2 + 230, y: this.groundY - 400, width: 60, height: 60, image: this.platformImages[0] },
+          { x: this.canvas.width / 2 + 290, y: this.groundY - 400, width: 60, height: 60, image: this.platformImages[1] },
+          { x: this.canvas.width / 2 + 350, y: this.groundY - 400, width: 60, height: 60, image: this.platformImages[2] },
+          { x: this.canvas.width / 2 + 410, y: this.groundY - 400, width: 60, height: 60, image: this.platformImages[0] },
+          { x: this.canvas.width / 2 - 150, y: this.groundY - 70, width: 60, height: 60, image: this.platformImages[0] },
+          { x: this.canvas.width / 2 - 90, y: this.groundY - 70, width: 60, height: 60, image: this.platformImages[1] }
+        ];
+
+        for (const platform of platforms) {
+          if (platform.image && platform.image.complete && !platform.image.loadFailed) {
+            try {
+              this.ctx.drawImage(platform.image, platform.x, platform.y, platform.width, platform.height);
+            } catch (error) {
+              console.warn('Failed to draw platform image:', error);
+              // Fallback rectangle
+              this.ctx.fillStyle = '#8B4513';
+              this.ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
+            }
+          } else {
+            // Fallback rectangle
+            this.ctx.fillStyle = '#8B4513';
+            this.ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
+          }
+        }
+
+        // Draw enemy using the image and flip based on direction
+        if (this.enemyImage.complete && !this.enemyImage.loadFailed) {
+          try {
+            this.ctx.save();
+            if (this.enemyDirection === 1) {
+              this.ctx.scale(-1, 1);
+              this.ctx.drawImage(
+                this.enemyImage,
+                -this.enemyX - this.enemyWidth,
+                this.enemyY,
+                this.enemyWidth,
+                this.enemyHeight
+              );
+            } else {
+              this.ctx.drawImage(
+                this.enemyImage,
+                this.enemyX,
+                this.enemyY,
+                this.enemyWidth,
+                this.enemyHeight
+              );
+            }
+            this.ctx.restore();
+          } catch (error) {
+            console.warn('Failed to draw enemy image:', error);
+            // Fallback rectangle
+            this.ctx.fillStyle = 'blue';
+            this.ctx.fillRect(this.enemyX, this.enemyY, this.enemyWidth, this.enemyHeight);
+          }
+        } else {
+          // Fallback if the image hasn't loaded yet or failed
+          this.ctx.fillStyle = 'blue';
+          this.ctx.fillRect(this.enemyX, this.enemyY, this.enemyWidth, this.enemyHeight);
+        }
+
+        // Draw NPC using the image
+        if (this.npcImage.complete && !this.npcImage.loadFailed) {
+          try {
+            this.ctx.drawImage(
+              this.npcImage,
+              this.npcX,
+              this.npcY,
+              this.npcWidth,
+              this.npcHeight
+            );
+          } catch (error) {
+            console.warn('Failed to draw NPC image:', error);
+            // Fallback rectangle
+            this.ctx.fillStyle = 'green';
+            this.ctx.fillRect(this.npcX, this.npcY, this.npcWidth, this.npcHeight);
+          }
+        } else {
+          // Fallback if the image hasn't loaded yet or failed
+          this.ctx.fillStyle = 'green';
+          this.ctx.fillRect(this.npcX, this.npcY, this.npcWidth, this.npcHeight);
+        }
+
+        // Draw collectible item if not collected
+        if (!this.itemCollected) {
+          if (this.collectibleImage.complete && !this.collectibleImage.loadFailed) {
+            try {
+              this.ctx.drawImage(
+                this.collectibleImage,
+                this.canvas.width / 2 - 120,
+                this.groundY - 110,
+                40,
+                40
+              );
+            } catch (error) {
+              console.warn('Failed to draw collectible image:', error);
+              // Fallback circle
+              this.ctx.fillStyle = 'gold';
+              this.ctx.beginPath();
+              this.ctx.arc(this.canvas.width / 2 - 120, this.groundY - 90, 20, 0, Math.PI * 2);
+              this.ctx.fill();
+            }
+          } else {
+            // Fallback if the image hasn't loaded yet or failed
+            this.ctx.fillStyle = 'gold';
+            this.ctx.beginPath();
+            this.ctx.arc(this.canvas.width / 2 - 120, this.groundY - 90, 20, 0, Math.PI * 2);
+            this.ctx.fill();
+          }
+        }
+      }
+    }
+
+    // Instantiate platformer mini-level
+    const platformerMini = new PlatformerMini(gameEnv);
+
+    // Variables to manage RPG pause state
+    let isRpgPaused = false;
+    let creeperMovementInterval, creeperAnimationInterval;
+
+    // Functions to pause and resume RPG overworld activities
+    const pauseRpg = () => {
+      if (isRpgPaused) return;
+      isRpgPaused = true;
+
+      clearInterval(creeperMovementInterval);
+      clearInterval(creeperAnimationInterval);
+
+      // Additional pause logic can be added here (e.g., pause player controls)
+    };
+
+    const resumeRpg = () => {
+      if (!isRpgPaused) return;
+      isRpgPaused = false;
+
+      // Restart creeper intervals
+      creeperMovementInterval = setInterval(() => {
+        sprite_data_creeper.updatePosition();
+      }, 100);
+
+      creeperAnimationInterval = setInterval(() => {
+        sprite_data_creeper.playAnimation();
+      }, 5000);
+
+      // Additional resume logic can be added here
+    };
+
+    // Start creeper movement and animation intervals
+    creeperMovementInterval = setInterval(() => {
+      sprite_data_creeper.updatePosition();
+    }, 100);
+
+    creeperAnimationInterval = setInterval(() => {
+      sprite_data_creeper.playAnimation();
+    }, 5000);
+
+    // Villager NPC sprite and interaction
+    const sprite_src_villager = `${path}/images/gamify/villager.png`;
+    const sprite_greet_villager = "Aur aur aur";
+    const sprite_data_villager = {
+      id: 'Villager',
+      greeting: sprite_greet_villager,
+      src: sprite_src_villager,
+      SCALE_FACTOR: 6,
+      ANIMATION_RATE: 100,
+      pixels: { width: 700, height: 1400 },
+      INIT_POSITION: { x: (width * 10) / 11, y: (height * 1) / 40 },
+      orientation: { rows: 1, columns: 1 },
+      down: { row: 0, start: 0, columns: 1 },
+      hitbox: { widthPercentage: 0.1, heightPercentage: 0.2 },
+
+      // Add missing properties to prevent collisionEvents error
+      collisionEvents: [],
+      
+      // Add resize method to prevent resize error
+      resize() {
+        // Optional: Add resize logic if needed
+      },
+
+      dialogues: [
+        "Explore the new terrain?",
+        "I love villager life!",
+        "Roblox is not better than Minecraft!"
+      ],
+
+      reaction() {
+        // Prevent default alert; interaction handled below
+      },
+
+      interact() {
+        if (this.dialogueSystem?.isDialogueOpen()) {
+          this.dialogueSystem.closeDialogue();
+          return;
+        }
+
+        if (!this.dialogueSystem) {
+          this.dialogueSystem = new DialogueSystem();
+        }
+
+        this.dialogueSystem.showDialogue(
+          "Do you wish to explore the plains?",
+          "Plains Biome?",
+          this.src // villager sprite image
+        );
+
+        this.dialogueSystem.addButtons([
+          {
+            text: "Yes!",
+            primary: true,
+            action: () => {
+              this.dialogueSystem.closeDialogue();
+              pauseRpg();
+              platformerMini.onExit = () => {
+                resumeRpg();
+              };
+              platformerMini.start();
+            }
+          },
+          {
+            text: "Not Ready",
+            action: () => {
+              this.dialogueSystem.closeDialogue();
+            }
+          }
+        ]);
+      }
+    };
+
+    // Export the classes and their data for GameControl or game runner
+    this.classes = [
+      { class: Background, data: image_data_main },
+      { class: Player, data: sprite_data_player },
+      { class: Npc, data: sprite_data_villager },
+      { class: Creeper, data: sprite_data_creeper },
+      { class: GameControl, data: {} }
+    ];
+
+    // Add this property to track game objects after they're created
+    this.gameEnv = gameEnv;
+  }
+
+  // Add update method to handle collision detection
+  update() {
+    // Find player and creeper objects
+    const player = this.gameEnv?.gameObjects?.find(obj => obj.spriteData?.id === 'Player');
+    const creeper = this.gameEnv?.gameObjects?.find(obj => obj.spriteData?.id === 'Creeper');
+    
+    // Check collision between player and creeper
+    if (player && creeper && creeper.spriteData?.checkPlayerCollision) {
+      // Get current player position (Player class should have a position property)
+      const playerData = {
+        position: player.position || player.spriteData.INIT_POSITION,
+        pixels: player.spriteData.pixels,
+        SCALE_FACTOR: player.spriteData.SCALE_FACTOR,
+        INIT_POSITION: player.spriteData.INIT_POSITION
+      };
+      
+      creeper.spriteData.checkPlayerCollision(playerData);
+    }
+  }
+
+  returnToDesert() {
+    if (!this.isRunning) return;
+    this.isRunning = false;
+
+    // Clean up event listeners and canvas
+    window.removeEventListener('keydown', this.keyDownHandler);
+    window.removeEventListener('keyup', this.keyDownHandler);
+
+    if (this.canvas?.parentNode) {
+      this.canvas.parentNode.removeChild(this.canvas);
+      this.canvas = null;
+      this.ctx = null;
+    }
+
+    if (this.animationFrameId) {
+      cancelAnimationFrame(this.animationFrameId);
+      this.animationFrameId = null;
+    }
+
+    // Transition back to GameLevelDesert
+    const desertLevel = new GameLevelDesert(this.gameEnv); // Pass gameEnv to GameLevelDesert
+    desertLevel.start(); // Start the desert level
+  }
+}
+
+export default GameLevelOverworld;
