@@ -2,35 +2,6 @@
 /* Import cute fonts to match main project */
 @import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300;0,400;0,600;0,700;0,800;1,400&family=Comic+Neue:ital,wght@0,300;0,400;0,700;1,400&display=swap');
 
-/* Node page-specific styles */
-.card-hover-effects {
-  position: relative;
-  overflow: hidden;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.card-hover-effects::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-  transition: left 0.6s ease;
-}
-
-.card-hover-effects:hover::before {
-  left: 100%;
-}
-
-.card-hover-effects:hover {
-  transform: translateY(-8px) rotateX(3deg) rotateY(3deg);
-  box-shadow: 
-    0 15px 35px rgba(0,0,0,0.4),
-    0 0 25px rgba(139, 92, 246, 0.2);
-}
-
 /* Cute font applications to match main project */
 .cute-title {
   font-family: 'Comic Neue', cursive;
@@ -52,7 +23,7 @@
   font-weight: 600;
 }
 
-/* Enhanced city cards with matching theme - made thinner */
+/* City cards - clean sections */
 .city-card {
   background: linear-gradient(135deg, 
     rgba(55, 65, 81, 0.95) 0%, 
@@ -61,95 +32,150 @@
   border: 2px solid rgba(139, 92, 246, 0.3);
   backdrop-filter: blur(10px);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  padding: 16px;
+  padding: 24px;
   margin: 16px 0;
-}
-
-.city-card:hover {
-  border: 2px solid rgba(139, 92, 246, 0.6);
-  box-shadow: 
-    0 12px 40px rgba(0, 0, 0, 0.4),
-    0 0 20px rgba(139, 92, 246, 0.3);
-}
-
-/* Dropdown styling - simplified */
-.pitstop-dropdown {
-  background: linear-gradient(135deg, rgba(75, 85, 99, 0.8), rgba(55, 65, 81, 0.8));
-  border: 2px solid rgba(139, 92, 246, 0.4);
-  backdrop-filter: blur(10px);
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  overflow: hidden;
+  overflow: visible;
   transition: all 0.3s ease;
-  margin: 0 16px 16px 16px;
 }
 
-.dropdown-button {
-  width: 100%;
-  padding: 16px 20px;
-  background: transparent;
-  border: none;
-  color: white;
-  font-family: 'Nunito', sans-serif;
-  font-weight: 600;
-  font-size: 16px;
-  text-align: left;
-  cursor: pointer;
+/* Travel route connector */
+.travel-route {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
+  margin: 32px 0;
+  position: relative;
+}
+
+.route-line {
+  width: 4px;
+  height: 60px;
+  background: linear-gradient(to bottom, 
+    rgba(139, 92, 246, 0.8) 0%,
+    rgba(59, 130, 246, 0.8) 50%,
+    rgba(139, 92, 246, 0.8) 100%);
+  border-radius: 2px;
+  position: relative;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* ENHANCED: Clickable route button */
+.route-button {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+  background: rgba(31, 41, 55, 0.95);
+  padding: 12px;
+  border-radius: 50%;
+  border: 2px solid rgba(139, 92, 246, 0.5);
+  cursor: pointer;
   transition: all 0.3s ease;
+  z-index: 10;
 }
 
-.dropdown-button:hover {
+.route-button:hover {
   background: rgba(139, 92, 246, 0.2);
+  border-color: rgba(139, 92, 246, 0.8);
+  transform: translate(-50%, -50%) scale(1.1);
+  box-shadow: 0 4px 16px rgba(139, 92, 246, 0.3);
 }
 
-.dropdown-arrow {
-  transition: transform 0.3s ease;
-  font-size: 12px;
+.route-button.active {
+  background: rgba(139, 92, 246, 0.3);
+  border-color: rgba(139, 92, 246, 1);
 }
 
-.dropdown-content {
-  display: none;
-  background: rgba(31, 41, 55, 0.8);
-  border-top: 1px solid rgba(139, 92, 246, 0.2);
+/* ENHANCED: Pitstops container with dropdown functionality */
+.pitstops-section {
+  background: linear-gradient(135deg, 
+    rgba(31, 41, 55, 0.95) 0%, 
+    rgba(55, 65, 81, 0.95) 100%);
+  border: 2px solid rgba(59, 130, 246, 0.4);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 20px;
+  margin: 16px 0;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.2);
+  display: none; /* HIDDEN by default */
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: all 0.4s ease;
 }
 
-.dropdown-content.show {
+.pitstops-section.show {
   display: block;
+  animation: slideDown 0.4s ease-out forwards;
+}
+
+@keyframes slideDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px) scaleY(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+  }
+}
+
+.pitstops-title {
+  text-align: center;
+  color: #60a5fa;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.pitstops-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
 }
 
 .pitstop-item {
-  padding: 12px 20px;
-  border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+  background: rgba(59, 130, 246, 0.15);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: 12px;
+  padding: 16px;
   transition: all 0.3s ease;
   cursor: pointer;
 }
 
-.pitstop-item:last-child {
-  border-bottom: none;
-}
-
 .pitstop-item:hover {
-  background: rgba(139, 92, 246, 0.15);
-  transform: translateX(4px);
+  background: rgba(59, 130, 246, 0.25);
+  border-color: rgba(59, 130, 246, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.2);
 }
 
 .pitstop-name {
   font-family: 'Nunito', sans-serif;
-  font-weight: 600;
-  color: #e5e7eb;
-  font-size: 14px;
-  margin-bottom: 4px;
+  font-weight: 700;
+  color: #93c5fd;
+  font-size: 16px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .pitstop-description {
   font-family: 'Nunito', sans-serif;
   font-weight: 400;
-  color: #9ca3af;
-  font-size: 12px;
-  line-height: 1.4;
+  color: #d1d5db;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 /* Data tag styling to match theme */
@@ -212,17 +238,26 @@
 
 @media (max-width: 768px) {
   .city-card {
-    padding: 12px;
+    padding: 16px;
     margin: 12px 0;
   }
   
-  .dropdown-button {
-    padding: 12px 16px;
-    font-size: 14px;
+  .pitstops-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
   }
   
   .pitstop-item {
-    padding: 8px 16px;
+    padding: 12px;
+  }
+  
+  .route-line {
+    height: 40px;
+  }
+  
+  .route-button {
+    font-size: 18px;
+    padding: 8px;
   }
 }
 </style>
@@ -267,60 +302,79 @@
         <p>Debug: Cities found: {% if page.lxdData.Cities %}{{ page.lxdData.Cities.size }}{% else %}0{% endif %}</p>
       </div>
 
-      <!-- Road Trip / City Cards -->
-      <div class="grid grid-cols-1 gap-12 mb-16 max-w-6xl mx-auto">
+      <!-- Travel Route with Cities and Pitstops -->
+      <div class="max-w-4xl mx-auto">
         {% if page.lxdData.Cities %}
           {% for city in page.lxdData.Cities %}
-            <div class="city-card rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden group card-hover-effects">
-
+            
+            <!-- City Card -->
+            <div class="city-card rounded-2xl shadow-lg">
               <!-- City Title -->
-              <div class="w-full px-4 pt-4 pb-2">
+              <div class="w-full mb-4">
                 <h3 class="text-3xl xl:text-4xl font-bold text-white cute-heading">
                   🏙️ {{ city.Name }}
                 </h3>
               </div>
 
-              <!-- Pitstops Dropdown -->
-              <div class="pitstop-dropdown">
-                <button class="dropdown-button" type="button" data-index="{{ forloop.index0 }}">
-                  <span class="cute-text">🗺️ Explore Pitstops ({% if city.Pitstops %}{{ city.Pitstops.size }}{% else %}0{% endif %})</span>
-                  <span class="dropdown-arrow" id="arrow-{{ forloop.index0 }}">▼</span>
-                </button>
-                <div class="dropdown-content" id="dropdown-{{ forloop.index0 }}">
-                  {% if city.Pitstops and city.Pitstops.size > 0 %}
-                    {% for pitstop in city.Pitstops %}
-                      <div class="pitstop-item">
-                        <div class="pitstop-name">📍 {{ pitstop.Name }}</div>
-                        <div class="pitstop-description">{{ pitstop.Description }}</div>
-                      </div>
-                    {% endfor %}
-                  {% else %}
-                    <div class="pitstop-item">
-                      <div class="pitstop-name">🚧 No pitstops available</div>
-                      <div class="pitstop-description">Add pitstops to your markdown file to see them here</div>
-                    </div>
-                  {% endif %}
-                </div>
-              </div>
-
-              <!-- Description -->
-              <div class="w-full px-4 pb-4 pt-2">
+              <!-- City Description -->
+              <div class="w-full">
                 {% if city.Description %}
                 <p class="text-gray-300 text-lg leading-relaxed cute-text mb-4">{{ city.Description }}</p>
                 {% endif %}
                 {% if city.Challenge %}
                 <div class="text-sm text-purple-400 cute-text mb-2">
-                  🎯 Challenge: {{ city.Challenge }}
+                  🎯 <strong>Challenge:</strong> {{ city.Challenge }}
                 </div>
                 {% endif %}
                 {% if city.Analogy %}
                 <div class="text-sm text-blue-400 cute-text">
-                  💡 Analogy: {{ city.Analogy }}
+                  💡 <strong>Analogy:</strong> {{ city.Analogy }}
                 </div>
                 {% endif %}
               </div>
-
             </div>
+
+            <!-- Travel Route & Pitstops (only if not the last city) -->
+            {% unless forloop.last %}
+              <div class="travel-route">
+                <div class="route-line">
+                  <!-- ENHANCED: Clickable route button -->
+                  <button class="route-button" data-route="{{ forloop.index0 }}" title="Click to explore pitstops">
+                    🛣️
+                  </button>
+                </div>
+              </div>
+
+              <!-- ENHANCED: Hidden pitstops section -->
+              {% if city.Pitstops and city.Pitstops.size > 0 %}
+              <div class="pitstops-section" id="pitstops-{{ forloop.index0 }}">
+                <div class="pitstops-title cute-subheading">
+                  🗺️ Travel Pitstops: {{ city.Name }} → 
+                  {% assign next_index = forloop.index %}
+                  {% for next_city in page.lxdData.Cities %}
+                    {% if forloop.index == next_index %}
+                      {{ next_city.Name }}
+                      {% break %}
+                    {% endif %}
+                  {% endfor %}
+                </div>
+                
+                <div class="pitstops-grid">
+                  {% for pitstop in city.Pitstops %}
+                    <div class="pitstop-item">
+                      <div class="pitstop-name">
+                        📍 {{ pitstop.Name }}
+                      </div>
+                      <div class="pitstop-description">
+                        {{ pitstop.Description }}
+                      </div>
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+              {% endif %}
+            {% endunless %}
+
           {% endfor %}
         {% else %}
           <div class="text-center text-red-400">
@@ -342,35 +396,55 @@
 
 <script type="text/javascript">
 document.addEventListener('DOMContentLoaded', function() {
-  // Add event listeners to dropdown buttons
-  var buttons = document.querySelectorAll('.dropdown-button');
+  console.log('=== ROUTE DROPDOWN SETUP ===');
   
-  for (var i = 0; i < buttons.length; i++) {
-    buttons[i].addEventListener('click', function() {
-      var index = this.getAttribute('data-index');
-      var dropdown = document.getElementById('dropdown-' + index);
-      var arrow = document.getElementById('arrow-' + index);
+  var routeButtons = document.querySelectorAll('.route-button');
+  console.log('Found ' + routeButtons.length + ' route buttons');
+  
+  for (var i = 0; i < routeButtons.length; i++) {
+    routeButtons[i].addEventListener('click', function(e) {
+      console.log('Route button clicked!');
       
-      if (!dropdown) return;
+      var routeIndex = this.getAttribute('data-route');
+      var pitstopsSection = document.getElementById('pitstops-' + routeIndex);
       
-      var isVisible = dropdown.classList.contains('show');
+      console.log('Toggling pitstops-' + routeIndex);
       
-      // Close all dropdowns
-      var allDropdowns = document.querySelectorAll('.dropdown-content');
-      var allArrows = document.querySelectorAll('.dropdown-arrow');
-      
-      for (var j = 0; j < allDropdowns.length; j++) {
-        allDropdowns[j].classList.remove('show');
+      if (!pitstopsSection) {
+        console.log('Pitstops section not found!');
+        return;
       }
       
-      for (var k = 0; k < allArrows.length; k++) {
-        allArrows[k].style.transform = 'rotate(0deg)';
+      var isVisible = pitstopsSection.classList.contains('show');
+      console.log('Currently visible:', isVisible);
+      
+      // Close all other pitstops sections and reset buttons
+      var allPitstops = document.querySelectorAll('.pitstops-section');
+      var allButtons = document.querySelectorAll('.route-button');
+      
+      for (var j = 0; j < allPitstops.length; j++) {
+        allPitstops[j].classList.remove('show');
       }
       
-      // Toggle current dropdown
+      for (var k = 0; k < allButtons.length; k++) {
+        allButtons[k].classList.remove('active');
+      }
+      
+      // Toggle current pitstops section
       if (!isVisible) {
-        dropdown.classList.add('show');
-        if (arrow) arrow.style.transform = 'rotate(180deg)';
+        pitstopsSection.classList.add('show');
+        this.classList.add('active');
+        console.log('OPENED pitstops ' + routeIndex);
+        
+        // Smooth scroll to the pitstops section
+        setTimeout(function() {
+          pitstopsSection.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center' 
+          });
+        }, 200);
+      } else {
+        console.log('CLOSED pitstops ' + routeIndex);
       }
     });
   }
