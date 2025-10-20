@@ -1,617 +1,522 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Quest for the Lost Code — Themed Learning Hub</title>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
 <style>
-/* Thematic, holographic styles (kept from yours) */
-:root{ --glow1: rgba(99,102,241,0.18); --glow2: rgba(6,182,212,0.12); --accent:#7c3aed; --teal:#06b6d4; --coreGreen:#34d399; }
-body { background: radial-gradient(ellipse at 20% 10%, rgba(124,58,237,0.06), transparent 10%), radial-gradient(ellipse at 80% 80%, rgba(6,182,212,0.04), transparent 18%), linear-gradient(180deg,#0b1020 0%, #111827 80%); color:#ecfeff; }
-.data-stream { position: absolute; pointer-events: none; mix-blend-mode: screen; opacity: 0.75; filter: blur(6px); }
-.core-orb { width: 110px; height: 110px; border-radius: 999px; background: radial-gradient(circle at 30% 30%, rgba(52,211,153,0.95), rgba(16,185,129,0.4) 40%, rgba(10,10,10,0.05) 70%); box-shadow: 0 0 30px rgba(16,185,129,0.25), 0 2px 20px rgba(10,10,10,0.5); display:flex; align-items:center; justify-content:center; font-weight:800; color:#05231a; transform-style: preserve-3d; }
-.holo-panel { background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border: 1px solid rgba(124,58,237,0.14); backdrop-filter: blur(6px); box-shadow: 0 8px 32px rgba(2,6,23,0.6); border-radius: 14px; }
-/* board look */
-.game-board { position: relative; border-radius: 18px; padding: 36px; overflow: visible; border: 1px solid rgba(255,255,255,0.03); }
-.module-card { background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02)); border-radius: 14px; padding: 12px; min-width: 180px; max-width: 200px; height: 160px; color: #e6f7ff; transition: transform .18s ease, box-shadow .18s ease; border: 1px solid rgba(255,255,255,0.04); display: flex; flex-direction: column; justify-content: space-between; }
-.module-card:hover { transform: translateY(-6px) scale(1.02); box-shadow: 0 18px 50px rgba(15,23,42,0.65); }
-.status-badge { font-size: .6rem; padding:4px 6px; border-radius:999px; font-weight:700; letter-spacing:0.4px; display:inline-block; }
-.locked { background: rgba(99,102,241,0.12); color:#c7d2fe; border:1px solid rgba(99,102,241,0.08); }
-.discovered { background: linear-gradient(90deg,#06b6d4,#7c3aed); color:white; box-shadow: 0 6px 18px rgba(99,102,241,0.12); }
-.completed { background: linear-gradient(90deg,#34d399,#10b981); color:white; box-shadow: 0 6px 18px rgba(16,185,129,0.12); }
-.scanner-section { border-radius: 12px; border: 1px solid rgba(255,255,255,0.04); }
-.holo-grid { position:absolute; inset:0; background-image: linear-gradient(rgba(255,255,255,0.01) 1px, transparent 1px); background-size: 60px 60px; opacity:0.06; pointer-events:none; transform: translateZ(-1px) scale(1.05); }
-.modal-backdrop { position:fixed; inset:0; background: rgba(2,6,23,0.6); display:flex; align-items:center; justify-content:center; z-index:60; }
-.modal { width: min(900px, calc(100% - 40px)); border-radius:12px; padding:18px; }
-.code-snippet { background: #0b1220; border-radius:8px; padding:10px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace; font-size:13px; color:#bfe9ff; border: 1px solid rgba(99,102,241,0.07); }
-.orb-ring { width: 160px; height:160px; border-radius:999px; display:flex; align-items:center; justify-content:center; position:relative; }
-.orb-glow { position:absolute; inset:0; border-radius:999px; box-shadow: 0 0 90px rgba(124,58,237,0.08), inset 0 6px 40px rgba(6,182,212,0.03); pointer-events:none; }
-.module-node { width: 200px; height: 160px; display:flex; flex-direction:column; align-items:center; justify-content:center; }
-.module-progress { height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; margin: 8px 0; }
-.progress-bar { height: 100%; background: linear-gradient(90deg, #06b6d4, #7c3aed); border-radius: 2px; width: 0%; transition: width 0.3s ease; }
+/* Import cute fonts */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300;0,400;0,600;0,700;0,800;1,400&family=Comic+Neue:ital,wght@0,300;0,400;0,700;1,400&display=swap');
+
+/* Card-based Module Styles */
+.module-progress {
+  height: 6px;
+  background-color: #374151;
+  border-radius: 3px;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+  width: 0%;
+}
+
+.progress-bar.completed { width: 100%; }
 .progress-bar.partial { width: 50%; }
-.progress-bar.completed { width: 100%; background: linear-gradient(90deg, #34d399, #10b981); }
-@media (max-width:900px){ .modules-grid{ padding:120px 24px 40px 24px !important; gap:32px !important; height:auto !important; grid-template-columns: 1fr !important; grid-template-rows: auto auto auto auto !important;} .orb-container { display:none; } }
+
+.module-status {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 10;
+}
+
+.status-badge {
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  font-family: 'Nunito', sans-serif;
+}
+
+.status-completed { 
+  background: linear-gradient(135deg, #10b981, #059669); 
+  color: white; 
+}
+.status-current { 
+  background: linear-gradient(135deg, #f59e0b, #d97706); 
+  color: white; 
+}
+.status-locked { 
+  background: linear-gradient(135deg, #6b7280, #4b5563); 
+  color: white; 
+}
+
+.card-3d {
+  transform-style: preserve-3d;
+  perspective: 1000px;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  padding: 12px; /* Increased padding for more spacing */
+}
+
+.card-3d:hover {
+  transform: translateY(-10px) rotateX(5deg) rotateY(5deg);
+  box-shadow: 
+    0 20px 40px rgba(0,0,0,0.4),
+    0 0 30px rgba(139, 92, 246, 0.2);
+}
+
+.card-inner {
+  background: linear-gradient(135deg, 
+    rgba(55, 65, 81, 0.95) 0%, 
+    rgba(75, 85, 99, 0.95) 50%, 
+    rgba(55, 65, 81, 0.95) 100%);
+  border: 2px solid rgba(139, 92, 246, 0.3);
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  padding: 24px; /* Added internal padding */
+}
+
+.card-inner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0.1), 
+    transparent);
+  transition: left 0.6s ease;
+}
+
+.card-3d:hover .card-inner::before {
+  left: 100%;
+}
+
+.card-3d:hover .card-inner {
+  border: 2px solid rgba(139, 92, 246, 0.6);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.4),
+    0 0 20px rgba(139, 92, 246, 0.3);
+}
+
+.card-icon {
+  background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px; /* Increased margin */
+  box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
+  transition: transform 0.3s ease;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.card-3d:hover .card-icon {
+  transform: scale(1.1) rotateZ(10deg);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+}
+
+.theme-button {
+  background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+  border: 2px solid rgba(139, 92, 246, 0.4);
+  padding: 14px 28px; /* Increased padding */
+  border-radius: 25px;
+  color: white;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 12px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+  position: relative;
+  overflow: hidden;
+  font-family: 'Nunito', sans-serif;
+}
+
+.theme-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(139, 92, 246, 0.6);
+  border: 2px solid rgba(139, 92, 246, 0.8);
+}
+
+.theme-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.theme-button:hover::before {
+  left: 100%;
+}
+
+.theme-button.locked {
+  background: linear-gradient(135deg, #6b7280, #4b5563);
+  border: 2px solid rgba(107, 114, 128, 0.4);
+  box-shadow: 0 4px 15px rgba(107, 114, 128, 0.4);
+  cursor: not-allowed;
+}
+
+.progress-indicator {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: rgba(0,0,0,0.2);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #10b981, #34d399);
+  width: 0%;
+  transition: width 0.5s ease;
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Grid improvements */
+.cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 28px; /* Increased gap */
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px; /* Increased padding */
+}
+
+/* Cute font applications */
+.cute-title {
+  font-family: 'Comic Neue', cursive;
+  font-weight: 700;
+}
+
+.cute-text {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 400;
+}
+
+.cute-heading {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+}
+
+.cute-button-text {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .cards-container {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 0 20px;
+  }
+  
+  .card-3d {
+    padding: 10px;
+  }
+  
+  .card-inner {
+    padding: 20px;
+  }
+}
 </style>
-</head>
-<body>
-  <!-- floating decoration -->
-  <svg class="data-stream" style="left:4%; top:10%; width:300px; height:200px;" viewBox="0 0 100 50" preserveAspectRatio="none">
-    <defs><linearGradient id="g1" x1="0" x2="1"><stop offset="0" stop-color="#7c3aed"/><stop offset="1" stop-color="#06b6d4"/></linearGradient></defs>
-    <path d="M0,40 C20,10 40,10 60,40 C80,70 100,10 120,30" stroke="url(#g1)" stroke-width="0.8" fill="none" opacity="0.9"/>
-  </svg>
 
-  <div class="max-w-7xl mx-auto p-6 relative">
-    <!-- header -->
-    <header class="text-center mb-6">
-      <h1 class="text-4xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-teal-200 to-indigo-300">🕹️ Quest for the Lost Code — Learning Hub</h1>
-      <p class="text-gray-200/80 mt-2">A holographic map of computing concepts — restore the Core by learning logic, data, memory, and debugging.</p>
-    </header>
-
-    <!-- main board -->
-    <div class="game-board holo-panel relative">
-      <div class="holo-grid"></div>
-
-      <div class="flex items-start justify-between mb-8">
-        <!-- left: orb + status -->
-        <div class="flex items-center space-x-6">
-          <div class="orb-container">
-            <div class="orb-ring holo-panel p-4 mr-4" style="border:1px solid rgba(255,255,255,0.03);">
-              <div class="core-orb" id="core-orb">0%</div>
-              <div class="orb-glow"></div>
-            </div>
-          </div>
-
-          <div>
-            <div class="text-sm text-teal-200 font-semibold">CORE HEALTH</div>
-            <div class="text-xs text-gray-200/60 mb-2">Complete modules to recharge the Core and restore the system.</div>
-            <div class="flex flex-wrap gap-2">
-              <span id="status-regions" class="status-badge locked">Undiscovered</span>
-              <span id="status-completed" class="status-badge locked">0 / 4</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- right: scanner / ping -->
-        <div class="scanner-section holo-panel p-4 w-56 text-center">
-          <div class="text-xs text-white/90 font-bold mb-2">🔎 NETWORK PING</div>
-          <div id="scanner-display" class="text-4xl mb-2" aria-live="polite">◦</div>
-          <button id="scan-network" class="bg-gradient-to-r from-teal-300 to-indigo-400 text-black font-bold py-2 px-3 rounded-full w-full">📡 PING</button>
-          <div class="text-xs text-white/70 mt-2">Node: <span id="scanner-value">-</span></div>
-        </div>
+<div class="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-blue-900">
+  <div class="container mx-auto px-6 py-12">
+    
+    <!-- Title Section -->
+    <div class="text-center mb-20">
+      <div class="inline-block relative">
+        <h1 class="text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 mb-6 cute-title">
+          🗺️ Travel Quest Hub
+        </h1>
+        <div class="absolute -inset-2 bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 opacity-20 blur-xl rounded-lg"></div>
       </div>
+      <p class="text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed cute-text px-4">
+        Embark on themed learning journeys! Each card represents a different adventure through coding concepts. 
+        Collect Knowledge Tokens and unlock new destinations! 🎯
+      </p>
+    </div>
 
-      <!-- modules grid (map nodes) -->
-      <div class="modules-grid grid grid-cols-2 gap-16">
-        <!-- Module 1 -->
-        <div class="module-node">
-          <div class="module-card module-node locked" data-pos="1" data-node="1,2" id="card-1">
-            <div class="flex items-center justify-between w-full mb-2">
-              <div class="flex items-center gap-2">
-                <div class="text-xl">🌲</div>
-                <div>
-                  <div class="text-sm font-bold" id="node1-title">Logic Forest</div>
-                  <div class="text-xs text-gray-200/60" id="node1-sub">Conditionals & Flow</div>
-                </div>
-              </div>
-              <div><span class="status-badge locked" id="badge-1">Locked</span></div>
+    <!-- Theme Cards Grid -->
+    <div class="cards-container">
+      
+      <!-- Travel Theme Card -->
+      <div class="card-3d" data-node="travel">
+        <div class="card-inner rounded-2xl h-full relative">
+          <div class="module-status">
+            <span class="status-badge status-current">Available</span>
+          </div>
+          
+          <div class="text-center">
+            <div class="card-icon">
+              <span class="text-3xl">🚗</span>
             </div>
-            <div class="module-progress w-full"><div class="progress-bar" id="bar-1"></div></div>
-            <div class="flex gap-1 mt-2">
-              <button class="flex-1 py-1 px-2 rounded text-xs bg-indigo-600 hover:bg-indigo-500" onclick="previewModule(1)">Preview</button>
-              <button class="flex-1 py-1 px-2 rounded text-xs bg-white/8 hover:bg-white/12 enter-btn" id="enter-1" data-mod="1" aria-disabled="true">Locked</button>
+            
+            <h3 class="text-2xl font-bold text-white mb-4 cute-heading">Travel</h3>
+            <p class="text-gray-300 text-sm mb-8 leading-relaxed cute-text">
+              Front-End & UI design explored through mapping your journey from city to city across America.
+            </p>
+            
+            <div class="module-progress mb-6">
+              <div class="progress-bar" style="width: 0%"></div> <!-- Changed from 25% to 0% -->
+            </div>
+            
+            <div class="flex flex-col gap-3">
+              <button class="theme-button w-full cute-button-text" onclick="startTheme('travel')">
+                Start Journey
+              </button>
+              <div class="text-xs text-gray-400 cute-text">Progress: 0/4 Cities</div> <!-- Changed from 1/4 to 0/4 -->
             </div>
           </div>
-        </div>
-
-        <!-- Module 2 -->
-        <div class="module-node">
-          <div class="module-card module-node locked" data-pos="2" data-node="3,4" id="card-2">
-            <div class="flex items-center justify-between w-full mb-2">
-              <div class="flex items-center gap-2">
-                <div class="text-xl">🜂</div>
-                <div>
-                  <div class="text-sm font-bold" id="node2-title">Data Desert</div>
-                  <div class="text-xs text-gray-200/60" id="node2-sub">Binary & Encoding</div>
-                </div>
-              </div>
-              <div><span class="status-badge locked" id="badge-2">Locked</span></div>
-            </div>
-            <div class="module-progress w-full"><div class="progress-bar" id="bar-2"></div></div>
-            <div class="flex gap-1 mt-2">
-              <button class="flex-1 py-1 px-2 rounded text-xs bg-indigo-600 hover:bg-indigo-500" onclick="previewModule(2)">Preview</button>
-              <button class="flex-1 py-1 px-2 rounded text-xs bg-white/8 hover:bg-white/12 enter-btn" id="enter-2" data-mod="2" aria-disabled="true">Locked</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Module 3 -->
-        <div class="module-node">
-          <div class="module-card module-node locked" data-pos="3" data-node="5" id="card-3">
-            <div class="flex items-center justify-between w-full mb-2">
-              <div class="flex items-center gap-2">
-                <div class="text-xl">💾</div>
-                <div>
-                  <div class="text-sm font-bold" id="node3-title">Memory Maze</div>
-                  <div class="text-xs text-gray-200/60" id="node3-sub">Storage & Cache</div>
-                </div>
-              </div>
-              <div><span class="status-badge locked" id="badge-3">Locked</span></div>
-            </div>
-            <div class="module-progress w-full"><div class="progress-bar" id="bar-3"></div></div>
-            <div class="flex gap-1 mt-2">
-              <button class="flex-1 py-1 px-2 rounded text-xs bg-indigo-600 hover:bg-indigo-500" onclick="previewModule(3)">Preview</button>
-              <button class="flex-1 py-1 px-2 rounded text-xs bg-white/8 hover:bg-white/12 enter-btn" id="enter-3" data-mod="3" aria-disabled="true">Locked</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Module 4 -->
-        <div class="module-node">
-          <div class="module-card module-node locked" data-pos="4" data-node="6" id="card-4">
-            <div class="flex items-center justify-between w-full mb-2">
-              <div class="flex items-center gap-2">
-                <div class="text-xl">🛠️</div>
-                <div>
-                  <div class="text-sm font-bold" id="node4-title">Debug Core</div>
-                  <div class="text-xs text-gray-200/60" id="node4-sub">Fix & Restore</div>
-                </div>
-              </div>
-              <div><span class="status-badge locked" id="badge-4">Locked</span></div>
-            </div>
-            <div class="module-progress w-full"><div class="progress-bar" id="bar-4"></div></div>
-            <div class="flex gap-1 mt-2">
-              <button class="flex-1 py-1 px-2 rounded text-xs bg-indigo-600 hover:bg-indigo-500" onclick="previewModule(4)">Preview</button>
-              <button class="flex-1 py-1 px-2 rounded text-xs bg-white/8 hover:bg-white/12 enter-btn" id="enter-4" data-mod="4" aria-disabled="true">Locked</button>
-            </div>
+          
+          <div class="progress-indicator">
+            <div class="progress-fill" style="width: 0%"></div> <!-- Changed from 25% to 0% -->
           </div>
         </div>
       </div>
 
-      <!-- footer hints -->
-      <div class="mt-8 text-sm text-gray-200/60">
-        <strong>Tip:</strong> Ping the network to discover region nodes (1–6). Nodes map to modules. Each module has short informational mini-activities — complete them to earn Knowledge Tokens and recharge the Core.
+      <!-- Food Theme Card -->
+      <div class="card-3d" data-node="food">
+        <div class="card-inner rounded-2xl h-full relative opacity-60">
+          <div class="module-status">
+            <span class="status-badge status-locked">🔒 Locked</span>
+          </div>
+          
+          <div class="text-center">
+            <div class="card-icon" style="background: linear-gradient(135deg, #6b7280, #4b5563); border: 2px solid rgba(107, 114, 128, 0.4);">
+              <span class="text-3xl">🍕</span>
+            </div>
+            
+            <h3 class="text-2xl font-bold text-white mb-4 cute-heading">Food</h3>
+            <p class="text-gray-300 text-sm mb-8 leading-relaxed cute-text">
+              Back-End & Databases explained through kitchens and recipes along your route.
+            </p>
+            
+            <div class="module-progress mb-6">
+              <div class="progress-bar"></div>
+            </div>
+            
+            <div class="flex flex-col gap-3">
+              <button class="theme-button locked w-full cute-button-text" disabled>
+                Complete Travel First
+              </button>
+              <div class="text-xs text-gray-500 cute-text">Requires: Travel Theme</div>
+            </div>
+          </div>
+          
+          <div class="progress-indicator">
+            <div class="progress-fill"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sports Theme Card -->
+      <div class="card-3d" data-node="sports">
+        <div class="card-inner rounded-2xl h-full relative opacity-60">
+          <div class="module-status">
+            <span class="status-badge status-locked">🔒 Locked</span>
+          </div>
+          
+          <div class="text-center">
+            <div class="card-icon" style="background: linear-gradient(135deg, #6b7280, #4b5563); border: 2px solid rgba(107, 114, 128, 0.4);">
+              <span class="text-3xl">⚽</span>
+            </div>
+            
+            <h3 class="text-2xl font-bold text-white mb-4 cute-heading">Sports</h3>
+            <p class="text-gray-300 text-sm mb-8 leading-relaxed cute-text">
+              API integration & teamwork analogies as you play through cities on your road trip.
+            </p>
+            
+            <div class="module-progress mb-6">
+              <div class="progress-bar"></div>
+            </div>
+            
+            <div class="flex flex-col gap-3">
+              <button class="theme-button locked w-full cute-button-text" disabled>
+                Complete Food First
+              </button>
+              <div class="text-xs text-gray-500 cute-text">Requires: Food Theme</div>
+            </div>
+          </div>
+          
+          <div class="progress-indicator">
+            <div class="progress-fill"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI Theme Card -->
+      <div class="card-3d" data-node="ai">
+        <div class="card-inner rounded-2xl h-full relative opacity-60">
+          <div class="module-status">
+            <span class="status-badge status-locked">🔒 Locked</span>
+          </div>
+          
+          <div class="text-center">
+            <div class="card-icon" style="background: linear-gradient(135deg, #6b7280, #4b5563); border: 2px solid rgba(107, 114, 128, 0.4);">
+              <span class="text-3xl">🤖</span>
+            </div>
+            
+            <h3 class="text-2xl font-bold text-white mb-4 cute-heading">AI Assistant</h3>
+            <p class="text-gray-300 text-sm mb-8 leading-relaxed cute-text">
+              Learn AI-assisted debugging and optimization on your journey from San Diego to Seattle.
+            </p>
+            
+            <div class="module-progress mb-6">
+              <div class="progress-bar"></div>
+            </div>
+            
+            <div class="flex flex-col gap-3">
+              <button class="theme-button locked w-full cute-button-text" disabled>
+                Complete Sports First
+              </button>
+              <div class="text-xs text-gray-500 cute-text">Requires: Sports Theme</div>
+            </div>
+          </div>
+          
+          <div class="progress-indicator">
+            <div class="progress-fill"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="mt-20 max-w-4xl mx-auto px-6">
+      <div class="bg-gray-800/50 backdrop-blur-lg rounded-2xl p-10 border-2 border-gray-600/30 shadow-2xl">
+        <h3 class="text-2xl font-bold text-white mb-8 text-center cute-heading">🎯 Journey Progress</h3>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div class="text-center p-6 bg-gray-700/30 rounded-lg border border-purple-500/20">
+            <div class="text-3xl font-bold text-purple-400 cute-heading" id="themes-completed">1</div>
+            <div class="text-sm text-gray-400 cute-text">Themes Unlocked</div>
+          </div>
+          <div class="text-center p-6 bg-gray-700/30 rounded-lg border border-blue-500/20">
+            <div class="text-3xl font-bold text-blue-400 cute-heading" id="cities-visited">1</div>
+            <div class="text-sm text-gray-400 cute-text">Cities Visited</div>
+          </div>
+          <div class="text-center p-6 bg-gray-700/30 rounded-lg border border-green-500/20">
+            <div class="text-3xl font-bold text-green-400 cute-heading" id="tokens-earned">0</div>
+            <div class="text-sm text-gray-400 cute-text">Knowledge Tokens</div>
+          </div>
+          <div class="text-center p-6 bg-gray-700/30 rounded-lg border border-yellow-500/20">
+            <div class="text-3xl font-bold text-yellow-400 cute-heading" id="overall-progress">25%</div>
+            <div class="text-sm text-gray-400 cute-text">Overall Progress</div>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- modal root -->
-  <div id="modal-root" aria-hidden="true"></div>
+  </div>
+</div>
 
 <script>
-const MODULES = {
-  1: {
-    id:1,
-    title: "Logic Forest — Conditionals & Flow",
-    summary: "Learn step-by-step program flow and fix common syntax errors.",
-    lessons: "/mchopie/quest/1/logic-flow", // Add your site's base path
-    activities: [
-      { type: "spot", snippet: "if score > 100\n  print(\"High score!\")\nend", solution: "if score > 100:", hint: "Add a colon to open the block." },
-      { type: "flow", defaultValue: 90, condition: "value > 100", trueText: 'print("High score!")', falseText: 'print("Keep trying")' },
-      { type: "summary", text: "Complete tasks to understand sequencing and conditionals." }
-    ]
-  },
-  2: {
-    id:2,
-    title: "Data Desert — Binary & Encoding",
-    summary: "Understand text-to-binary conversion and data representation.",
-    lessons: "/mchopie/quest/2/data-encoding", // Add your site's base path
-    activities: [
-      { type: "binary" },
-      { type: "spot", snippet: "message = 'abc'\nfor i in message:\n  print(i)\n", solution: "for i in message:", hint: "This code reads each character correctly." },
-      { type: "summary", text: "Binary uses encodings like ASCII to map characters to bytes." }
-    ]
-  },
-  3: {
-    id:3,
-    title: "Memory Maze — Storage & Cache",
-    summary: "Explore RAM, storage, and performance optimization basics.",
-    lessons: "/mchopie/quest/3/memory-maze", // Add your site's base path
-    activities: [
-      { type:"flow", defaultValue:2, condition: "value >= 8", trueText: "Out of memory - slow", falseText: "Running smoothly" },
-      { type:"summary", text: "Memory pressure causes slowdowns; optimizations trade speed for memory." }
-    ]
-  },
-  4: {
-    id:4,
-    title: "Debug Core — Fix & Restore",
-    summary: "Apply debugging strategies to restore the Core program.",
-    lessons: "/mchopie/quest/4/final-debug", // Add your site's base path
-    activities: [
-      { type: "order", fragments: ["initialize core", "verify data", "reboot subsystems"], correctOrder: [0,1,2] },
-      { type: "summary", text: "Use systematic debugging: reproduce, isolate, hypothesize, test." }
-    ]
-  }
-};
+document.addEventListener("DOMContentLoaded", function() {
+  // Keep travel unlocked but reset progress to 0
+  const userProgress = {
+    themes: ['travel'], // Keep travel unlocked
+    progress: {
+      travel: 0,  // Reset to 0% progress
+      food: 0,
+      sports: 0,
+      ai: 0
+    },
+    tokensEarned: 0,
+    citiesVisited: 0  // Reset to 0 cities
+  };
 
-/* ---------- state & helpers ---------- */
-const unlocked = new Set(JSON.parse(localStorage.getItem('quest:unlocked')||'[]'));
-const completed = new Set(JSON.parse(localStorage.getItem('quest:completed')||'[]'));
-
-function saveState(){
-  try{
-    localStorage.setItem('quest:unlocked', JSON.stringify(Array.from(unlocked)));
-    localStorage.setItem('quest:completed', JSON.stringify(Array.from(completed)));
-  }catch(e){}
-}
-function nodeToModule(node){
-  if(node===1||node===2) return 1;
-  if(node===3||node===4) return 2;
-  if(node===5) return 3;
-  if(node===6) return 4;
-  return null;
-}
-
-/* ---------- UI update ---------- */
-function updateUI(){
-  const coreOrb = document.getElementById('core-orb');
-  const percent = Math.round((completed.size / Object.keys(MODULES).length) * 100);
-  coreOrb.textContent = percent + '%';
-  coreOrb.style.transform = `scale(${1 + (completed.size * 0.04)})`;
-
-  document.getElementById('status-completed').textContent = `${completed.size} / ${Object.keys(MODULES).length}`;
-  document.getElementById('status-regions').className = unlocked.size>0 ? 'status-badge discovered' : 'status-badge locked';
-  document.getElementById('status-regions').textContent = `${unlocked.size} Discovered`;
-
-  for(let i=1;i<=4;i++){
-    const badge = document.getElementById('badge-'+i);
-    const card = document.getElementById('card-'+i);
-    const bar = document.getElementById('bar-'+i);
-    const enterBtn = document.getElementById('enter-'+i);
-    const mod = MODULES[i];
-
-    // set titles dynamically (in case MODULES changed)
-    document.getElementById('node'+i+'-title').textContent = mod.title.split(' — ')[0];
-    document.getElementById('node'+i+'-sub').textContent = mod.title.split(' — ')[1] || mod.summary;
-
-    if(completed.has(i)){
-      badge.className = 'status-badge completed'; badge.textContent='Complete';
-      card.classList.remove('locked'); card.classList.add('available');
-      bar.className='progress-bar completed';
-      enterBtn.textContent='✅ Done'; enterBtn.disabled=false; enterBtn.setAttribute('aria-disabled','false');
-    } else if (unlocked.has(i)){
-      badge.className = 'status-badge discovered'; badge.textContent='Available';
-      card.classList.remove('locked'); card.classList.add('available');
-      bar.className='progress-bar partial';
-      // if a lessons link exists, make enter navigate; else open preview
-      enterBtn.disabled=false; enterBtn.setAttribute('aria-disabled','false');
-      enterBtn.textContent = MODULES[i].lessons ? 'Enter' : 'Start';
-    } else {
-      badge.className = 'status-badge locked'; badge.textContent='Locked';
-      card.classList.add('locked'); card.classList.remove('available');
-      bar.className = 'progress-bar';
-      enterBtn.textContent='Locked'; enterBtn.disabled=true; enterBtn.setAttribute('aria-disabled','true');
-    }
-  }
-}
-
-/* ---------- scanning ---------- */
-const nodeSymbols = ['▢','◦','◉','◎','⬤','⬢'];
-document.getElementById('scan-network').addEventListener('click', () => {
-  const btn = document.getElementById('scan-network');
-  btn.disabled=true; btn.textContent='📡 scanning...';
-  let steps=0;
-  const int = setInterval(()=>{
-    const rnd = Math.floor(Math.random()*6)+1;
-    document.getElementById('scanner-display').textContent = nodeSymbols[rnd-1];
-    steps++;
-    if(steps>10){
-      clearInterval(int);
-      const final = Math.floor(Math.random()*6)+1;
-      document.getElementById('scanner-display').textContent = nodeSymbols[final-1];
-      document.getElementById('scanner-value').textContent = final;
-      unlockByNode(final);
-      btn.disabled=false; btn.textContent='📡 PING';
-    }
-  }, 70);
-});
-
-function unlockByNode(node){
-  const mod = nodeToModule(node);
-  if(!mod) return;
-  if(unlocked.has(mod)){
-    showToast(`Node ${node} mapped to Module ${mod} — already discovered.`);
-    return;
-  }
-  unlocked.add(mod); saveState();
-  const c = document.getElementById('card-'+mod);
-  c.classList.remove('locked');
-  c.classList.add('available');
-  c.style.transform='scale(1.06)';
-  setTimeout(()=>c.style.transform='scale(1)', 300);
-  updateUI();
-  showToast(`✅ Node ${node} discovered: ${MODULES[mod].title.split(' — ')[0]}`);
-}
-
-/* ---------- toast/modal system ---------- */
-function showToast(msg, timeout=2200){
-  const root = document.getElementById('modal-root');
-  const box = document.createElement('div');
-  box.className='modal-backdrop';
-  box.innerHTML = `<div class="modal holo-panel p-4" role="dialog" aria-modal="true"><div class="flex justify-between items-start"><div><div class="font-bold text-lg text-white">System Notice</div><div class="text-xs text-white/70 mt-1">${escapeHtml(msg)}</div></div><div><button onclick="this.closest('.modal-backdrop').remove()" class="px-3 py-1 rounded bg-white/10">Close</button></div></div></div>`;
-  root.appendChild(box);
-  setTimeout(()=> { try{ box.remove(); } catch(e){} }, timeout);
-}
-
-/* escape for injection safety in JS-created HTML */
-function escapeHtml(s=''){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
-/* ---------- modal preview builder (data-driven) ---------- */
-let activeModal = null;
-function previewModule(i){
-  const mod = MODULES[i];
-  if(!mod) { showToast('Module data not found'); return; }
-
-  // build modal content using activities
-  const root = document.getElementById('modal-root');
-  root.innerHTML=''; root.style.display='block'; root.setAttribute('aria-hidden','false');
-
-  const backdrop = document.createElement('div');
-  backdrop.className = 'modal-backdrop';
-  backdrop.tabIndex = 0;
-
-  const modal = document.createElement('div');
-  modal.className = 'modal holo-panel p-6';
-  modal.setAttribute('role','dialog');
-  modal.setAttribute('aria-labelledby','mod-title');
-
-  // header
-  const header = document.createElement('div');
-  header.className='flex justify-between items-start mb-4';
-  header.innerHTML = `<div><div id="mod-title" class="text-lg font-bold">${escapeHtml(mod.title)}</div><div class="text-xs text-gray-200/70 mt-1">${escapeHtml(mod.summary)}</div></div><div><button id="close-modal" class="py-1 px-2 rounded bg-white/10">Close</button></div>`;
-  modal.appendChild(header);
-
-  // content container
-  const content = document.createElement('div');
-  content.id = 'modal-content';
-  content.className='text-sm text-gray-100 space-y-4';
-
-  // render each activity
-  (mod.activities || []).forEach((act, ai) => {
-    const node = renderActivity(act, i, ai);
-    content.appendChild(node);
-  });
-
-  modal.appendChild(content);
-
-  // footer buttons
-  const footer = document.createElement('div');
-  footer.className='flex justify-end gap-2 mt-4';
-  const markBtn = document.createElement('button');
-  markBtn.className='px-3 py-1 rounded bg-green-500 text-black'; markBtn.textContent='Mark Complete';
-  markBtn.addEventListener('click', ()=> markModule(i));
-  const doneBtn = document.createElement('button');
-  doneBtn.className='px-3 py-1 rounded bg-white/8'; doneBtn.textContent='Done';
-  doneBtn.addEventListener('click', closeModal);
-  footer.appendChild(markBtn); footer.appendChild(doneBtn);
-  modal.appendChild(footer);
-
-  backdrop.appendChild(modal);
-  root.appendChild(backdrop);
-  activeModal = backdrop;
-
-  // close handlers
-  backdrop.addEventListener('click', function(e){ if(e.target === backdrop) closeModal(); });
-  document.getElementById('close-modal').addEventListener('click', closeModal);
-  document.addEventListener('keydown', escHandler);
-}
-
-/* render an activity DOM node from activity object */
-function renderActivity(act, moduleId, idx){
-  const wrapper = document.createElement('section');
-  wrapper.className='bg-gray-900/30 p-4 rounded';
-
-  if(act.type === 'spot'){
-    wrapper.innerHTML = `
-      <div class="font-semibold text-teal-100 mb-1">Spot the bug</div>
-      <div class="code-snippet mb-2"><pre>${escapeHtml(act.snippet || '')}</pre></div>
-      <div class="text-xs text-gray-300 mb-2">${escapeHtml(act.hint || '')}</div>
-      <div class="flex gap-2">
-        <input class="spot-input p-2 rounded bg-white/5 text-white flex-1" placeholder="${escapeHtml(act.placeholder || 'Type corrected line')}"/>
-        <button class="spot-check px-3 py-1 rounded bg-teal-400 text-black">Check</button>
-      </div>
-      <div class="mt-2 spot-feedback text-sm"></div>
-    `;
-    // attach handler after insertion
-    setTimeout(()=> {
-      const btn = wrapper.querySelector('.spot-check');
-      btn.addEventListener('click', ()=>{
-        const inp = wrapper.querySelector('.spot-input').value.trim();
-        const out = wrapper.querySelector('.spot-feedback');
-        const sol = act.solution || '';
-        if(!inp){ out.innerHTML = '<span style="color:#FBBF24">Please enter your fix.</span>'; return; }
-        if(inp === sol || inp.replace(/\s/g,'') === sol.replace(/\s/g,'')){
-          out.innerHTML = '<span style="color:#34D399;font-weight:600">Correct — well done.</span>';
-        } else {
-          out.innerHTML = '<span style="color:#F87171">Not quite — check punctuation.</span>';
+  // Update progress indicators
+  function updateProgress() {
+    document.querySelectorAll('[data-node]').forEach(card => {
+      const theme = card.dataset.node;
+      const progressBar = card.querySelector('.progress-bar');
+      const progressFill = card.querySelector('.progress-fill');
+      const badge = card.querySelector('.status-badge');
+      const button = card.querySelector('.theme-button');
+      const progressText = card.querySelector('.text-xs.text-gray-400'); // Find progress text
+      
+      if (userProgress.themes.includes(theme)) {
+        // Theme is unlocked
+        card.querySelector('.card-inner').style.opacity = '1';
+        badge.className = 'status-badge status-current';
+        badge.textContent = 'Available';
+        button.className = 'theme-button w-full cute-button-text';
+        button.disabled = false;
+        
+        // Set progress
+        const progress = userProgress.progress[theme];
+        progressBar.style.width = progress + '%';
+        progressFill.style.width = progress + '%';
+        
+        // Update progress text based on theme and progress
+        if (theme === 'travel') {
+          const citiesCompleted = Math.floor(progress / 25); // 25% per city
+          progressText.textContent = `Progress: ${citiesCompleted}/4 Cities`;
         }
-      });
-    }, 0);
-  } else if(act.type === 'flow'){
-    wrapper.innerHTML = `
-      <div class="font-semibold text-teal-100 mb-1">Flow Visualizer</div>
-      <div class="text-xs text-gray-300 mb-2">Change the value and run to see which branch executes.</div>
-      <div class="flex items-center gap-3 mb-2">
-        <input type="number" class="flow-value p-2 rounded bg-white/5 text-white w-24" value="${act.defaultValue || 0}"/>
-        <div class="text-xs text-gray-400">→</div>
-        <div class="code-snippet p-2">${escapeHtml(act.condition || 'value > 100')}</div>
-      </div>
-      <div class="flex gap-2">
-        <button class="flow-run px-3 py-1 rounded bg-indigo-600 text-black">Run</button>
-        <button class="flow-explain px-3 py-1 rounded bg-white/8">Explain</button>
-      </div>
-      <div class="mt-2 flow-output text-sm text-gray-200"></div>
-    `;
-    setTimeout(()=> {
-      wrapper.querySelector('.flow-run').addEventListener('click', ()=>{
-        const val = Number(wrapper.querySelector('.flow-value').value || 0);
-        const cond = act.condition || 'value > 100';
-        let trueRes = act.trueText || 'True branch';
-        let falseRes = act.falseText || 'False branch';
-        const m = cond.match(/value\s*([><]=?)\s*(\d+)/);
-        let res = false;
-        if(m){
-          const op = m[1]; const threshold = Number(m[2]);
-          if(op === '>') res = val > threshold;
-          if(op === '>=') res = val >= threshold;
-          if(op === '<') res = val < threshold;
-          if(op === '<=') res = val <= threshold;
-        } else {
-          res = val > 100;
+        
+        if (progress === 100) {
+          badge.className = 'status-badge status-completed';
+          badge.textContent = '✅ Complete';
         }
-        wrapper.querySelector('.flow-output').innerHTML = res ? `<span style="color:#34D399">Output: ${escapeHtml(trueRes)}</span>` : `<span style="color:#FBBF24">Output: ${escapeHtml(falseRes)}</span>`;
-      });
-      wrapper.querySelector('.flow-explain').addEventListener('click', ()=>{
-        wrapper.querySelector('.flow-output').innerHTML = `<div style="color:#c7d2fe">${escapeHtml(act.explain || (act.condition ? `If condition ${act.condition} is true → true branch` : 'Explains branch behavior'))}</div>`;
-      });
-    },0);
-  } else if(act.type === 'binary'){
-    wrapper.innerHTML = `
-      <div class="font-semibold text-teal-100 mb-1">Binary Converter</div>
-      <div class="text-xs text-gray-300 mb-2">Type text and convert to ASCII binary.</div>
-      <input class="binary-input p-2 rounded bg-white/5 text-white w-full mb-2" placeholder="type text (e.g. hi)"/>
-      <div class="code-snippet binary-output"></div>
-      <div class="mt-2 flex gap-2">
-        <button class="binary-run px-3 py-1 rounded bg-indigo-600 text-black">Convert</button>
-        <button class="binary-clear px-3 py-1 rounded bg-white/8">Clear</button>
-      </div>
-    `;
-    setTimeout(()=>{
-      wrapper.querySelector('.binary-run').addEventListener('click', ()=>{
-        const txt = wrapper.querySelector('.binary-input').value || '';
-        const out = txt.split('').map(c=>c.charCodeAt(0).toString(2).padStart(8,'0')).join(' ');
-        wrapper.querySelector('.binary-output').textContent = out || '(enter text)';
-      });
-      wrapper.querySelector('.binary-clear').addEventListener('click', ()=>{ wrapper.querySelector('.binary-input').value=''; wrapper.querySelector('.binary-output').textContent=''; });
-    },0);
-  } else if(act.type === 'order'){
-    // fragments ordering UI: click to cycle index
-    const frags = act.fragments || [];
-    wrapper.innerHTML = `<div class="font-semibold text-teal-100 mb-1">Order the fragments</div><div class="text-xs text-gray-300 mb-2">Click fragments to cycle their slot. Arrange them in correct order then mark complete.</div><div class="grid gap-2 fragment-grid"></div>`;
-    setTimeout(()=>{
-      const grid = wrapper.querySelector('.fragment-grid');
-      frags.forEach((f, idx)=>{
-        const b = document.createElement('button');
-        b.className='p-2 rounded code-snippet fragment-btn';
-        b.dataset.order = idx;
-        b.textContent = `${f} (slot ${idx})`;
-        b.addEventListener('click', ()=>{
-          let cur = parseInt(b.dataset.order||'0');
-          cur = (cur + 1) % frags.length;
-          b.dataset.order = cur; b.style.transform = `translateX(${cur*6}px)`; b.textContent = `${f} (slot ${cur})`;
-        });
-        grid.appendChild(b);
-      });
-    },0);
-  } else if(act.type === 'summary'){
-    wrapper.innerHTML = `<div class="font-semibold text-teal-100 mb-1">Summary</div><div class="text-sm text-gray-200">${escapeHtml(act.text||'')}</div>`;
-  } else {
-    wrapper.innerHTML = `<div class="text-sm text-gray-200">Activity type not supported yet.</div>`;
-  }
+      } else {
+        // Theme is locked
+        card.querySelector('.card-inner').style.opacity = '0.6';
+        badge.className = 'status-badge status-locked';
+        badge.innerHTML = '🔒 Locked';
+        button.className = 'theme-button locked w-full cute-button-text';
+        button.disabled = true;
+      }
+    });
 
-  return wrapper;
-}
-
-/* close modal */
-function closeModal(){
-  const root = document.getElementById('modal-root');
-  root.innerHTML=''; root.style.display='none'; root.setAttribute('aria-hidden','true');
-  activeModal = null;
-  document.removeEventListener('keydown', escHandler);
-}
-
-/* esc key handler */
-function escHandler(e){ if(e.key === 'Escape'){ closeModal(); } }
-
-/* ---------- marking complete ---------- */
-function markModule(i){
-  const mod = MODULES[i];
-  if(!mod) return;
-  // lightweight validation by activity types:
-  // - binary: require output present in modal
-  // - order: require fragments include every slot 0..n-1
-  let ok = false;
-  const content = document.getElementById('modal-content');
-  if(!content){ ok = true; } // if no modal content, allow for demo
-  // check binary
-  const bin = content?.querySelector('.binary-output')?.textContent || '';
-  if(bin && bin.trim() && bin.trim() !== '(enter text)') ok = true;
-  // check spot correct
-  content?.querySelectorAll('.spot-feedback').forEach(e=>{
-    if(e.textContent && e.textContent.toLowerCase().includes('correct')) ok = true;
-  });
-  // check quiz-like: not implemented here but extendable
-  // check order fragments
-  const fragBtns = content?.querySelectorAll('.fragment-btn') || [];
-  if(fragBtns.length > 0){
-    const orders = Array.from(fragBtns).map(b => parseInt(b.dataset.order || '0'));
-    // check has all unique 0..n-1
-    const n = fragBtns.length;
-    const okOrder = [ ...new Set(orders) ].length === n && orders.every(v => v >=0 && v < n);
-    if(okOrder) ok = true;
-  }
-
-  if(!ok){
-    alert('Please complete at least one activity (e.g., convert text to binary, correctly fix the spot activity, or arrange fragments) before marking complete.');
-    return;
-  }
-
-  completed.add(i); saveState(); updateUI();
-  closeModal(); showToast(`🎉 Module ${i} completed — Knowledge Token awarded!`);
-}
-
-/* ---------- enter module navigation ---------- */
-document.querySelectorAll('.enter-btn').forEach(btn=>{
-  btn.addEventListener('click', (e)=>{
-    const id = Number(btn.dataset.mod);
-    if(!unlocked.has(id)) { 
-      showToast('Module locked — discover the region first'); 
-      return; 
-    }
+    // Update stats
+    document.getElementById('themes-completed').textContent = userProgress.themes.length;
+    document.getElementById('cities-visited').textContent = userProgress.citiesVisited;
+    document.getElementById('tokens-earned').textContent = userProgress.tokensEarned;
     
-    const mod = MODULES[id];
-    if(mod && mod.lessons){
-      // Check if the page exists, otherwise fall back to preview
-      fetch(mod.lessons, { method: 'HEAD' })
-        .then(response => {
-          if (response.ok) {
-            window.location.href = mod.lessons;
-          } else {
-            console.log(`Page ${mod.lessons} not found, showing preview instead`);
-            previewModule(id);
-          }
-        })
-        .catch(() => {
-          // If fetch fails (e.g., CORS), just try to navigate
-          console.log(`Cannot check ${mod.lessons}, attempting navigation`);
-          window.location.href = mod.lessons;
-        });
-    } else {
-      previewModule(id);
-    }
-  });
-});
-
-/* ---------- keyboard accessibility (Enter on focused cards) ---------- */
-document.querySelectorAll('.module-card').forEach(card=>{
-  card.tabIndex = 0;
-  card.addEventListener('keydown', (e)=>{
-    if(e.key === 'Enter' || e.key === ' ') previewModule(Number(card.id.split('-').pop()));
-  });
-});
-
-/* init on load */
-updateUI();
-
-/* pre-unlock any modules found in URL hash ?module=2 style (optional) */
-(function checkHashUnlock(){
-  const p = new URLSearchParams(location.search);
-  if(p.has('unlock')){
-    const m = Number(p.get('unlock'));
-    if(MODULES[m]) { unlocked.add(m); saveState(); updateUI(); showToast(`Module ${m} unlocked from URL`); }
+    const overallProgress = Math.round(
+      Object.values(userProgress.progress).reduce((a, b) => a + b, 0) / 4
+    );
+    document.getElementById('overall-progress').textContent = overallProgress + '%';
   }
-})();
+
+  // Start theme function
+  window.startTheme = function(themeName) {
+    if (userProgress.themes.includes(themeName)) {
+      // Navigate to theme - update this URL to match your routing
+      window.location.href = `{{ site.baseurl }}/node/${themeName}`;
+    } else {
+      alert('🔒 This theme is locked! Complete previous themes to unlock it.');
+    }
+  };
+
+  // Add card hover sound effects (optional)
+  document.querySelectorAll('.card-3d').forEach(card => {
+    card.addEventListener('mouseenter', () => {
+      // You could add subtle sound effects here
+      card.style.zIndex = '10';
+    });
+    
+    card.addEventListener('mouseleave', () => {
+      card.style.zIndex = '1';
+    });
+  });
+
+  // Initialize
+  updateProgress();
+});
 </script>
-</body>
-</html>
