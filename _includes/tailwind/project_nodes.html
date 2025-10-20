@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Quest Module — Data-driven Template</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+<style>
+/* minimal theme styles (keeps same look) */
+:root{ --accent:#7c3aed; --teal:#06b6d4; --coreGreen:#34d399; }
+body{ background: radial-gradient(ellipse at 20% 10%, rgba(124,58,237,0.06), transparent 10%), radial-gradient(ellipse at 80% 80%, rgba(6,182,212,0.04), transparent 18%), linear-gradient(180deg,#0b1020 0%, #111827 80%); color:#ecfeff; }
+.holo-panel{ background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border: 1px solid rgba(124,58,237,0.14); backdrop-filter: blur(6px); box-shadow: 0 8px 32px rgba(2,6,23,0.6); border-radius: 14px; }
+.code-snippet { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace; font-size:13px; background:#0b1220; color:#bfe9ff; padding:10px; border-radius:8px; border:1px solid rgba(99,102,241,0.06); }
+.flow-box{ min-width:110px; border-radius:8px; padding:10px; background:linear-gradient(180deg,#0f1724,#0b1220); border:1px solid rgba(255,255,255,0.03); color:#dbeafe }
+.status-badge{ font-size:.7rem; padding:6px 10px; border-radius:999px; font-weight:700; letter-spacing:.6px; display:inline-block; }
+</style>
+</head>
+<body class="min-h-screen">
+
+<!-- MODULE JSON: replace this content with any module's lxdData JSON object -->
+<script id="module-data" type="application/json">
+{
+  "Title": "Glitched Forest — Logic & Flow",
+  "Description": "Learn how programs execute step-by-step. Explore conditionals, loops, and common logic/syntax errors through short examples and interactive fixes.",
+  "Audience": "High school juniors & sophomores",
+  "Level": 1,
+  "Image": "/images/quest/glitched-forest.svg",
+  "Video": "/quest/1/logic-flow/video",
+  "Lessons": "/quest/1/logic-flow",
+  "Categories": ["Programming Logic","Conditionals","Debugging"],
+  "LearningObjectives": [
+    "Explain sequencing and control flow.",
+    "Identify syntax vs logic errors.",
+    "Apply simple debugging strategies."
+  ],
+  "Topics": [
+    {
+      "Title":"What is control flow?",
+      "Description":"Sequencing, conditionals, and loops — how the CPU follows instructions.",
+      "Example":"if score > 100: print('High score!')"
+    },
+    {
+      "Title":"Common syntax errors",
+      "Description":"Missing colons, incorrect indentation, and other small mistakes that prevent code from running.",
+      "Example":"if (x > 5) print(x)  →  if (x > 5): print(x)"
+    },
+    {
+      "Title":"Logic vs syntax",
+      "Description":"A running program that produces wrong results usually has logic errors—tests help find them."
+    }
+  ],
+  "Activities": [
+    {
+      "id":"spot-1",
+      "type":"spot",
+      "title":"Spot the syntax bug",
+      "prompt":"Fix the if-line in this pseudocode",
+      "snippet":"if score > 100\n  print(\"High score!\")\nend",
+      "solution":"if score > 100:",
+      "hint":"Add the punctuation that begins a block in Python-like pseudocode."
+    },
+    {
+      "id":"flow-1",
+      "type":"flow",
+      "title":"Conditional Flow",
+      "prompt":"Change the value to see which branch executes.",
+      "defaultValue":90,
+      "condition":"value > 100",
+      "trueText":"print(\"High score!\")",
+      "falseText":"print(\"Keep trying\")"
+    },
+    {
+      "id":"quiz-1",
+      "type":"quiz",
+      "title":"Quick check",
+      "questions":[
+        { "q":"A program runs but produces the wrong result. This best describes a:", "options":["Syntax error","Logic error"], "correctIndex":1 },
+        { "q":"In Python-style pseudocode, which punctuation commonly begins a block after an if-line?", "options":["; (semicolon)",": (colon)"], "correctIndex":1 }
+      ]
+    },
+    {
+      "id":"summary-1",
+      "type":"summary",
+      "title":"Wrap-up",
+      "text":"Complete these activities to earn a Knowledge Token. Proceed to Data Desert next."
+    }
+  ]
+}
+</script>
+
+<!-- Main container (UI is fixed; content is data-driven) -->
+<div class="container mx-auto px-4 py-8">
+  <div class="bg-gradient-to-br from-gray-900/60 to-black/40 rounded-xl p-8 holo-panel">
+    <!-- header -->
+    <div class="text-center mb-8">
+      <h1 id="module-title" class="text-4xl font-extrabold text-teal-200"></h1>
+      <p id="module-desc" class="mt-2 text-gray-300 max-w-3xl mx-auto"></p>
+      <div id="module-audience" class="mt-3 text-xs text-gray-400"></div>
+    </div>
+
+    <!-- top row -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8 items-start">
+      <div class="lg:col-span-1 flex items-center justify-center">
+        <img id="module-image" alt="" class="rounded-lg shadow-lg w-full max-w-xs object-contain">
+      </div>
+
+      <div class="lg:col-span-2 space-y-4">
+        <div class="bg-gray-800 p-6 rounded-lg holo-panel">
+          <h2 class="text-xl font-bold text-teal-100">What you'll learn</h2>
+          <ul id="learning-list" class="mt-3 text-sm text-gray-200 list-disc pl-5 space-y-1"></ul>
+          <div class="mt-4 text-xs text-gray-400 flex gap-4">
+            <div>Level: <span id="module-level" class="font-semibold text-gray-200"></span></div>
+            <div id="module-video-link"></div>
+            <div>Categories: <span id="module-cats" class="ml-2 text-sm text-gray-200"></span></div>
+          </div>
+        </div>
+
+        <div class="flex gap-3">
+          <a id="open-lessons" class="px-4 py-2 rounded bg-indigo-600 hover:bg-indigo-500 text-black font-semibold" target="_blank">Open Lesson</a>
+          <a id="video-link" class="px-4 py-2 rounded bg-white/10 hover:bg-white/20 text-sm" target="_blank">▶ View Video</a>
+          <a href="#activities" class="px-4 py-2 rounded bg-teal-400 hover:bg-teal-300 text-black text-sm">Jump to Activities</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- topics -->
+    <div id="topics-grid" class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8"></div>
+
+    <!-- activities -->
+    <div id="activities" class="space-y-8">
+      <div class="text-2xl font-bold text-teal-100 mb-2">Interactive Activities</div>
+      <p id="activities-desc" class="text-sm text-gray-300/80 mb-4">Complete the activities below. Each activity is intentionally light so teams can expand later.</p>
+      <div id="activity-list" class="space-y-6"></div>
+
+      <section id="module-summary" class="bg-gray-800 p-6 rounded-lg holo-panel">
+        <h4 id="summary-title" class="text-lg font-semibold text-teal-100">Wrap-up & Next Steps</h4>
+        <p id="summary-text" class="mt-2 text-sm text-gray-300/80"></p>
+        <div class="mt-4 flex gap-3">
+          <button id="mark-complete" class="px-4 py-2 rounded bg-gradient-to-r from-teal-400 to-indigo-500 text-black font-semibold">Mark Module Complete</button>
+          <button id="download-summary" class="px-4 py-2 rounded bg-white/10">Download Summary</button>
+        </div>
+      </section>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* data-driven module UI (standalone)
+   Reads JSON from #module-data and populates the UI.
+   To reuse: change the JSON object in the <script id="module-data"> section above.
+*/
+(function(){
+  // parse module JSON
+  let MODULE = {};
+  try {
+    const jsonEl = document.getElementById('module-data');
+    MODULE = JSON.parse(jsonEl ? jsonEl.textContent : '{}');
+  } catch(e) {
+    console.error('Invalid module JSON', e);
+    MODULE = {};
+  }
+
+  const MODULE_KEY = window.location.pathname + '::' + (MODULE.Title || 'module');
+
+  // helper to create DOM from HTML string
+  function make(html){ const d = document.createElement('div'); d.innerHTML = html; return d.firstElementChild; }
+
+  // populate header/top
+  document.getElementById('module-title').textContent = MODULE.Title || 'Untitled Module';
+  document.getElementById('module-desc').textContent = MODULE.Description || '';
+  document.getElementById('module-audience').textContent = MODULE.Audience ? 'Audience: ' + MODULE.Audience : '';
+  const img = document.getElementById('module-image');
+  if (MODULE.Image) { img.src = MODULE.Image; img.alt = MODULE.Alt || MODULE.Title; } else { img.style.display = 'none'; }
+  document.getElementById('module-level').textContent = MODULE.Level || '';
+  document.getElementById('open-lessons').href = MODULE.Lessons || '#';
+  const videoLink = document.getElementById('video-link');
+  if (MODULE.Video) { videoLink.href = MODULE.Video; videoLink.style.display = ''; } else { videoLink.style.display = 'none'; }
+  document.getElementById('module-cats').textContent = (MODULE.Categories || []).join(', ');
+
+  // learning objectives
+  const list = document.getElementById('learning-list');
+  list.innerHTML = '';
+  (MODULE.LearningObjectives || []).forEach(li => { const el = document.createElement('li'); el.textContent = li; list.appendChild(el); });
+
+  // topics grid
+  const topicGrid = document.getElementById('topics-grid');
+  topicGrid.innerHTML = '';
+  (MODULE.Topics || []).forEach(t => {
+    const card = document.createElement('div');
+    card.className = 'bg-gray-800 p-5 rounded-lg shadow-inner border border-indigo-700/10';
+    card.innerHTML = '<h3 class="text-lg font-bold text-teal-100 mb-2"></h3><p class="text-sm text-gray-200/80 mb-3"></p>';
+    card.querySelector('h3').textContent = t.Title || '';
+    card.querySelector('p').innerHTML = t.Description || '';
+    if (t.Example) {
+      const ex = document.createElement('div');
+      ex.className = 'text-xs text-gray-300 mb-2 font-semibold';
+      ex.textContent = 'Example';
+      const code = document.createElement('div');
+      code.className = 'code-snippet bg-black/60 p-3 rounded text-xs text-teal-100 border border-indigo-700/5';
+      code.innerText = t.Example;
+      card.appendChild(ex); card.appendChild(code);
+    }
+    if (t.Video) { const a = document.createElement('a'); a.href = t.Video; a.textContent = 'Watch related video'; a.target='_blank'; a.className='text-indigo-300 underline text-sm mt-3 block'; card.appendChild(a); }
+    topicGrid.appendChild(card);
+  });
+
+  // activity renderers
+  function renderActivity(act, idx) {
+    const section = document.createElement('section');
+    section.className = 'bg-gray-800 p-6 rounded-lg holo-panel';
+    section.dataset.activityId = act.id || ('act-'+idx);
+
+    const title = act.title || ('Activity ' + (idx+1));
+    let html = '<div class="flex items-start justify-between"><div><h4 class="text-lg font-semibold text-teal-100">' + title + '</h4>';
+    if (act.prompt) html += '<p class="text-sm text-gray-300/80 mt-1">' + act.prompt + '</p>';
+    html += '</div></div><div class="mt-4">';
+
+    if (act.type === 'spot') {
+      html += '<div class="grid md:grid-cols-2 gap-4"><div><div class="code-snippet text-xs">'+escapeHtml(act.snippet || '')+'</div><div class="mt-3 text-xs text-gray-400">'+(act.hint||'Hint: punctuation at end of conditional lines matters.')+'</div></div>';
+      html += '<div><label class="block text-xs text-gray-300 mb-2">Enter corrected line:</label>';
+      html += '<input data-field="spot-input" type="text" class="w-full p-2 rounded bg-black/60 border border-indigo-700/10 text-teal-100" placeholder="'+escapeHtml(act.placeholder||'e.g. if score > 100:')+'"/>';
+      html += '<div class="mt-3 flex gap-2"><button data-action="spot-check" class="px-3 py-2 rounded bg-teal-400 text-black font-semibold">Check</button>';
+      html += '<button data-action="spot-hint" class="px-3 py-2 rounded bg-white/10">Hint</button></div><div data-output="spot-feedback" class="mt-3 text-sm"></div></div></div>';
+    } else if (act.type === 'flow') {
+      html += '<div class="space-y-4"><div class="flex items-center gap-4">';
+      html += '<div class="flow-box text-sm bg-black/50 p-3 rounded"><label class="text-xs text-gray-300">Value</label>';
+      html += '<input data-field="flow-value" type="number" value="'+(act.defaultValue||90)+'" class="mt-1 w-24 rounded p-1 bg-gray-900 border border-indigo-700/10 text-teal-100"/></div>';
+      html += '<div class="text-sm text-gray-400">➡</div>';
+      html += '<div class="flow-box text-sm bg-black/50 p-3 rounded"><div class="font-mono text-xs">'+escapeHtml(act.condition||'value > 100')+'</div></div>';
+      html += '<div class="flow-box text-sm bg-black/50 p-3 rounded"><div data-output="flow-branch" class="text-sm">Branch output</div></div>';
+      html += '</div><div class="flex gap-2"><button data-action="flow-run" class="px-3 py-2 rounded bg-indigo-600 text-black font-semibold">Run</button>';
+      html += '<button data-action="flow-explain" class="px-3 py-2 rounded bg-white/10">Explain</button></div><div data-output="flow-output" class="text-sm text-gray-200/80 mt-2"></div></div>';
+    } else if (act.type === 'quiz') {
+      html += '<div class="space-y-4 text-sm text-gray-200/80">';
+      (act.questions||[]).forEach((q, qi)=> {
+        html += '<div><div class="font-semibold">'+(qi+1)+'. '+q.q+'</div>';
+        q.options.forEach((opt, oi) => { html += '<label class="inline-flex items-center mt-1"><input type="radio" name="q'+idx+'-'+qi+'" value="'+oi+'"/> <span class="ml-2">'+escapeHtml(opt)+'</span></label><br>'; });
+        html += '</div>';
+      });
+      html += '<div class="mt-2"><button data-action="quiz-submit" class="px-3 py-2 rounded bg-emerald-400 text-black font-semibold">Submit</button><div data-output="quiz-result" class="mt-2 text-sm"></div></div></div>';
+    } else if (act.type === 'summary') {
+      html += '<div class="text-sm text-gray-200/80">'+escapeHtml(act.text||'')+'</div>';
+    } else {
+      html += '<div class="text-sm text-gray-200/80">'+escapeHtml(act.html||'<i>No activity details provided.</i>')+'</div>';
+    }
+
+    html += '</div>';
+    section.innerHTML = html;
+    return section;
+  }
+
+  // escape function for user-provided text
+  function escapeHtml(s){ if(!s) return ''; return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  // populate activities
+  const actList = document.getElementById('activity-list');
+  actList.innerHTML = '';
+  (MODULE.Activities || []).forEach((act, idx) => actList.appendChild(renderActivity(act, idx)));
+
+  // delegated event handling for activity UI
+  actList.addEventListener('click', function(e){
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    const action = btn.getAttribute('data-action');
+    const sec = btn.closest('section');
+    if(!sec) return;
+    const idx = Array.prototype.indexOf.call(actList.children, sec);
+    const actData = MODULE.Activities[idx];
+
+    // spot
+    if (action === 'spot-check') {
+      const input = sec.querySelector('[data-field="spot-input"]');
+      const out = sec.querySelector('[data-output="spot-feedback"]');
+      const user = (input?.value || '').trim();
+      const sol = (actData?.solution || '').trim();
+      if (!user) { out.innerHTML = '<span style="color:#FBBF24">Please enter a corrected line.</span>'; return; }
+      if (sol && (user === sol || user === sol.replace(/ /g,''))) {
+        out.innerHTML = '<span style="color:#34D399;font-weight:600">Correct — well done.</span>';
+      } else {
+        out.innerHTML = '<span style="color:#F87171">Not quite — check punctuation and exact syntax.</span>';
+      }
+      return;
+    }
+    if (action === 'spot-hint') {
+      alert(actData?.hint || 'Hint: Many Python-like condition-starting lines end with ":" to open a block.');
+      return;
+    }
+
+    // flow
+    if (action === 'flow-run' || action === 'flow-explain') {
+      const field = sec.querySelector('[data-field="flow-value"]');
+      const outElem = sec.querySelector('[data-output="flow-output"]');
+      const branchElem = sec.querySelector('[data-output="flow-branch"]');
+      const val = Number(field?.value || 0);
+      const cond = actData?.condition || 'value > 100';
+      let conditionTrue = false;
+      const m = cond.match(/value\s*([><]=?)\s*(\d+)/) || cond.match(/([a-zA-Z0-9_]+)\s*([><]=?)\s*(\d+)/);
+      if (m) {
+        const operator = m[1] === 'value' ? m[2] : m[2];
+        const threshold = Number(m[m.length-1]);
+        if (operator === '>') conditionTrue = val > threshold;
+        if (operator === '>=') conditionTrue = val >= threshold;
+        if (operator === '<') conditionTrue = val < threshold;
+        if (operator === '<=') conditionTrue = val <= threshold;
+      } else {
+        conditionTrue = val > 100;
+      }
+      if (action === 'flow-run') {
+        branchElem.textContent = conditionTrue ? (actData.trueText || 'True branch') : (actData.falseText || 'False branch');
+        outElem.innerHTML = conditionTrue ? '<span style="color:#34D399">Output: ' + (actData.trueText || 'True branch') + '</span>' : '<span style="color:#FBBF24">Output: ' + (actData.falseText || 'False branch') + '</span>';
+      } else {
+        outElem.innerHTML = '<div style="color:#c7d2fe">'+(conditionTrue ? 'Condition true → true branch executes.' : 'Condition false → else branch executes.')+'</div>';
+      }
+      return;
+    }
+
+    // quiz
+    if (action === 'quiz-submit') {
+      const out = sec.querySelector('[data-output="quiz-result"]');
+      const qs = actData?.questions || [];
+      let correct = 0, total = qs.length;
+      qs.forEach((q, qi) => {
+        const sel = sec.querySelector('input[name="q'+idx+'-'+qi+ '"]:checked');
+        if (sel && Number(sel.value) === (q.correctIndex || 0)) correct++;
+      });
+      out.innerHTML = '<span style="font-weight:600;color:' + (correct===total? '#34D399' : '#FBBF24') + '">You scored ' + correct + '/' + total + '.</span>';
+      return;
+    }
+  });
+
+  // mark complete logic: requires at least one successful spot or perfect quiz
+  document.getElementById('mark-complete').addEventListener('click', function(){
+    let pass = false;
+    document.querySelectorAll('[data-output="spot-feedback"]').forEach(el => { if (el.textContent && el.textContent.toLowerCase().includes('correct')) pass = true; });
+    document.querySelectorAll('[data-output="quiz-result"]').forEach(el => {
+      const m = el.textContent.match(/You scored\s+(\d+)\/(\d+)/);
+      if (m && Number(m[1]) === Number(m[2])) pass = true;
+    });
+    if (pass) {
+      alert('Module marked complete. Knowledge Token awarded!');
+      try { localStorage.setItem(MODULE_KEY + ':completed', 'true'); } catch(e){}
+    } else {
+      alert('Please complete at least one activity correctly (fix the syntax or score fully on the quiz) before marking complete.');
+    }
+  });
+
+  // download summary
+  document.getElementById('download-summary').addEventListener('click', function(){
+    const summary = [
+      'Module: ' + (MODULE.Title || 'Untitled'),
+      '',
+      'Description: ' + (MODULE.Description || ''),
+      '',
+      'Learning objectives:',
+      ...(MODULE.LearningObjectives || []).map(x => '- ' + x),
+      '',
+      'Topics:',
+      ...(MODULE.Topics || []).map(t => '- ' + (t.Title || '') + ': ' + (t.Description || '')),
+      '',
+      'Activities attempted: (client-side)'
+    ].join('\\n');
+    const blob = new Blob([summary], {type:'text/plain'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = (MODULE.Title||'module') + '-summary.txt'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+  });
+
+  // restore state if completed
+  try { if (localStorage.getItem(MODULE_KEY + ':completed') === 'true') { console.info('Module previously completed on this browser'); } } catch(e){}
+})();
+</script>
+</body>
+</html>
