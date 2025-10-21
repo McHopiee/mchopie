@@ -1,14 +1,13 @@
 ---
 layout: post
 tailwind: True
-title: Travel Quest — Travel Node
+title: Node One - 
 description: >
-  Explore the Travel theme: front-end design analogies inspired by city adventures. Complete challenges as you move from San Diego to Seattle.
+  TBD
 author: TBD.
-permalink: /node/travel
+permalink: /node/one
 lxdData:
-  Title: "Travel — Front-End Fun"
-  Description: "Design and layout adventures inspired by travel. Explore cities while building interactive UI elements and practicing front-end development."
+  Title: "TBD"
   Cities:
     - Name: "San Diego"
     - Name: "Los Angeles"
