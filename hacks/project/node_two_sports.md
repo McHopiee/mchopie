@@ -5,7 +5,7 @@ title: Node Three -
 description: >
   TBD
 author: TBD.
-permalink: /node/three
+permalink: /node/sports
 lxdData:
   Title: "TBD"
   Cities:

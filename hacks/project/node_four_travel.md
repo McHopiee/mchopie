@@ -5,7 +5,7 @@ title: Node Four -
 description: >
   TBD
 author: TBD.
-permalink: /node/four
+permalink: /node/travel
 lxdData:
   Title: "TBD"
   Cities:

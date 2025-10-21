@@ -5,7 +5,7 @@ title: Node One -
 description: >
   TBD
 author: TBD.
-permalink: /node/one
+permalink: /node/ai
 lxdData:
   Title: "TBD"
   Cities:

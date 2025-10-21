@@ -247,19 +247,124 @@
         <div class="absolute -inset-2 bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 opacity-20 blur-xl rounded-lg"></div>
       </div>
       <p class="text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed cute-text px-4">
-        Embark on themed learning journeys! Each card represents a different adventure through coding concepts. 
-        Collect Knowledge Tokens and unlock new destinations! 🎯
+        Four parallel journeys through San Diego → Los Angeles → San Francisco → Seattle. Same cities, different perspectives! 
+        Choose your learning adventure through coding concepts. 🎯
       </p>
     </div>
 
     <!-- Theme Cards Grid -->
     <div class="cards-container">
       
-      <!-- Travel Theme Card -->
+      <!-- Node One: AI Theme Card -->
+      <div class="card-3d" data-node="ai">
+        <div class="card-inner rounded-2xl h-full relative">
+          <div class="module-status">
+            <span class="status-badge status-current">Node 1</span>
+          </div>
+          
+          <div class="text-center">
+            <div class="card-icon">
+              <span class="text-3xl">🤖</span>
+            </div>
+            
+            <h3 class="text-2xl font-bold text-white mb-4 cute-heading">AI Route</h3>
+            <p class="text-gray-300 text-sm mb-8 leading-relaxed cute-text">
+              Tech tour! San Diego → LA → San Francisco → Seattle discovering <strong>AI & Machine Learning</strong> through tech hubs, startups, and innovation centers.
+            </p>
+            
+            <div class="module-progress mb-6">
+              <div class="progress-bar" style="width: 0%"></div>
+            </div>
+            
+            <div class="flex flex-col gap-3">
+              <button class="theme-button w-full cute-button-text" onclick="startTheme('ai')">
+                Start Journey
+              </button>
+              <div class="text-xs text-gray-400 cute-text">Progress: 0/4 Cities</div>
+            </div>
+          </div>
+          
+          <div class="progress-indicator">
+            <div class="progress-fill" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Node Two: Sports Theme Card -->
+      <div class="card-3d" data-node="sports">
+        <div class="card-inner rounded-2xl h-full relative">
+          <div class="module-status">
+            <span class="status-badge status-current">Node 2</span>
+          </div>
+          
+          <div class="text-center">
+            <div class="card-icon">
+              <span class="text-3xl">⚽</span>
+            </div>
+            
+            <h3 class="text-2xl font-bold text-white mb-4 cute-heading">Sports Route</h3>
+            <p class="text-gray-300 text-sm mb-8 leading-relaxed cute-text">
+              Athletic adventure! San Diego → LA → San Francisco → Seattle learning <strong>APIs & Integration</strong> through local teams, stadiums, and sports data.
+            </p>
+            
+            <div class="module-progress mb-6">
+              <div class="progress-bar" style="width: 0%"></div>
+            </div>
+            
+            <div class="flex flex-col gap-3">
+              <button class="theme-button w-full cute-button-text" onclick="startTheme('sports')">
+                Start Journey
+              </button>
+              <div class="text-xs text-gray-400 cute-text">Progress: 0/4 Cities</div>
+            </div>
+          </div>
+          
+          <div class="progress-indicator">
+            <div class="progress-fill" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Node Three: Food Theme Card -->
+      <div class="card-3d" data-node="food">
+        <div class="card-inner rounded-2xl h-full relative">
+          <div class="module-status">
+            <span class="status-badge status-current">Node 3</span>
+          </div>
+          
+          <div class="text-center">
+            <div class="card-icon">
+              <span class="text-3xl">🍕</span>
+            </div>
+            
+            <h3 class="text-2xl font-bold text-white mb-4 cute-heading">Food Route</h3>
+            <p class="text-gray-300 text-sm mb-8 leading-relaxed cute-text">
+              Culinary coding! San Diego → LA → San Francisco → Seattle exploring <strong>Back-End & Databases</strong> through local cuisines and restaurant systems.
+            </p>
+            
+            <div class="module-progress mb-6">
+              <div class="progress-bar" style="width: 0%"></div>
+            </div>
+            
+            <div class="flex flex-col gap-3">
+              <button class="theme-button w-full cute-button-text" onclick="startTheme('food')">
+                Start Journey
+              </button>
+              <div class="text-xs text-gray-400 cute-text">Progress: 0/4 Cities</div>
+            </div>
+          </div>
+          
+          <div class="progress-indicator">
+            <div class="progress-fill" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Node Four: Travel Theme Card -->
       <div class="card-3d" data-node="travel">
         <div class="card-inner rounded-2xl h-full relative">
           <div class="module-status">
-            <span class="status-badge status-current">Available</span>
+            <span class="status-badge status-current">Node 4</span>
           </div>
           
           <div class="text-center">
@@ -267,130 +372,25 @@
               <span class="text-3xl">🚗</span>
             </div>
             
-            <h3 class="text-2xl font-bold text-white mb-4 cute-heading">Travel</h3>
+            <h3 class="text-2xl font-bold text-white mb-4 cute-heading">Travel Route</h3>
             <p class="text-gray-300 text-sm mb-8 leading-relaxed cute-text">
-              Front-End & UI design explored through mapping your journey from city to city across America.
+              Journey through San Diego → LA → San Francisco → Seattle focusing on <strong>Front-End & UI Design</strong>. Explore navigation, layouts, and user experiences.
             </p>
             
             <div class="module-progress mb-6">
-              <div class="progress-bar" style="width: 0%"></div> <!-- Changed from 25% to 0% -->
+              <div class="progress-bar" style="width: 0%"></div>
             </div>
             
             <div class="flex flex-col gap-3">
               <button class="theme-button w-full cute-button-text" onclick="startTheme('travel')">
                 Start Journey
               </button>
-              <div class="text-xs text-gray-400 cute-text">Progress: 0/4 Cities</div> <!-- Changed from 1/4 to 0/4 -->
+              <div class="text-xs text-gray-400 cute-text">Progress: 0/4 Cities</div>
             </div>
           </div>
           
           <div class="progress-indicator">
-            <div class="progress-fill" style="width: 0%"></div> <!-- Changed from 25% to 0% -->
-          </div>
-        </div>
-      </div>
-
-      <!-- Food Theme Card -->
-      <div class="card-3d" data-node="food">
-        <div class="card-inner rounded-2xl h-full relative opacity-60">
-          <div class="module-status">
-            <span class="status-badge status-locked">🔒 Locked</span>
-          </div>
-          
-          <div class="text-center">
-            <div class="card-icon" style="background: linear-gradient(135deg, #6b7280, #4b5563); border: 2px solid rgba(107, 114, 128, 0.4);">
-              <span class="text-3xl">🍕</span>
-            </div>
-            
-            <h3 class="text-2xl font-bold text-white mb-4 cute-heading">Food</h3>
-            <p class="text-gray-300 text-sm mb-8 leading-relaxed cute-text">
-              Back-End & Databases explained through kitchens and recipes along your route.
-            </p>
-            
-            <div class="module-progress mb-6">
-              <div class="progress-bar"></div>
-            </div>
-            
-            <div class="flex flex-col gap-3">
-              <button class="theme-button locked w-full cute-button-text" disabled>
-                Complete Travel First
-              </button>
-              <div class="text-xs text-gray-500 cute-text">Requires: Travel Theme</div>
-            </div>
-          </div>
-          
-          <div class="progress-indicator">
-            <div class="progress-fill"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Sports Theme Card -->
-      <div class="card-3d" data-node="sports">
-        <div class="card-inner rounded-2xl h-full relative opacity-60">
-          <div class="module-status">
-            <span class="status-badge status-locked">🔒 Locked</span>
-          </div>
-          
-          <div class="text-center">
-            <div class="card-icon" style="background: linear-gradient(135deg, #6b7280, #4b5563); border: 2px solid rgba(107, 114, 128, 0.4);">
-              <span class="text-3xl">⚽</span>
-            </div>
-            
-            <h3 class="text-2xl font-bold text-white mb-4 cute-heading">Sports</h3>
-            <p class="text-gray-300 text-sm mb-8 leading-relaxed cute-text">
-              API integration & teamwork analogies as you play through cities on your road trip.
-            </p>
-            
-            <div class="module-progress mb-6">
-              <div class="progress-bar"></div>
-            </div>
-            
-            <div class="flex flex-col gap-3">
-              <button class="theme-button locked w-full cute-button-text" disabled>
-                Complete Food First
-              </button>
-              <div class="text-xs text-gray-500 cute-text">Requires: Food Theme</div>
-            </div>
-          </div>
-          
-          <div class="progress-indicator">
-            <div class="progress-fill"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- AI Theme Card -->
-      <div class="card-3d" data-node="ai">
-        <div class="card-inner rounded-2xl h-full relative opacity-60">
-          <div class="module-status">
-            <span class="status-badge status-locked">🔒 Locked</span>
-          </div>
-          
-          <div class="text-center">
-            <div class="card-icon" style="background: linear-gradient(135deg, #6b7280, #4b5563); border: 2px solid rgba(107, 114, 128, 0.4);">
-              <span class="text-3xl">🤖</span>
-            </div>
-            
-            <h3 class="text-2xl font-bold text-white mb-4 cute-heading">AI Assistant</h3>
-            <p class="text-gray-300 text-sm mb-8 leading-relaxed cute-text">
-              Learn AI-assisted debugging and optimization on your journey from San Diego to Seattle.
-            </p>
-            
-            <div class="module-progress mb-6">
-              <div class="progress-bar"></div>
-            </div>
-            
-            <div class="flex flex-col gap-3">
-              <button class="theme-button locked w-full cute-button-text" disabled>
-                Complete Sports First
-              </button>
-              <div class="text-xs text-gray-500 cute-text">Requires: Sports Theme</div>
-            </div>
-          </div>
-          
-          <div class="progress-indicator">
-            <div class="progress-fill"></div>
+            <div class="progress-fill" style="width: 0%"></div>
           </div>
         </div>
       </div>
@@ -403,19 +403,19 @@
         <h3 class="text-2xl font-bold text-white mb-8 text-center cute-heading">🎯 Journey Progress</h3>
         <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div class="text-center p-6 bg-gray-700/30 rounded-lg border border-purple-500/20">
-            <div class="text-3xl font-bold text-purple-400 cute-heading" id="themes-completed">1</div>
-            <div class="text-sm text-gray-400 cute-text">Themes Unlocked</div>
+            <div class="text-3xl font-bold text-purple-400 cute-heading" id="themes-completed">4</div>
+            <div class="text-sm text-gray-400 cute-text">Routes Available</div>
           </div>
           <div class="text-center p-6 bg-gray-700/30 rounded-lg border border-blue-500/20">
-            <div class="text-3xl font-bold text-blue-400 cute-heading" id="cities-visited">1</div>
-            <div class="text-sm text-gray-400 cute-text">Cities Visited</div>
+            <div class="text-3xl font-bold text-blue-400 cute-heading" id="cities-visited">0</div>
+            <div class="text-sm text-gray-400 cute-text">Cities Explored</div>
           </div>
           <div class="text-center p-6 bg-gray-700/30 rounded-lg border border-green-500/20">
             <div class="text-3xl font-bold text-green-400 cute-heading" id="tokens-earned">0</div>
             <div class="text-sm text-gray-400 cute-text">Knowledge Tokens</div>
           </div>
           <div class="text-center p-6 bg-gray-700/30 rounded-lg border border-yellow-500/20">
-            <div class="text-3xl font-bold text-yellow-400 cute-heading" id="overall-progress">25%</div>
+            <div class="text-3xl font-bold text-yellow-400 cute-heading" id="overall-progress">0%</div>
             <div class="text-sm text-gray-400 cute-text">Overall Progress</div>
           </div>
         </div>
@@ -427,17 +427,17 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-  // Keep travel unlocked but reset progress to 0
+  // ALL THEMES UNLOCKED FOR DEVELOPMENT
   const userProgress = {
-    themes: ['travel'], // Keep travel unlocked
+    themes: ['ai', 'sports', 'food', 'travel'], // REORDERED
     progress: {
-      travel: 0,  // Reset to 0% progress
-      food: 0,
+      ai: 0,
       sports: 0,
-      ai: 0
+      food: 0,
+      travel: 0
     },
     tokensEarned: 0,
-    citiesVisited: 0  // Reset to 0 cities
+    citiesVisited: 0
   };
 
   // Update progress indicators
@@ -448,38 +448,32 @@ document.addEventListener("DOMContentLoaded", function() {
       const progressFill = card.querySelector('.progress-fill');
       const badge = card.querySelector('.status-badge');
       const button = card.querySelector('.theme-button');
-      const progressText = card.querySelector('.text-xs.text-gray-400'); // Find progress text
+      const progressText = card.querySelector('.text-xs.text-gray-400');
       
-      if (userProgress.themes.includes(theme)) {
-        // Theme is unlocked
-        card.querySelector('.card-inner').style.opacity = '1';
-        badge.className = 'status-badge status-current';
-        badge.textContent = 'Available';
-        button.className = 'theme-button w-full cute-button-text';
-        button.disabled = false;
-        
-        // Set progress
-        const progress = userProgress.progress[theme];
-        progressBar.style.width = progress + '%';
-        progressFill.style.width = progress + '%';
-        
-        // Update progress text based on theme and progress
-        if (theme === 'travel') {
-          const citiesCompleted = Math.floor(progress / 25); // 25% per city
-          progressText.textContent = `Progress: ${citiesCompleted}/4 Cities`;
-        }
-        
-        if (progress === 100) {
-          badge.className = 'status-badge status-completed';
-          badge.textContent = '✅ Complete';
-        }
-      } else {
-        // Theme is locked
-        card.querySelector('.card-inner').style.opacity = '0.6';
-        badge.className = 'status-badge status-locked';
-        badge.innerHTML = '🔒 Locked';
-        button.className = 'theme-button locked w-full cute-button-text';
-        button.disabled = true;
+      // Update node numbers in badges
+      const nodeNumbers = { ai: 1, sports: 2, food: 3, travel: 4 };
+      if (badge.textContent.includes('Node')) {
+        badge.textContent = `Node ${nodeNumbers[theme]}`;
+      }
+      
+      // ALL THEMES ARE NOW UNLOCKED
+      card.querySelector('.card-inner').style.opacity = '1';
+      badge.className = 'status-badge status-current';
+      button.className = 'theme-button w-full cute-button-text';
+      button.disabled = false;
+      
+      // Set progress
+      const progress = userProgress.progress[theme];
+      progressBar.style.width = progress + '%';
+      progressFill.style.width = progress + '%';
+      
+      // ALL THEMES use same city count since they're all the same route
+      const citiesCompleted = Math.floor(progress / 25);
+      progressText.textContent = `Progress: ${citiesCompleted}/4 Cities`;
+      
+      if (progress === 100) {
+        badge.className = 'status-badge status-completed';
+        badge.textContent = '✅ Complete';
       }
     });
 
@@ -496,18 +490,13 @@ document.addEventListener("DOMContentLoaded", function() {
 
   // Start theme function
   window.startTheme = function(themeName) {
-    if (userProgress.themes.includes(themeName)) {
-      // Navigate to theme - update this URL to match your routing
-      window.location.href = `{{ site.baseurl }}/node/${themeName}`;
-    } else {
-      alert('🔒 This theme is locked! Complete previous themes to unlock it.');
-    }
+    // ALL themes are now accessible for development
+    window.location.href = `{{ site.baseurl }}/node/${themeName}`;
   };
 
-  // Add card hover sound effects (optional)
+  // Add card hover effects
   document.querySelectorAll('.card-3d').forEach(card => {
     card.addEventListener('mouseenter', () => {
-      // You could add subtle sound effects here
       card.style.zIndex = '10';
     });
     
