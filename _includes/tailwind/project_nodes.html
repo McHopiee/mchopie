@@ -529,7 +529,7 @@
 
       <!-- Back to Hub Button -->
       <div class="text-center mt-20">
-        <a href="{{ site.baseurl }}/project" class="prereq-button cute-text inline-block">
+        <a href="{{ site.baseurl }}/travel_hub" class="prereq-button cute-text inline-block">
           🏠 Back to Travel Hub
         </a>
       </div>
@@ -539,8 +539,79 @@
 </div>
 
 <script type="text/javascript">
+// Enhanced map visualization - ADD THIS AT THE TOP OF THE SCRIPT SECTION
+function createFoodRouteMap() {
+  const mapContainer = document.createElement('div');
+  mapContainer.className = 'food-route-map mb-8';
+  mapContainer.innerHTML = `
+    <div class="relative bg-gradient-to-b from-blue-200 to-green-200 rounded-2xl p-8 mx-auto max-w-4xl">
+      <!-- Map SVG with route line -->
+      <svg viewBox="0 0 400 600" class="w-full h-64">
+        <!-- Coast line -->
+        <path d="M50 50 Q 60 150 40 250 Q 30 350 50 450 Q 70 550 60 600" 
+              stroke="#2563eb" stroke-width="3" fill="none" class="coast-line"/>
+        
+        <!-- Route line connecting cities -->
+        <path d="M80 480 L 120 360 L 160 240 L 200 120" 
+              stroke="#8b5cf6" stroke-width="4" fill="none" 
+              stroke-dasharray="10,5" class="route-line"/>
+        
+        <!-- City markers -->
+        <g class="city-marker" data-city="san_diego">
+          <circle cx="80" cy="480" r="20" fill="#fbbf24" stroke="#f59e0b" stroke-width="3"/>
+          <text x="80" y="510" text-anchor="middle" class="text-sm font-bold" fill="white">San Diego</text>
+          <text x="80" y="485" text-anchor="middle" class="text-xl">☀️</text>
+        </g>
+        
+        <g class="city-marker" data-city="los_angeles">
+          <circle cx="120" cy="360" r="20" fill="#a78bfa" stroke="#8b5cf6" stroke-width="3"/>
+          <text x="120" y="390" text-anchor="middle" class="text-sm font-bold" fill="white">Los Angeles</text>
+          <text x="120" y="365" text-anchor="middle" class="text-xl">🌴</text>
+        </g>
+        
+        <g class="city-marker" data-city="san_francisco">
+          <circle cx="160" cy="240" r="20" fill="#60a5fa" stroke="#3b82f6" stroke-width="3"/>
+          <text x="160" y="270" text-anchor="middle" class="text-sm font-bold" fill="white">San Francisco</text>
+          <text x="160" y="245" text-anchor="middle" class="text-xl">🌁</text>
+        </g>
+        
+        <g class="city-marker" data-city="seattle">
+          <circle cx="200" cy="120" r="20" fill="#34d399" stroke="#10b981" stroke-width="3"/>
+          <text x="200" y="150" text-anchor="middle" class="text-sm font-bold" fill="white">Seattle</text>
+          <text x="200" y="125" text-anchor="middle" class="text-xl">🌲</text>
+        </g>
+      </svg>
+      
+      <!-- Progress indicators -->
+      <div class="mt-6 flex justify-between items-center">
+        <div class="text-center">
+          <div class="text-2xl font-bold text-purple-600" id="total-xp">0 XP</div>
+          <div class="text-sm text-gray-600">Experience Points</div>
+        </div>
+        <div class="text-center">
+          <div class="text-2xl font-bold text-blue-600" id="current-city">San Diego</div>
+          <div class="text-sm text-gray-600">Current Location</div>
+        </div>
+        <div class="text-center">
+          <div class="text-2xl font-bold text-green-600" id="badges-earned">0/4</div>
+          <div class="text-sm text-gray-600">Badges Earned</div>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  return mapContainer;
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   console.log('=== ROUTE DROPDOWN SETUP ===');
+  
+  // Insert map before cities - ADD THIS TO YOUR EXISTING DOMContentLoaded
+  const container = document.querySelector('.max-w-5xl.mx-auto');
+  if (container) {
+    const mapElement = createFoodRouteMap();
+    container.insertBefore(mapElement, container.firstChild);
+  }
   
   var routeButtons = document.querySelectorAll('.route-button');
   console.log('Found ' + routeButtons.length + ' route buttons');
@@ -740,79 +811,426 @@ function checkActivity(activityId) {
     
     if (hasGoodPractices) {
       showFeedback(feedback, "Excellent JavaScript! Great use of modern syntax and best practices! 🚀", "success");
+      // SAVE PROGRESS - Mark activity as completed
+      saveActivityProgress(activityId, true);
     } else {
       showFeedback(feedback, "Good JavaScript! Try adding comments and using const/let for better practices. ✨", "info");
+      // SAVE PARTIAL PROGRESS
+      saveActivityProgress(activityId, false);
     }
   } else {
     showFeedback(feedback, "Good start! Try including JavaScript syntax like functions, variables (const/let), or array methods. 📝", "info");
   }
 }
 
-// ENHANCED: Pull hints from markdown data
-function hintActivity(activityId) {
-  var feedback = document.getElementById('feedback-' + activityId);
-  var prompt = document.getElementById('prompt-' + activityId);
+// NEW: Progress saving functions
+function saveActivityProgress(activityId, isCompleted) {
+  // Get current theme from URL
+  var currentTheme = getCurrentTheme();
   
-  if (!feedback || !prompt) {
-    console.error('Feedback or prompt element not found for:', activityId);
+  if (!currentTheme) {
+    console.error('Could not determine current theme');
     return;
   }
   
-  // Get hints from markdown data
-  var hintsData = prompt.getAttribute('data-hints');
-  var hints = [];
+  // Load existing progress
+  var progress = loadProgress();
   
-  if (hintsData && hintsData.trim()) {
-    // Split hints by the delimiter we used in the template
-    hints = hintsData.split('||').filter(function(hint) {
-      return hint.trim().length > 0;
-    });
+  // Create unique activity identifier
+  var fullActivityId = currentTheme + '_' + activityId;
+  
+  if (isCompleted) {
+    // Mark as completed if not already
+    if (!progress.themes[currentTheme].completedActivities.includes(fullActivityId)) {
+      progress.themes[currentTheme].completedActivities.push(fullActivityId);
+      progress.globalStats.totalActivitiesCompleted++;
+      progress.globalStats.tokensEarned += 10;
+      
+      // Update theme progress
+      progress.themes[currentTheme].totalProgress = calculateThemeProgress(progress.themes[currentTheme]);
+      
+      // Check if we completed a new city (every 3 activities)
+      var activitiesCount = progress.themes[currentTheme].completedActivities.length;
+      var newCitiesVisited = Math.floor(activitiesCount / 3);
+      var oldCitiesVisited = Math.floor((activitiesCount - 1) / 3);
+      
+      if (newCitiesVisited > oldCitiesVisited) {
+        progress.globalStats.citiesVisited++;
+        showCityCompletionFeedback(currentTheme, newCitiesVisited);
+      }
+      
+      saveProgress(progress);
+      showActivityCompletionFeedback(fullActivityId);
+    }
+  } else {
+    // Save partial progress (attempt made)
+    if (!progress.themes[currentTheme].attemptedActivities) {
+      progress.themes[currentTheme].attemptedActivities = [];
+    }
+    if (!progress.themes[currentTheme].attemptedActivities.includes(fullActivityId)) {
+      progress.themes[currentTheme].attemptedActivities.push(fullActivityId);
+      progress.globalStats.tokensEarned += 2; // Smaller reward for attempts
+      saveProgress(progress);
+    }
   }
-  
-  // If no hints in markdown, use default JavaScript hints
-  if (hints.length === 0) {
-    hints = [
-      "💡 Start with 'function functionName()' or 'const functionName = () =>' for arrow functions.",
-      "💡 Use 'const' for values that don't change and 'let' for variables that do change.",
-      "💡 Try array methods like .map(), .filter(), .find() for working with data collections.",
-      "💡 Add error handling with try/catch blocks for robust code.",
-      "💡 Use console.log() to test your functions and see the output.",
-      "💡 Remember to return values from your functions using the 'return' keyword.",
-      "💡 Use template literals with backticks for string interpolation: `Hello ${name}`",
-      "💡 Consider using async/await for handling promises and API calls."
-    ];
-  }
-  
-  var randomHint = hints[Math.floor(Math.random() * hints.length)];
-  showFeedback(feedback, "💡 " + randomHint, "hint");
 }
 
-function resetActivity(activityId) {
-  var input = document.getElementById('input-' + activityId);
-  var feedback = document.getElementById('feedback-' + activityId);
+function getCurrentTheme() {
+  // Try to get theme from URL
+  var urlPath = window.location.pathname;
+  var urlMatch = urlPath.match(/\/node\/(\w+)/);
+  if (urlMatch) {
+    return urlMatch[1];
+  }
   
-  if (input) input.value = '';
-  if (feedback) feedback.style.display = 'none';
+  // Try to get from page title or other indicators
+  var title = document.title.toLowerCase();
+  if (title.includes('ai')) return 'ai';
+  if (title.includes('sports')) return 'sports';
+  if (title.includes('food')) return 'food';
+  if (title.includes('travel')) return 'travel';
+  
+  // Fallback - try to detect from page content
+  var heading = document.querySelector('h2');
+  if (heading) {
+    var headingText = heading.textContent.toLowerCase();
+    if (headingText.includes('ai')) return 'ai';
+    if (headingText.includes('sports')) return 'sports';
+    if (headingText.includes('food')) return 'food';
+    if (headingText.includes('travel')) return 'travel';
+  }
+  
+  return null;
+}
+
+function loadProgress() {
+  const PROGRESS_KEY = 'mchopiee_travel_progress';
+  var saved = localStorage.getItem(PROGRESS_KEY);
+  if (saved) {
+    try {
+      return JSON.parse(saved);
+    } catch (e) {
+      console.error('Error loading progress:', e);
+    }
+  }
+  
+  // Default progress structure
+  return {
+    themes: {
+      ai: { completedActivities: [], attemptedActivities: [], totalProgress: 0 },
+      sports: { completedActivities: [], attemptedActivities: [], totalProgress: 0 },
+      food: { completedActivities: [], attemptedActivities: [], totalProgress: 0 },
+      travel: { completedActivities: [], attemptedActivities: [], totalProgress: 0 }
+    },
+    globalStats: {
+      totalActivitiesCompleted: 0,
+      totalSegmentsCompleted: 0,
+      citiesVisited: 0,
+      tokensEarned: 0
+    }
+  };
+}
+
+function saveProgress(progressData) {
+  const PROGRESS_KEY = 'mchopiee_travel_progress';
+  try {
+    localStorage.setItem(PROGRESS_KEY, JSON.stringify(progressData));
+    console.log('Progress saved:', progressData);
+  } catch (e) {
+    console.error('Error saving progress:', e);
+  }
+}
+
+function calculateThemeProgress(themeData) {
+  // Each theme has 4 cities, estimate 3-4 activities per city
+  var estimatedTotalActivities = 12; // 4 cities × 3 activities average
+  var completedActivities = themeData.completedActivities.length;
+  return Math.min(100, Math.round((completedActivities / estimatedTotalActivities) * 100));
+}
+
+function showActivityCompletionFeedback(activityId) {
+  // Create a toast notification
+  var toast = document.createElement('div');
+  toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300';
+  toast.innerHTML = '<div class="flex items-center gap-2"><span class="text-lg">🎉</span><div><div class="font-bold">Activity Completed!</div><div class="text-sm">+10 tokens earned</div></div></div>';
+  
+  document.body.appendChild(toast);
+  
+  // Animate in
+  setTimeout(function() {
+    toast.style.transform = 'translateX(0)';
+  }, 100);
+  
+  // Remove after 3 seconds
+  setTimeout(function() {
+    toast.style.transform = 'translateX(100%)';
+    setTimeout(function() {
+      if (document.body.contains(toast)) {
+        document.body.removeChild(toast);
+      }
+    }, 300);
+  }, 3000);
+}
+
+function showCityCompletionFeedback(theme, cityNumber) {
+  var toast = document.createElement('div');
+  toast.className = 'fixed top-4 right-4 bg-purple-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300';
+  toast.innerHTML = '<div class="flex items-center gap-2"><span class="text-lg">🏙️</span><div><div class="font-bold">City Completed!</div><div class="text-sm">City ' + cityNumber + ' in ' + theme.toUpperCase() + ' route!</div></div></div>';
+  
+  document.body.appendChild(toast);
+  
+  setTimeout(function() {
+    toast.style.transform = 'translateX(0)';
+  }, 100);
+  
+  setTimeout(function() {
+    toast.style.transform = 'translateX(100%)';
+    setTimeout(function() {
+      if (document.body.contains(toast)) {
+        document.body.removeChild(toast);
+      }
+    }, 300);
+  }, 4000);
+}
+
+// Load and display existing progress when page loads
+document.addEventListener('DOMContentLoaded', function() {
+  // ... existing DOMContentLoaded code ...
+  
+  // Load progress and mark completed activities
+  loadAndDisplayProgress();
+});
+
+function loadAndDisplayProgress() {
+  var progress = loadProgress();
+  var currentTheme = getCurrentTheme();
+  
+  if (!currentTheme) return;
+  
+  var themeData = progress.themes[currentTheme];
+  if (!themeData) return;
+  
+  // Mark completed activities with visual indicators
+  themeData.completedActivities.forEach(function(fullActivityId) {
+    var activityId = fullActivityId.replace(currentTheme + '_', '');
+    var activityElement = document.getElementById('activity-' + activityId);
+    var inputElement = document.getElementById('input-' + activityId);
+    var feedbackElement = document.getElementById('feedback-' + activityId);
+    
+    if (activityElement) {
+      // Add completed styling
+      activityElement.style.border = '2px solid #10b981';
+      activityElement.style.background = 'rgba(16, 185, 129, 0.1)';
+      
+      if (feedbackElement) {
+        showFeedback(feedbackElement, "✅ Previously completed! Great work!", "success");
+      }
+      
+      if (inputElement) {
+        inputElement.style.background = 'rgba(16, 185, 129, 0.1)';
+      }
+    }
+  });
+  
+  // Mark attempted activities
+  if (themeData.attemptedActivities) {
+    themeData.attemptedActivities.forEach(function(fullActivityId) {
+      var activityId = fullActivityId.replace(currentTheme + '_', '');
+      var activityElement = document.getElementById('activity-' + activityId);
+      
+      if (activityElement && !themeData.completedActivities.includes(fullActivityId)) {
+        // Add attempted styling
+        activityElement.style.border = '2px solid #f59e0b';
+        activityElement.style.background = 'rgba(245, 158, 11, 0.1)';
+      }
+    });
+  }
 }
 
 function showFeedback(feedbackElement, message, type) {
   if (!feedbackElement) {
-    console.error('Feedback element not provided');
+    console.error('Feedback element not found');
     return;
   }
   
-  var colors = {
-    success: 'border-green-500',
-    warning: 'border-yellow-500', 
-    info: 'border-blue-500',
-    hint: 'border-purple-500'
-  };
+  // Clear any existing classes
+  feedbackElement.className = 'activity-prompt';
   
-  feedbackElement.className = 'activity-prompt ' + (colors[type] || 'border-gray-500');
-  feedbackElement.style.borderLeftColor = type === 'success' ? '#10b981' : 
-                                         type === 'warning' ? '#f59e0b' :
-                                         type === 'hint' ? '#8b5cf6' : '#3b82f6';
+  // Add type-specific styling
+  if (type === 'success') {
+    feedbackElement.style.borderLeftColor = '#10b981';
+    feedbackElement.style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
+    feedbackElement.style.color = '#34d399';
+  } else if (type === 'warning') {
+    feedbackElement.style.borderLeftColor = '#f59e0b';
+    feedbackElement.style.backgroundColor = 'rgba(245, 158, 11, 0.1)';
+    feedbackElement.style.color = '#fbbf24';
+  } else if (type === 'info') {
+    feedbackElement.style.borderLeftColor = '#3b82f6';
+    feedbackElement.style.backgroundColor = 'rgba(59, 130, 246, 0.1)';
+    feedbackElement.style.color = '#60a5fa';
+  } else {
+    feedbackElement.style.borderLeftColor = '#8b5cf6';
+    feedbackElement.style.backgroundColor = 'rgba(139, 92, 246, 0.1)';
+    feedbackElement.style.color = '#c084fc';
+  }
+  
   feedbackElement.textContent = message;
   feedbackElement.style.display = 'block';
+  
+  // Animate in
+  feedbackElement.style.opacity = '0';
+  feedbackElement.style.transform = 'translateY(-10px)';
+  
+  setTimeout(function() {
+    feedbackElement.style.transition = 'all 0.3s ease';
+    feedbackElement.style.opacity = '1';
+    feedbackElement.style.transform = 'translateY(0)';
+  }, 50);
+}
+
+function hintActivity(activityId) {
+  var promptElement = document.getElementById('prompt-' + activityId);
+  var feedbackElement = document.getElementById('feedback-' + activityId);
+  
+  if (!promptElement || !feedbackElement) {
+    console.error('Prompt or feedback element not found for:', activityId);
+    return;
+  }
+  
+  var hints = promptElement.getAttribute('data-hints');
+  if (hints) {
+    var hintArray = hints.split('||');
+    var randomHint = hintArray[Math.floor(Math.random() * hintArray.length)];
+    showFeedback(feedbackElement, "💡 Hint: " + randomHint, "info");
+  } else {
+    showFeedback(feedbackElement, "💡 Hint: Try using modern JavaScript features like const/let, arrow functions, or array methods like map(), filter(), reduce().", "info");
+  }
+}
+
+function resetActivity(activityId) {
+  var inputElement = document.getElementById('input-' + activityId);
+  var feedbackElement = document.getElementById('feedback-' + activityId);
+  var activityElement = document.getElementById('activity-' + activityId);
+  
+  if (inputElement) {
+    inputElement.value = '';
+    inputElement.style.background = 'rgba(31, 41, 55, 0.8)';
+  }
+  
+  if (feedbackElement) {
+    feedbackElement.style.display = 'none';
+    feedbackElement.textContent = '';
+  }
+  
+  if (activityElement) {
+    activityElement.style.border = '1px solid rgba(139, 92, 246, 0.3)';
+    activityElement.style.background = 'rgba(139, 92, 246, 0.1)';
+  }
+  
+  showFeedback(feedbackElement, "🔄 Activity reset! Try again with a fresh start.", "info");
+}
+
+// Enhanced progress structure for Food Module
+function createFoodModuleProgress() {
+  return {
+    currentCity: 'san_diego',
+    xp: 0,
+    badges: [],
+    dishes: [],
+    cities: {
+      san_diego: {
+        unlocked: true,
+        completed: false,
+        tasks: {
+          'create_baja_bowl': { completed: false, xp: 50 },
+          'add_ingredients': { completed: false, xp: 30 },
+          'photo_upload': { completed: false, xp: 20 }
+        }
+      },
+      los_angeles: {
+        unlocked: false,
+        completed: false,
+        tasks: {
+          'filter_trucks': { completed: false, xp: 40 },
+          'search_dishes': { completed: false, xp: 30 },
+          'performance_test': { completed: false, xp: 30 }
+        }
+      },
+      san_francisco: {
+        unlocked: false,
+        completed: false,
+        tasks: {
+          'edit_menu': { completed: false, xp: 60 },
+          'handle_conflicts': { completed: false, xp: 40 },
+          'transaction_demo': { completed: false, xp: 50 }
+        }
+      },
+      seattle: {
+        unlocked: false,
+        completed: false,
+        tasks: {
+          'soft_delete': { completed: false, xp: 40 },
+          'analytics_dashboard': { completed: false, xp: 60 },
+          'cleanup_master': { completed: false, xp: 30 }
+        }
+      }
+    }
+  };
+}
+
+// Enhanced activity validation for different city types
+function validateFoodActivity(cityName, taskName, userCode) {
+  const validators = {
+    san_diego: {
+      create_baja_bowl: (code) => {
+        return code.includes('class') && code.includes('constructor') && 
+               code.includes('ingredients') && code.includes('calories');
+      },
+      add_ingredients: (code) => {
+        return code.includes('push') || code.includes('add') && 
+               code.includes('array') || code.includes('ingredients');
+      }
+    },
+    los_angeles: {
+      filter_trucks: (code) => {
+        return code.includes('filter') && (code.includes('includes') || code.includes('indexOf'));
+      },
+      search_dishes: (code) => {
+        return code.includes('search') && code.includes('toLowerCase');
+      }
+    },
+    san_francisco: {
+      edit_menu: (code) => {
+        return code.includes('update') || code.includes('modify') && 
+               code.includes('transaction') || code.includes('try');
+      },
+      handle_conflicts: (code) => {
+        return code.includes('version') || code.includes('conflict') && 
+               code.includes('merge') || code.includes('resolve');
+      }
+    },
+    seattle: {
+      soft_delete: (code) => {
+        return code.includes('deleted_at') || code.includes('archived') && 
+               code.includes('Date') || code.includes('timestamp');
+      },
+      analytics_dashboard: (code) => {
+        return code.includes('reduce') || code.includes('group') && 
+               code.includes('count') || code.includes('sum');
+      }
+    }
+  };
+  
+  const cityValidators = validators[cityName];
+  if (!cityValidators || !cityValidators[taskName]) {
+    return { valid: false, message: "Unknown task" };
+  }
+  
+  const isValid = cityValidators[taskName](userCode.toLowerCase());
+  return {
+    valid: isValid,
+    message: isValid ? "Great work!" : "Try including the required concepts for this task"
+  };
 }
 </script>

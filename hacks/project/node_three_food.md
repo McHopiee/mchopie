@@ -1,178 +1,155 @@
 ---
 layout: post
 tailwind: True
-title: Travel Quest — Food Node
+title: Travel Quest — Food Route
 description: >
-  Explore the Food theme: back-end & database analogies inspired by regional cuisine. Travel from San Diego to Seattle, stopping to learn back-end concepts through local dishes and kitchen metaphors.
+  🎒 Progressive road-trip learning: San Diego → LA → SF → Seattle. Build dishes, query menus, handle transactions, and master database cleanup through coastal cuisine adventures.
 author: Hope F.
 permalink: /node/food
 lxdData:
-  Title: "Food — Back-End & Databases"
-  Description: "Cook up coding skills with back-end logic. Each city stop highlights a local food specialty while teaching database design, CRUD, querying, and data hygiene — all framed as kitchen metaphors."
+  Title: "🍕 Food Route — Back-End & Databases"
+  Description: "Progressive road-trip learning: build dishes, query menus, handle transactions, and master database cleanup through coastal cuisine adventures."
+  XP_System:
+    Total_Available: 500
+    Badges: ["First Insert", "Query Master", "Transactional Pro", "Cleanup Crew"]
   Cities:
     - Name: "San Diego"
-      Description: "Begin your culinary-backend journey in sunny San Diego, where coastal flavors and food trucks meet simple, robust data models."
-      Challenge: "Design a simple database schema to store recipes and menu items (tables, fields, and relationships)."
+      Icon: "☀️"
+      Theme: "Yellow & Surfboard"
+      Unlocked: true
+      Description: "Fresh ingredients meet database creation. Build your first dishes by learning INSERT operations and data modeling."
+      Challenge: "CREATE: Build the Baja Bowl - Design dish records and ingredient relationships"
       Analogy: "The database is your kitchen pantry — organize ingredients (fields) and recipes (records) so chefs (applications) can cook reliably."
+      XP_Reward: 100
       Pitstops:
-        - Name: "Fish Taco Stand"
-          Description: "Study simple record creation and insertion while learning about ingredient lists and portion fields — perfect for practicing CREATE operations."
-          Activity: "Create a database table for fish tacos. Include columns: taco_id, fish_type, toppings, sauce, price, spice_level. Write the CREATE TABLE statement with appropriate data types."
+        - Name: "🌮 Fish Taco Stand"
+          Description: "Design your first database table by creating a Taco class with all the essential properties."
+          Activity: "Create a JavaScript class called 'FishTaco' with properties: id, fishType, toppings (array), sauce, price, spiceLevel. Add a method calculateTotalPrice() that includes tax."
+          XP: 50
+          Type: "CREATE"
+          Validation_Keywords: ["class", "constructor", "calculateTotalPrice", "tax"]
           Hints:
-            - "Start with CREATE TABLE fish_tacos ()"
-            - "Use INT for taco_id and make it PRIMARY KEY"
-            - "VARCHAR(50) works well for text fields like fish_type"
-            - "Consider DECIMAL(5,2) for price to handle dollars and cents"
-            - "Use ENUM for spice_level: ('mild', 'medium', 'hot')"
-        - Name: "California Burrito Cart"
-          Description: "Model composite dishes with nested ingredients and optional fields — practice designing flexible schemas that handle variations."
-          Activity: "Design a burrito customization system. Create tables for: burritos, ingredients, and burrito_ingredients (junction table). Show how to handle optional extras like guacamole."
+            - "Use: class FishTaco { constructor(id, fishType, ...) { ... } }"
+            - "Make toppings an array: this.toppings = toppings || []"
+            - "calculateTotalPrice() { return this.price * 1.08; } // 8% tax"
+            - "Include validation: if (!fishType) throw new Error('Fish type required')"
+        - Name: "🌯 California Burrito Cart"
+          Description: "Practice creating collections by building a burrito ordering system with multiple items."
+          Activity: "Create a BurritoCart class that manages an array of burritos. Include methods: addBurrito(), removeBurrito(), getTotalPrice(), and getBurritosByFilling()."
+          XP: 50
+          Type: "CREATE"
+          Validation_Keywords: ["class", "addBurrito", "array", "getTotalPrice"]
           Hints:
-            - "Create three separate tables: burritos, ingredients, burrito_ingredients"
-            - "The junction table needs foreign keys to both other tables"
-            - "Use BOOLEAN for optional extras like is_extra_guac"
-            - "Consider adding quantity field to junction table"
-            - "Don't forget PRIMARY KEY and FOREIGN KEY constraints"
-        - Name: "Ceviche Counter"
-          Description: "Learn input validation and sanitization (keep the ceviche fresh!) — apply validation rules before inserting records."
-          Activity: "Write an INSERT statement for a new ceviche recipe. Include validation checks: fish must be 'fresh', citrus_time must be between 10-60 minutes, temperature must be 'cold'."
-          Hints:
-            - "Use CHECK constraints: CHECK (fish_quality = 'fresh')"
-            - "Validate time range: CHECK (citrus_time BETWEEN 10 AND 60)"
-            - "Temperature constraint: CHECK (temperature = 'cold')"
-            - "INSERT statement format: INSERT INTO table_name (columns) VALUES (values)"
-            - "Test your constraints with invalid data to ensure they work"
-        - Name: "Baja Sauce Workshop"
-          Description: "Explore default values and lookup tables (sauces, spice levels) to avoid repeating strings across many records."
-          Activity: "Create a sauce lookup table with default values. Design tables: sauces (id, name, heat_level), dishes (id, name, default_sauce_id). Show how to use foreign keys and defaults."
-          Hints:
-            - "Create sauces table first, then reference it in dishes table"
-            - "Use AUTO_INCREMENT for sauce IDs"
-            - "Set DEFAULT value: default_sauce_id INT DEFAULT 1"
-            - "Add FOREIGN KEY constraint: FOREIGN KEY (default_sauce_id) REFERENCES sauces(id)"
-            - "Populate sauces table first with INSERT statements"
+            - "class BurritoCart { constructor() { this.burritos = []; } }"
+            - "addBurrito(burrito) { this.burritos.push(burrito); }"
+            - "Use array.filter() for getBurritosByFilling()"
+            - "Use array.reduce() for getTotalPrice()"
     - Name: "Los Angeles"
-      Description: "In sprawling LA, scale matters — design systems that handle many users, varied inputs, and richer interactions."
-      Challenge: "Implement Create and Read operations (APIs or SQL) and build endpoints that return menu lists and single recipe entries."
-      Analogy: "Think of APIs as waitstaff taking orders — they must correctly accept, validate, and retrieve dishes from the kitchen (database)."
+      Icon: "🌴"
+      Theme: "Pastel Neon & Taco Truck"
+      Unlocked: false
+      Description: "Food truck paradise! Learn to search, filter, and efficiently query your growing database of dishes."
+      Challenge: "READ: Food Truck Tasting - Master filtering, search, and performance optimization"
+      Analogy: "Think of querying like being a food critic — you need to find exactly what you're looking for quickly in a sea of options."
+      XP_Reward: 100
+      Unlock_Condition: "Complete 2/3 San Diego activities"
       Pitstops:
-        - Name: "Koreatown BBQ Grill"
-          Description: "Practice INSERT operations and transactional groupings — order the BBQ set (multiple related inserts) reliably and atomically."
-          Activity: "Write a transaction to insert a BBQ combo meal. Include: INSERT into orders, INSERT into order_items (multiple meats), INSERT into sides. Use BEGIN/COMMIT to ensure all-or-nothing."
+        - Name: "🚚 Korean BBQ Truck"
+          Description: "Build a smart search system that can find dishes by multiple criteria simultaneously."
+          Activity: "Create a MenuSearcher class with methods: searchByName(), filterByCalories(), filterByIngredients(), and a complex search() method that combines all filters."
+          XP: 40
+          Type: "READ"
+          Validation_Keywords: ["filter", "search", "includes", "toLowerCase"]
           Hints:
-            - "Start with BEGIN TRANSACTION or START TRANSACTION"
-            - "Insert the main order first to get the order_id"
-            - "Use LAST_INSERT_ID() or RETURNING clause to get the order_id"
-            - "Insert multiple order_items using the same order_id"
-            - "End with COMMIT to save all changes, or ROLLBACK if error occurs"
-        - Name: "Street Taco Row"
-          Description: "Design REST endpoints for listing and filtering tacos by fillings and toppings — practice Read operations with query parameters."
-          Activity: "Design a REST API endpoint: GET /api/tacos?filling=carnitas&spice=mild. Write the SQL SELECT query with WHERE clauses to filter tacos by filling and spice level."
+            - "Use string.toLowerCase().includes() for case-insensitive search"
+            - "Chain filters: dishes.filter().filter().filter()"
+            - "Create helper methods for each filter type"
+            - "Return results sorted by relevance score"
+        - Name: "🌮 Street Taco Row"
+          Description: "Implement pagination and performance optimization for large datasets."
+          Activity: "Build a PaginatedTacoMenu class that handles large arrays efficiently. Include methods: getPage(), getTotalPages(), and createIndex() for faster searches."
+          XP: 40
+          Type: "READ"
+          Validation_Keywords: ["slice", "pagination", "index", "performance"]
           Hints:
-            - "Use SELECT * FROM tacos WHERE condition1 AND condition2"
-            - "Parameters become WHERE clauses: filling = 'carnitas'"
-            - "Handle optional parameters with dynamic WHERE building"
-            - "Consider using prepared statements for safety"
-            - "Return JSON format: {'tacos': [array of taco objects]}"
-        - Name: "Avocado Toast Café"
-          Description: "Handle user-supplied customizations safely (input validation and parameterized queries) to prevent broken orders and injection risks."
-          Activity: "Create a parameterized query for custom avocado toast orders. Use prepared statements to safely insert user inputs: bread_type, toppings, extras. Prevent SQL injection."
-          Hints:
-            - "Use placeholders: INSERT INTO orders (bread_type, toppings) VALUES (?, ?)"
-            - "Bind parameters separately from the SQL string"
-            - "Validate input types and lengths before binding"
-            - "Never concatenate user input directly into SQL strings"
-            - "Consider using an ORM for additional safety layers"
-        - Name: "Farmers Market Depot"
-          Description: "Build APIs that support pagination and filtering — return smaller, efficient result sets when menus are large."
-          Activity: "Write a paginated query for browsing market vendors. Use LIMIT and OFFSET: SELECT * FROM vendors WHERE category = ? LIMIT 10 OFFSET ?. Show how to calculate page numbers."
-          Hints:
-            - "OFFSET = (page_number - 1) * items_per_page"
-            - "Always include LIMIT to prevent huge result sets"
-            - "Return total count for pagination controls"
-            - "Use ORDER BY for consistent pagination"
-            - "Consider performance impact of large OFFSET values"
+            - "getPage(pageNum, itemsPerPage) uses array.slice()"
+            - "Create search index: Map object with ingredients as keys"
+            - "Measure performance with console.time()"
+            - "Cache frequently accessed data"
     - Name: "San Francisco"
-      Description: "Tech-forward and detail-oriented, San Francisco emphasizes efficiency, indexing, and shaping data for fast access."
-      Challenge: "Implement Read and Update operations; practice indexing, query optimization, and writing efficient SELECT statements."
-      Analogy: "Indexing is like organizing your pantry by frequency of use — frequently used ingredients should be easy to reach to speed up cooking (queries)."
+      Icon: "🌁"
+      Theme: "Foggy Blue & Sourdough"
+      Unlocked: false
+      Description: "Gourmet pop-up kitchen! Master updating records safely with transactions and conflict resolution."
+      Challenge: "UPDATE: Gourmet Pop-Up - Handle menu changes, conflicts, and maintain data consistency"
+      Analogy: "Updating data is like editing a shared recipe — you need to handle conflicts when multiple chefs want to make changes."
+      XP_Reward: 150
+      Unlock_Condition: "Complete 2/3 Los Angeles activities"
       Pitstops:
-        - Name: "Sourdough Bakery"
-          Description: "Learn indexing basics: choose which fields to index (e.g., recipe name, tag) to speed retrieval of common queries."
-          Activity: "Create indexes for a bakery database. Write CREATE INDEX statements for: recipe names (frequently searched), bread types, and baking_time. Explain when to use each index."
+        - Name: "🥖 Sourdough Pop-Up"
+          Description: "Implement safe update operations with conflict detection and rollback capabilities."
+          Activity: "Create a SafeUpdater class that handles optimistic locking. Include methods: updateDish(), detectConflicts(), and rollbackChanges() with version tracking."
+          XP: 60
+          Type: "UPDATE"
+          Validation_Keywords: ["update", "version", "conflict", "rollback"]
           Hints:
-            - "CREATE INDEX idx_recipe_name ON recipes(name)"
-            - "Index columns used in WHERE clauses frequently"
-            - "Composite indexes: CREATE INDEX idx_bread_time ON recipes(bread_type, baking_time)"
-            - "Consider index size vs. query speed trade-offs"
-            - "Use EXPLAIN to analyze query performance with/without indexes"
-        - Name: "Seafood Market"
-          Description: "Practice JOINs and relational queries to combine ingredient, supplier, and recipe tables — like assembling a seafood platter from multiple sources."
-          Activity: "Write a JOIN query to find all seafood dishes with their suppliers. JOIN tables: dishes, ingredients, suppliers. SELECT dish_name, ingredient_name, supplier_name, price."
+            - "Track versions: dish.version = dish.version + 1"
+            - "detectConflicts() compares current version with original"
+            - "Use try/catch for rollback scenarios"
+            - "Store backup before making changes"
+        - Name: "🦐 Seafood Market"
+          Description: "Master complex data relationships and synchronized updates across multiple entities."
+          Activity: "Build a MarketTransaction class that updates dishes, ingredients, and inventory simultaneously. Ensure all updates succeed or all fail."
+          XP: 60
+          Type: "UPDATE"
+          Validation_Keywords: ["transaction", "atomic", "synchronized", "consistency"]
           Hints:
-            - "Start with main table: SELECT d.dish_name FROM dishes d"
-            - "JOIN syntax: JOIN ingredients i ON d.ingredient_id = i.id"
-            - "Chain multiple JOINs for three-table queries"
-            - "Use table aliases (d, i, s) to keep query readable"
-            - "Add WHERE clause to filter for seafood: WHERE i.category = 'seafood'"
-        - Name: "Dim Sum Alley"
-          Description: "Explore denormalization vs normalization trade-offs for read-heavy operations — when to duplicate data for speed."
-          Activity: "Design a dim sum ordering system. Compare normalized (separate tables) vs denormalized (combined tables) approaches. Show trade-offs for read performance vs data consistency."
-          Hints:
-            - "Normalized: separate tables for orders, items, prices (no data duplication)"
-            - "Denormalized: store price directly in order_items (faster reads, potential inconsistency)"
-            - "Consider read frequency vs. update frequency"
-            - "Denormalized is faster for reporting queries"
-            - "Normalized ensures data consistency and reduces storage"
-        - Name: "Sourdough Starter Lab"
-          Description: "Understand caching strategies and materialized views to avoid recomputing expensive queries every request."
-          Activity: "Create a materialized view for popular bread recipes. Write CREATE MATERIALIZED VIEW daily_specials AS SELECT... Show how to refresh the view and when to use it."
-          Hints:
-            - "CREATE MATERIALIZED VIEW daily_specials AS SELECT recipe_name, avg_rating, order_count"
-            - "Use aggregate functions: COUNT(), AVG(), SUM()"
-            - "Refresh with: REFRESH MATERIALIZED VIEW daily_specials"
-            - "Schedule refreshes during low-traffic periods"
-            - "Use for expensive queries that don't need real-time data"
+            - "Use Promise.all() for atomic operations"
+            - "Create backup of all affected records first"
+            - "Implement transaction.commit() and transaction.rollback()"
+            - "Validate all updates before applying any"
     - Name: "Seattle"
-      Description: "Finish in Seattle where reliability, deployment, and observability matter — prepare your kitchen for production service."
-      Challenge: "Implement Update and Delete operations safely; set up backups, migrations, and a simple deployment of your database-backed app."
-      Analogy: "Deployment is like opening your restaurant — you must ensure recipes are reproducible, backups are ready, and orders are tracked."
+      Icon: "🌲"
+      Theme: "Teal & Salmon"
+      Unlocked: false
+      Description: "Sustainable cleanup and analytics! Master deletion strategies and build insightful reports from your data."
+      Challenge: "DELETE & ANALYZE: Sustainable Cleanup - Implement archival strategies and generate analytics"
+      Analogy: "Managing data lifecycle is like sustainable cooking — sometimes you preserve ingredients, sometimes you compost them."
+      XP_Reward: 150
+      Unlock_Condition: "Complete 2/3 San Francisco activities"
       Pitstops:
-        - Name: "Salmon Smokehouse"
-          Description: "Practice safe UPDATE and DELETE operations with transactions and soft-deletes (archiving) to avoid accidental data loss."
-          Activity: "Write safe UPDATE and DELETE operations for menu management. Use transactions, WHERE clauses, and soft-delete (is_active=false) instead of hard DELETE. Include rollback examples."
+        - Name: "🐟 Salmon Smokehouse"
+          Description: "Implement soft-delete patterns to archive data safely without losing historical information."
+          Activity: "Create an ArchiveManager class with methods: softDelete(), restore(), permanentDelete(), and getArchivedItems(). Include audit trail functionality."
+          XP: 50
+          Type: "DELETE"
+          Validation_Keywords: ["deleted_at", "archived", "restore", "audit"]
           Hints:
-            - "Always use WHERE clause: UPDATE dishes SET price = 15.99 WHERE id = 1"
-            - "Soft delete: UPDATE dishes SET is_active = false WHERE id = 1"
-            - "Wrap in transaction: BEGIN; UPDATE...; COMMIT; or ROLLBACK;"
-            - "Test WHERE clause with SELECT first"
-            - "Keep audit trail: UPDATE dishes SET deleted_at = NOW() WHERE id = 1"
-        - Name: "Coffee Roastery"
-          Description: "Set up logging and basic monitoring for your database queries and endpoints — know when the app is under pressure (high load)."
-          Activity: "Design a query logging system. Create a logs table: timestamp, query_type, execution_time, user_id. Write INSERT statements to track slow queries (>1 second)."
+            - "softDelete() sets deleted_at: new Date()"
+            - "Filter out deleted items in normal queries"
+            - "restore() sets deleted_at to null"
+            - "Keep audit log of all deletion actions"
+        - Name: "☕ Coffee Analytics Lab"
+          Description: "Build a comprehensive analytics dashboard using aggregation and data visualization."
+          Activity: "Create an AnalyticsDashboard class that generates insights: topIngredients(), avgCaloriesByCity(), dishCategoryBreakdown(), and trendsOverTime()."
+          XP: 70
+          Type: "ANALYZE"
+          Validation_Keywords: ["reduce", "group", "analytics", "aggregate"]
           Hints:
-            - "CREATE TABLE query_logs (id, timestamp, query_type, execution_time, user_id)"
-            - "Use DATETIME or TIMESTAMP for timestamp field"
-            - "Log after each query: INSERT INTO query_logs VALUES (NOW(), 'SELECT', 1.5, 123)"
-            - "Add index on timestamp for efficient log analysis"
-            - "Set up alerts for queries > 1 second execution time"
-        - Name: "Pike Place Backup Cellar"
-          Description: "Learn backup strategies and simple migration patterns to evolve schemas without losing customer data."
-          Activity: "Write a database migration script. Add a new column 'allergens' to existing 'dishes' table. Use ALTER TABLE ADD COLUMN with DEFAULT values. Include rollback plan."
+            - "Use array.reduce() to aggregate data"
+            - "Group by categories using Map objects"
+            - "Calculate averages, sums, and counts"
+            - "Format results for visualization"
+        - Name: "🗑️ Sustainable Cleanup Center"
+          Description: "Master the full data lifecycle with smart cleanup policies and optimization strategies."
+          Activity: "Build a DataLifecycleManager that implements retention policies, cleanup old records, optimizes storage, and generates lifecycle reports."
+          XP: 30
+          Type: "OPTIMIZE"
+          Validation_Keywords: ["cleanup", "retention", "optimize", "lifecycle"]
           Hints:
-            - "ALTER TABLE dishes ADD COLUMN allergens VARCHAR(255) DEFAULT ''"
-            - "Test on copy of production data first"
-            - "Rollback: ALTER TABLE dishes DROP COLUMN allergens"
-            - "Use migration versioning: migration_001_add_allergens.sql"
-            - "Always backup before running migrations"
-        - Name: "PWA Food Truck Pier"
-          Description: "Deploy a small API-backed demo (Heroku/Vercel/Netlify + managed DB) and ensure it responds reliably to real requests."
-          Activity: "Design a simple food truck API. Create endpoints: GET /menu, POST /orders, GET /orders/:id. Write pseudocode for each endpoint with error handling and status codes."
-          Hints:
-            - "GET /menu: return JSON array of menu items with 200 status"
-            - "POST /orders: validate input, insert to DB, return 201 with order ID"
-            - "GET /orders/:id: find by ID, return 404 if not found, 200 with order data"
-            - "Use try/catch blocks for database errors"
-            - "Return proper HTTP status codes: 200, 201, 400, 404, 500"
+            - "Implement age-based cleanup policies"
+            - "Clean up orphaned records and broken relationships"
+            - "Optimize data structures for better performance"
+            - "Generate reports on data usage and cleanup"
 ---
 {%- include tailwind/project_nodes.html -%}

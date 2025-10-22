@@ -304,7 +304,7 @@
             
             <h3 class="text-2xl font-bold text-white mb-4 cute-heading">Sports Route</h3>
             <p class="text-gray-300 text-sm mb-8 leading-relaxed cute-text">
-              Athletic adventure! San Diego → LA → San Francisco → Seattle learning <strong>APIs & Integration</strong> through local teams, stadiums, and sports data.
+              Athletic adventure! San Diego → LA → San Francisco → Seattle learning <strong>APIs & Integration</strong> through local teams, stadiums, sports data, and athletic facilities.
             </p>
             
             <div class="module-progress mb-6">
@@ -427,85 +427,148 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-  // ALL THEMES UNLOCKED FOR DEVELOPMENT
-  const userProgress = {
-    themes: ['ai', 'sports', 'food', 'travel'], // REORDERED
-    progress: {
-      ai: 0,
-      sports: 0,
-      food: 0,
-      travel: 0
-    },
-    tokensEarned: 0,
-    citiesVisited: 0
-  };
-
-  // Update progress indicators
-  function updateProgress() {
+  // Progress tracking system
+  const PROGRESS_KEY = 'mchopiee_travel_progress';
+  
+  // Load saved progress or initialize
+  function loadProgress() {
+    const saved = localStorage.getItem(PROGRESS_KEY);
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error('Error loading progress:', e);
+      }
+    }
+    
+    // Default progress structure
+    return {
+      themes: {
+        ai: { completedActivities: [], attemptedActivities: [], totalProgress: 0 },
+        sports: { completedActivities: [], attemptedActivities: [], totalProgress: 0 },
+        food: { completedActivities: [], attemptedActivities: [], totalProgress: 0 },
+        travel: { completedActivities: [], attemptedActivities: [], totalProgress: 0 }
+      },
+      globalStats: {
+        totalActivitiesCompleted: 0,
+        totalSegmentsCompleted: 0,
+        citiesVisited: 0,
+        tokensEarned: 0
+      }
+    };
+  }
+  
+  // Save progress to localStorage
+  function saveProgress(progressData) {
+    try {
+      localStorage.setItem(PROGRESS_KEY, JSON.stringify(progressData));
+      console.log('Progress saved:', progressData);
+    } catch (e) {
+      console.error('Error saving progress:', e);
+    }
+  }
+  
+  // Calculate progress percentage for a theme
+  function calculateThemeProgress(themeData) {
+    // Each theme has 4 cities, estimate 3-4 activities per city
+    const estimatedTotalActivities = 12; // 4 cities × 3 activities average
+    const completedActivities = themeData.completedActivities.length;
+    return Math.min(100, Math.round((completedActivities / estimatedTotalActivities) * 100));
+  }
+  
+  // Update progress indicators on the hub
+  function updateProgressDisplay() {
+    const progress = loadProgress();
+    
     document.querySelectorAll('[data-node]').forEach(card => {
       const theme = card.dataset.node;
+      const themeData = progress.themes[theme];
       const progressBar = card.querySelector('.progress-bar');
       const progressFill = card.querySelector('.progress-fill');
       const badge = card.querySelector('.status-badge');
-      const button = card.querySelector('.theme-button');
       const progressText = card.querySelector('.text-xs.text-gray-400');
       
-      // Update node numbers in badges
-      const nodeNumbers = { ai: 1, sports: 2, food: 3, travel: 4 };
-      if (badge.textContent.includes('Node')) {
-        badge.textContent = `Node ${nodeNumbers[theme]}`;
-      }
+      // Calculate progress
+      const progressPercent = calculateThemeProgress(themeData);
+      const citiesVisited = Math.floor(themeData.completedActivities.length / 3); // 3 activities per city
+      const totalCities = 4;
       
-      // ALL THEMES ARE NOW UNLOCKED
-      card.querySelector('.card-inner').style.opacity = '1';
-      badge.className = 'status-badge status-current';
-      button.className = 'theme-button w-full cute-button-text';
-      button.disabled = false;
+      // Update visual progress
+      progressBar.style.width = progressPercent + '%';
+      progressFill.style.width = progressPercent + '%';
       
-      // Set progress
-      const progress = userProgress.progress[theme];
-      progressBar.style.width = progress + '%';
-      progressFill.style.width = progress + '%';
+      // Update progress text with activities info
+      const completedActivities = themeData.completedActivities.length;
+      progressText.innerHTML = `Progress: ${citiesVisited}/${totalCities} Cities<br><small>${completedActivities} activities completed</small>`;
       
-      // ALL THEMES use same city count since they're all the same route
-      const citiesCompleted = Math.floor(progress / 25);
-      progressText.textContent = `Progress: ${citiesCompleted}/4 Cities`;
-      
-      if (progress === 100) {
+      // Update badge based on progress
+      if (progressPercent === 100) {
         badge.className = 'status-badge status-completed';
         badge.textContent = '✅ Complete';
+      } else if (progressPercent > 0) {
+        badge.className = 'status-badge status-current';
+        badge.textContent = `${progressPercent}% Done`;
+      } else {
+        badge.className = 'status-badge status-current';
+        badge.textContent = `Node ${getNodeNumber(theme)}`;
+      }
+      
+      // Add visual indicator for started themes
+      if (completedActivities > 0) {
+        card.classList.add('started');
+        card.style.borderColor = 'rgba(139, 92, 246, 0.6)';
       }
     });
-
-    // Update stats
-    document.getElementById('themes-completed').textContent = userProgress.themes.length;
-    document.getElementById('cities-visited').textContent = userProgress.citiesVisited;
-    document.getElementById('tokens-earned').textContent = userProgress.tokensEarned;
     
-    const overallProgress = Math.round(
-      Object.values(userProgress.progress).reduce((a, b) => a + b, 0) / 4
-    );
-    document.getElementById('overall-progress').textContent = overallProgress + '%';
+    // Update global stats if elements exist
+    const citiesElement = document.getElementById('cities-visited');
+    const tokensElement = document.getElementById('tokens-earned');
+    const progressElement = document.getElementById('overall-progress');
+    
+    if (citiesElement) citiesElement.textContent = progress.globalStats.citiesVisited;
+    if (tokensElement) tokensElement.textContent = progress.globalStats.tokensEarned;
+    
+    if (progressElement) {
+      const overallProgress = Math.round(
+        (calculateThemeProgress(progress.themes.ai) + 
+         calculateThemeProgress(progress.themes.sports) + 
+         calculateThemeProgress(progress.themes.food) + 
+         calculateThemeProgress(progress.themes.travel)) / 4
+      );
+      progressElement.textContent = overallProgress + '%';
+    }
   }
-
-  // Start theme function
-  window.startTheme = function(themeName) {
-    // ALL themes are now accessible for development
-    window.location.href = `{{ site.baseurl }}/node/${themeName}`;
+  
+  function getNodeNumber(theme) {
+    const nodeMap = { ai: 1, sports: 2, food: 3, travel: 4 };
+    return nodeMap[theme] || 1;
+  }
+  
+  // Make progress functions globally available
+  window.McHopieeProgress = {
+    loadProgress: loadProgress,
+    saveProgress: saveProgress,
+    updateProgressDisplay: updateProgressDisplay
   };
-
+  
+  // Start theme function (updated to use Jekyll baseurl)
+  window.startTheme = function(themeName) {
+    console.log('Starting theme:', themeName);
+    window.location.href = '{{ site.baseurl }}/node/' + themeName;
+  };
+  
   // Add card hover effects
   document.querySelectorAll('.card-3d').forEach(card => {
-    card.addEventListener('mouseenter', () => {
-      card.style.zIndex = '10';
+    card.addEventListener('mouseenter', function() {
+      this.style.transform = 'translateY(-10px) rotateX(5deg) rotateY(5deg)';
     });
     
-    card.addEventListener('mouseleave', () => {
-      card.style.zIndex = '1';
+    card.addEventListener('mouseleave', function() {
+      this.style.transform = 'translateY(0) rotateX(0deg) rotateY(0deg)';
     });
   });
 
-  // Initialize
-  updateProgress();
+  // Initialize progress display
+  updateProgressDisplay();
 });
 </script>
