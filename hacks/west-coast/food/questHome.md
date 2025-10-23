@@ -5,7 +5,7 @@ title: Travel Quest — Food Route
 description: >
   🎒 Progressive road-trip learning: San Diego → LA → SF → Seattle. Build dishes, query menus, handle transactions, and master database cleanup through coastal cuisine adventures.
 author: Hope F.
-permalink: /node/food
+permalink: /west-coast/food/
 lxdData:
   Title: "🍕 Food Route — Back-End & Databases"
   Description: "Progressive road-trip learning: build dishes, query menus, handle transactions, and master database cleanup through coastal cuisine adventures."
@@ -152,4 +152,4 @@ lxdData:
             - "Optimize data structures for better performance"
             - "Generate reports on data usage and cleanup"
 ---
-{%- include tailwind/project_nodes.html -%}
+{%- include tailwind/food_module.html -%}
