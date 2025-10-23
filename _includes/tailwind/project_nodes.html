@@ -38,6 +38,71 @@
   transition: all 0.3s ease;
 }
 
+/* LOCKED CITIES */
+.city-card.locked {
+  background: linear-gradient(135deg, 
+    rgba(55, 65, 81, 0.4) 0%, 
+    rgba(75, 85, 99, 0.4) 50%, 
+    rgba(55, 65, 81, 0.4) 100%);
+  border: 2px solid rgba(107, 114, 128, 0.3);
+  opacity: 0.6;
+  filter: grayscale(80%);
+}
+
+.city-card.locked h3 {
+  color: #9ca3af !important;
+}
+
+.city-card.locked p, .city-card.locked div {
+  color: #6b7280 !important;
+}
+
+.city-card.locked::after {
+  content: '🔒 Complete previous city to unlock';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(31, 41, 55, 0.95);
+  color: #9ca3af;
+  padding: 12px 24px;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 14px;
+  border: 1px solid rgba(107, 114, 128, 0.5);
+  z-index: 10;
+}
+
+.city-card.unlocked {
+  animation: unlockPulse 1s ease-out;
+}
+
+@keyframes unlockPulse {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.7); }
+  50% { transform: scale(1.02); box-shadow: 0 0 0 20px rgba(139, 92, 246, 0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(139, 92, 246, 0); }
+}
+
+/* Progress indicators on city cards */
+.city-progress {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(139, 92, 246, 0.2);
+  border: 1px solid rgba(139, 92, 246, 0.5);
+  border-radius: 20px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #c084fc;
+}
+
+.city-progress.completed {
+  background: rgba(16, 185, 129, 0.2);
+  border: 1px solid rgba(16, 185, 129, 0.5);
+  color: #10b981;
+}
+
 /* Travel route connector */
 .travel-route {
   display: flex;
@@ -57,6 +122,14 @@
   border-radius: 2px;
   position: relative;
   animation: pulse 2s infinite;
+}
+
+.route-line.locked {
+  background: linear-gradient(to bottom, 
+    rgba(107, 114, 128, 0.4) 0%,
+    rgba(107, 114, 128, 0.4) 50%,
+    rgba(107, 114, 128, 0.4) 100%);
+  animation: none;
 }
 
 @keyframes pulse {
@@ -90,6 +163,18 @@
 .route-button.active {
   background: rgba(139, 92, 246, 0.3);
   border-color: rgba(139, 92, 246, 1);
+}
+
+.route-button.locked {
+  background: rgba(107, 114, 128, 0.3);
+  border-color: rgba(107, 114, 128, 0.5);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.route-button.locked:hover {
+  transform: translate(-50%, -50%);
+  box-shadow: none;
 }
 
 /* ENHANCED: Pitstops container with dropdown functionality */
@@ -151,6 +236,7 @@
   padding: 20px;
   transition: all 0.3s ease;
   cursor: default;
+  position: relative;
 }
 
 .pitstop-item:hover {
@@ -158,6 +244,14 @@
   border-color: rgba(59, 130, 246, 0.5);
   transform: translateY(-2px);
   box-shadow: 0 4px 16px rgba(59, 130, 246, 0.2);
+}
+
+.pitstop-item.completed::after {
+  content: '✅';
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 18px;
 }
 
 .pitstop-name {
@@ -339,6 +433,28 @@
   left: 100%;
 }
 
+/* UNLOCK NOTIFICATION */
+.unlock-notification {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  padding: 16px 32px;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 16px;
+  z-index: 1000;
+  box-shadow: 0 8px 32px rgba(16, 185, 129, 0.4);
+  animation: slideInDown 0.5s ease-out;
+}
+
+@keyframes slideInDown {
+  from { transform: translateX(-50%) translateY(-100px); opacity: 0; }
+  to { transform: translateX(-50%) translateY(0); opacity: 1; }
+}
+
 @media (max-width: 768px) {
   .city-card {
     padding: 16px;
@@ -361,6 +477,11 @@
   .route-button {
     font-size: 18px;
     padding: 8px;
+  }
+  
+  .city-card.locked::after {
+    font-size: 12px;
+    padding: 10px 16px;
   }
 }
 </style>
@@ -400,9 +521,13 @@
         {% endif %}
       </div>
 
-      <!-- Debug info -->
-      <div class="text-center mb-8 text-yellow-400 cute-text">
-        <p>Debug: Cities found: {% if page.lxdData.Cities %}{{ page.lxdData.Cities.size }}{% else %}0{% endif %}</p>
+      <!-- Progress Overview -->
+      <div class="text-center mb-8">
+        <div class="inline-flex items-center gap-4 bg-rgba(31, 41, 55, 0.8) rounded-2xl px-6 py-3 border border-purple-500/30">
+          <span class="text-white cute-text">Journey Progress:</span>
+          <span class="text-green-400 font-bold" id="overall-progress">City 1/4</span>
+          <span class="text-purple-400" id="total-activities">0 activities completed</span>
+        </div>
       </div>
 
       <!-- Travel Route with Cities and Pitstops -->
@@ -411,7 +536,12 @@
           {% for city in page.lxdData.Cities %}
             
             <!-- City Card -->
-            <div class="city-card rounded-2xl shadow-lg">
+            <div class="city-card rounded-2xl shadow-lg relative" id="city-{{ forloop.index0 }}" data-city-index="{{ forloop.index0 }}">
+              <!-- Progress indicator -->
+              <div class="city-progress" id="progress-{{ forloop.index0 }}">
+                0/{{ city.Pitstops.size | default: 3 }}
+              </div>
+              
               <!-- City Title -->
               <div class="w-full mb-4">
                 <h3 class="text-3xl xl:text-4xl font-bold text-white cute-heading">
@@ -440,9 +570,9 @@
             <!-- Travel Route & Pitstops (only if not the last city) -->
             {% unless forloop.last %}
               <div class="travel-route">
-                <div class="route-line">
+                <div class="route-line" id="route-{{ forloop.index0 }}">
                   <!-- ENHANCED: Clickable route button -->
-                  <button class="route-button" data-route="{{ forloop.index0 }}" title="Click to explore pitstops">
+                  <button class="route-button" id="route-btn-{{ forloop.index0 }}" data-route="{{ forloop.index0 }}" title="Click to explore pitstops">
                     🛣️
                   </button>
                 </div>
@@ -464,7 +594,7 @@
                 
                 <div class="pitstops-grid">
                   {% for pitstop in city.Pitstops %}
-                    <div class="pitstop-item">
+                    <div class="pitstop-item" id="pitstop-{{ forloop.parentloop.index0 }}-{{ forloop.index0 }}">
                       <div class="pitstop-name">
                         📍 {{ pitstop.Name }}
                       </div>
@@ -475,7 +605,7 @@
                       <!-- DYNAMIC ACTIVITY SECTION -->
                       <div class="pitstop-activity">
                         <div class="activity-title">
-                          🎯 JavaScript Challenge
+                          🎯 Code Challenge
                           <button class="activity-toggle" onclick="toggleActivity('{{ forloop.parentloop.index0 }}-{{ forloop.index0 }}')">
                             Try It
                           </button>
@@ -483,6 +613,8 @@
                         
                         <div class="activity-content" id="activity-{{ forloop.parentloop.index0 }}-{{ forloop.index0 }}">
                           <div class="activity-prompt" id="prompt-{{ forloop.parentloop.index0 }}-{{ forloop.index0 }}"
+                               data-city="{{ forloop.parentloop.index0 }}"
+                               data-pitstop="{{ forloop.index0 }}"
                                data-original-activity="{{ pitstop.Activity | escape }}"
                                data-hints="{{ pitstop.Hints | join: '||' | escape }}">
                             <!-- Dynamic prompt will be generated by JavaScript -->
@@ -491,8 +623,8 @@
                           <textarea 
                             class="activity-input" 
                             id="input-{{ forloop.parentloop.index0 }}-{{ forloop.index0 }}"
-                            placeholder="Type your JavaScript solution here..."
-                            rows="4">
+                            placeholder="Write your code solution here..."
+                            rows="6">
                           </textarea>
                           
                           <div>
@@ -539,85 +671,208 @@
 </div>
 
 <script type="text/javascript">
-// Enhanced map visualization - ADD THIS AT THE TOP OF THE SCRIPT SECTION
-function createFoodRouteMap() {
-  const mapContainer = document.createElement('div');
-  mapContainer.className = 'food-route-map mb-8';
-  mapContainer.innerHTML = `
-    <div class="relative bg-gradient-to-b from-blue-200 to-green-200 rounded-2xl p-8 mx-auto max-w-4xl">
-      <!-- Map SVG with route line -->
-      <svg viewBox="0 0 400 600" class="w-full h-64">
-        <!-- Coast line -->
-        <path d="M50 50 Q 60 150 40 250 Q 30 350 50 450 Q 70 550 60 600" 
-              stroke="#2563eb" stroke-width="3" fill="none" class="coast-line"/>
-        
-        <!-- Route line connecting cities -->
-        <path d="M80 480 L 120 360 L 160 240 L 200 120" 
-              stroke="#8b5cf6" stroke-width="4" fill="none" 
-              stroke-dasharray="10,5" class="route-line"/>
-        
-        <!-- City markers -->
-        <g class="city-marker" data-city="san_diego">
-          <circle cx="80" cy="480" r="20" fill="#fbbf24" stroke="#f59e0b" stroke-width="3"/>
-          <text x="80" y="510" text-anchor="middle" class="text-sm font-bold" fill="white">San Diego</text>
-          <text x="80" y="485" text-anchor="middle" class="text-xl">☀️</text>
-        </g>
-        
-        <g class="city-marker" data-city="los_angeles">
-          <circle cx="120" cy="360" r="20" fill="#a78bfa" stroke="#8b5cf6" stroke-width="3"/>
-          <text x="120" y="390" text-anchor="middle" class="text-sm font-bold" fill="white">Los Angeles</text>
-          <text x="120" y="365" text-anchor="middle" class="text-xl">🌴</text>
-        </g>
-        
-        <g class="city-marker" data-city="san_francisco">
-          <circle cx="160" cy="240" r="20" fill="#60a5fa" stroke="#3b82f6" stroke-width="3"/>
-          <text x="160" y="270" text-anchor="middle" class="text-sm font-bold" fill="white">San Francisco</text>
-          <text x="160" y="245" text-anchor="middle" class="text-xl">🌁</text>
-        </g>
-        
-        <g class="city-marker" data-city="seattle">
-          <circle cx="200" cy="120" r="20" fill="#34d399" stroke="#10b981" stroke-width="3"/>
-          <text x="200" y="150" text-anchor="middle" class="text-sm font-bold" fill="white">Seattle</text>
-          <text x="200" y="125" text-anchor="middle" class="text-xl">🌲</text>
-        </g>
-      </svg>
-      
-      <!-- Progress indicators -->
-      <div class="mt-6 flex justify-between items-center">
-        <div class="text-center">
-          <div class="text-2xl font-bold text-purple-600" id="total-xp">0 XP</div>
-          <div class="text-sm text-gray-600">Experience Points</div>
-        </div>
-        <div class="text-center">
-          <div class="text-2xl font-bold text-blue-600" id="current-city">San Diego</div>
-          <div class="text-sm text-gray-600">Current Location</div>
-        </div>
-        <div class="text-center">
-          <div class="text-2xl font-bold text-green-600" id="badges-earned">0/4</div>
-          <div class="text-sm text-gray-600">Badges Earned</div>
-        </div>
-      </div>
-    </div>
-  `;
+// CITY UNLOCKING SYSTEM
+let gameProgress = {
+  unlockedCities: [0], // San Diego starts unlocked
+  completedActivities: {},
+  totalActivitiesCompleted: 0
+};
+
+// Load progress from localStorage
+function loadGameProgress() {
+  const saved = localStorage.getItem('mchopiee_city_progress');
+  if (saved) {
+    try {
+      gameProgress = JSON.parse(saved);
+    } catch (e) {
+      console.error('Error loading game progress:', e);
+    }
+  }
+}
+
+// Save progress to localStorage
+function saveGameProgress() {
+  try {
+    localStorage.setItem('mchopiee_city_progress', JSON.stringify(gameProgress));
+  } catch (e) {
+    console.error('Error saving game progress:', e);
+  }
+}
+
+// Initialize city locking on page load
+function initializeCityLocking() {
+  loadGameProgress();
   
-  return mapContainer;
+  // Get all city cards
+  const cityCards = document.querySelectorAll('.city-card');
+  const routeButtons = document.querySelectorAll('.route-button');
+  const routeLines = document.querySelectorAll('.route-line');
+  
+  // Lock all cities except unlocked ones
+  cityCards.forEach((card, index) => {
+    if (!gameProgress.unlockedCities.includes(index)) {
+      lockCity(index);
+    } else {
+      unlockCity(index);
+    }
+  });
+  
+  // Lock route buttons for locked cities
+  routeButtons.forEach((button, index) => {
+    if (!gameProgress.unlockedCities.includes(index + 1)) {
+      lockRoute(index);
+    }
+  });
+  
+  updateProgressDisplay();
+  loadAndDisplayProgress();
+}
+
+function lockCity(cityIndex) {
+  const cityCard = document.getElementById(`city-${cityIndex}`);
+  if (cityCard) {
+    cityCard.classList.add('locked');
+    cityCard.style.position = 'relative';
+  }
+}
+
+function unlockCity(cityIndex) {
+  const cityCard = document.getElementById(`city-${cityIndex}`);
+  if (cityCard) {
+    cityCard.classList.remove('locked');
+    cityCard.classList.add('unlocked');
+    
+    // Show unlock notification if this is a new unlock
+    if (cityIndex > 0) {
+      showUnlockNotification(cityIndex);
+    }
+  }
+}
+
+function lockRoute(routeIndex) {
+  const routeButton = document.getElementById(`route-btn-${routeIndex}`);
+  const routeLine = document.getElementById(`route-${routeIndex}`);
+  
+  if (routeButton) {
+    routeButton.classList.add('locked');
+    routeButton.title = 'Complete current city to unlock';
+  }
+  
+  if (routeLine) {
+    routeLine.classList.add('locked');
+  }
+}
+
+function unlockRoute(routeIndex) {
+  const routeButton = document.getElementById(`route-btn-${routeIndex}`);
+  const routeLine = document.getElementById(`route-${routeIndex}`);
+  
+  if (routeButton) {
+    routeButton.classList.remove('locked');
+    routeButton.title = 'Click to explore pitstops';
+  }
+  
+  if (routeLine) {
+    routeLine.classList.remove('locked');
+  }
+}
+
+function showUnlockNotification(cityIndex) {
+  const cityNames = ['San Diego', 'Los Angeles', 'San Francisco', 'Seattle'];
+  const cityName = cityNames[cityIndex] || `City ${cityIndex + 1}`;
+  
+  const notification = document.createElement('div');
+  notification.className = 'unlock-notification';
+  notification.innerHTML = `🎉 ${cityName} Unlocked! Continue your journey!`;
+  
+  document.body.appendChild(notification);
+  
+  // Remove notification after 4 seconds
+  setTimeout(() => {
+    if (document.body.contains(notification)) {
+      notification.style.animation = 'slideInDown 0.5s ease-out reverse';
+      setTimeout(() => {
+        document.body.removeChild(notification);
+      }, 500);
+    }
+  }, 4000);
+}
+
+function checkCityCompletion(cityIndex) {
+  // Count completed activities for this city
+  const cityActivities = Object.keys(gameProgress.completedActivities).filter(key => 
+    key.startsWith(`${cityIndex}-`)
+  );
+  
+  // Get total activities for this city (count pitstops)
+  const pitstops = document.querySelectorAll(`[id^="pitstop-${cityIndex}-"]`);
+  const totalActivities = pitstops.length;
+  
+  // Update progress display
+  const progressElement = document.getElementById(`progress-${cityIndex}`);
+  if (progressElement) {
+    progressElement.textContent = `${cityActivities.length}/${totalActivities}`;
+    
+    if (cityActivities.length === totalActivities && totalActivities > 0) {
+      progressElement.classList.add('completed');
+      progressElement.textContent = '✅ Complete';
+    }
+  }
+  
+  // Check if city should be completed (all activities done)
+  if (cityActivities.length >= totalActivities && totalActivities > 0) {
+    completeCity(cityIndex);
+  }
+}
+
+function completeCity(cityIndex) {
+  // Mark next city as unlocked
+  const nextCityIndex = cityIndex + 1;
+  
+  if (nextCityIndex < 4 && !gameProgress.unlockedCities.includes(nextCityIndex)) {
+    gameProgress.unlockedCities.push(nextCityIndex);
+    saveGameProgress();
+    
+    // Unlock the next city
+    unlockCity(nextCityIndex);
+    unlockRoute(cityIndex); // Unlock the route TO the next city
+    
+    updateProgressDisplay();
+  }
+}
+
+function updateProgressDisplay() {
+  // Update overall progress
+  const overallProgress = document.getElementById('overall-progress');
+  const totalActivitiesElement = document.getElementById('total-activities');
+  
+  if (overallProgress) {
+    const completedCities = Math.max(0, gameProgress.unlockedCities.length - 1);
+    overallProgress.textContent = `City ${gameProgress.unlockedCities.length}/4`;
+  }
+  
+  if (totalActivitiesElement) {
+    totalActivitiesElement.textContent = `${gameProgress.totalActivitiesCompleted} activities completed`;
+  }
 }
 
 document.addEventListener('DOMContentLoaded', function() {
   console.log('=== ROUTE DROPDOWN SETUP ===');
   
-  // Insert map before cities - ADD THIS TO YOUR EXISTING DOMContentLoaded
-  const container = document.querySelector('.max-w-5xl.mx-auto');
-  if (container) {
-    const mapElement = createFoodRouteMap();
-    container.insertBefore(mapElement, container.firstChild);
-  }
+  // Initialize city locking system FIRST
+  initializeCityLocking();
   
   var routeButtons = document.querySelectorAll('.route-button');
   console.log('Found ' + routeButtons.length + ' route buttons');
   
   for (var i = 0; i < routeButtons.length; i++) {
     routeButtons[i].addEventListener('click', function(e) {
+      // Check if route is locked
+      if (this.classList.contains('locked')) {
+        alert('🔒 Complete the current city first to unlock this route!');
+        return;
+      }
+      
       console.log('Route button clicked!');
       
       var routeIndex = this.getAttribute('data-route');
@@ -664,106 +919,85 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
   
-  // Initialize JavaScript activities
-  initializeJavaScriptActivities();
+  // Initialize city-specific activities
+  initializeCityActivities();
 });
 
-function initializeJavaScriptActivities() {
-  console.log('Initializing JavaScript activities...');
+function initializeCityActivities() {
+  console.log('Initializing city-specific activities...');
   
-  var activityPrompts = document.querySelectorAll('[data-original-activity]');
+  var activityPrompts = document.querySelectorAll('[data-city]');
   
   for (var i = 0; i < activityPrompts.length; i++) {
     var prompt = activityPrompts[i];
+    var cityIndex = parseInt(prompt.getAttribute('data-city'));
+    var pitstopIndex = parseInt(prompt.getAttribute('data-pitstop'));
     var originalActivity = prompt.getAttribute('data-original-activity');
-    var jsActivity = convertToJavaScript(originalActivity);
-    prompt.textContent = jsActivity;
-    console.log('Converted activity:', jsActivity);
+    
+    var cityActivity = generateCityActivity(cityIndex, pitstopIndex, originalActivity);
+    prompt.textContent = cityActivity;
+    console.log('City ' + cityIndex + ' Pitstop ' + pitstopIndex + ':', cityActivity);
   }
 }
 
-function convertToJavaScript(originalActivity) {
-  if (!originalActivity) {
-    return 'Write JavaScript code to practice programming concepts.';
+// UPDATED: City-specific activity generation based on your specifications
+function generateCityActivity(cityIndex, pitstopIndex, originalActivity) {
+  const cityActivities = {
+    // 🏖️ San Diego - "Build the Baja Bowl" (CREATE)
+    0: [
+      // Form validation & dish creation
+      'Create a Dish Form class that validates: dishName (required, min 3 chars), category (bowl/taco/salad), ingredients array (min 1 item). Include methods validateRequired() and getFormData().',
+      
+      // Ingredient management
+      'Build an IngredientManager class with methods: addIngredient(name, qty, unit), removeIngredient(index), validateIngredients(). Handle edge cases like duplicate ingredients and invalid quantities.',
+      
+      // Database simulation with API calls
+      'Write an async function createDish(dishData) that simulates POST /api/dishes. Include proper error handling, 201 response simulation, and toast notification: "Baja Bowl added — +50 XP".'
+    ],
+    
+    // 🌴 Los Angeles - "Food Truck Tasting" (READ & FILTER)
+    1: [
+      // List & filter implementation
+      'Create a DishFilter class that implements: filterByCity(dishes, city), filterByCalories(dishes, minCal), filterByIngredient(dishes, ingredient). Use array methods and pagination logic.',
+      
+      // Search functionality with performance
+      'Build a search function that queries: /api/dishes?city=la&page=1&per=10&min_cal=300&ingredient=avocado. Include loading states, error handling, and simulated indexing performance metrics.',
+      
+      // Dev Console SQL display
+      'Write a QueryBuilder class that generates safe SQL examples: "SELECT * FROM dishes WHERE city = ? AND calories >= ? AND ingredients LIKE ?". Display in a Dev Console with syntax highlighting.'
+    ],
+    
+    // 🌁 San Francisco - "Gourmet Pop-Up" (UPDATE & TRANSACTIONS)
+    2: [
+      // Edit dish with transactions
+      'Create an EditDish class with methods: updateIngredients(dishId, ingredients), renameDish(dishId, newName), saveChanges(). Wrap all changes in a simulated transaction with rollback capability.',
+      
+      // Conflict resolution system
+      'Build a ConflictResolver that detects version mismatches: checkVersion(dishId, currentVersion), handleConflict(conflicts), showResolutionModal(). Include optimistic locking simulation.',
+      
+      // Preview changes modal
+      'Implement a ChangePreview component that shows before/after diff: generateDiff(original, updated), displayChanges(), confirmChanges(). Include PUT /api/dishes/:id simulation with atomic updates.'
+    ],
+    
+    // 🌲 Seattle - "Sustainable Cleanup with Clam Chowder" (DELETE & ADVANCED)
+    3: [
+      // Soft delete implementation
+      'Create a DeletionManager class with methods: softDelete(dishId), hardDelete(dishId), restoreArchived(dishId). Add deleted_at timestamps and implement archival list filtering.',
+      
+      // Analytics dashboard
+      'Build an AnalyticsDashboard that aggregates: topIngredients(), caloriesByCity(), dishesByCategory(), archivedVsActive(). Use reduce(), groupBy(), and data visualization helpers.',
+      
+      // Cascading delete system
+      'Implement cascading deletion: deleteDishAndRelated(dishId) that removes dish_ingredients, reviews, and photos. Include confirmation dialogs and undo functionality within 30 seconds.'
+    ]
+  };
+  
+  const activities = cityActivities[cityIndex];
+  if (!activities || pitstopIndex >= activities.length) {
+    return 'Write code to practice database operations and web development concepts.';
   }
   
-  var activity = originalActivity.toLowerCase();
-  
-  // Database table creation -> JavaScript object/class
-  if (activity.includes('create') && activity.includes('table')) {
-    if (activity.includes('taco')) {
-      return 'Create a JavaScript class called FishTaco with properties: id, fishType, toppings (array), sauce, price, spiceLevel. Add a method to calculate total price with tax.';
-    }
-    if (activity.includes('burrito')) {
-      return 'Design a JavaScript object structure for a burrito customization system. Create classes: Burrito, Ingredient. Add methods to addIngredient(), removeIngredient(), and calculatePrice().';
-    }
-    if (activity.includes('sauce')) {
-      return 'Create a JavaScript Map to store sauce data with heat levels. Write functions: getSauceByName(), addNewSauce(), and filterSaucesByHeat(level).';
-    }
-  }
-  
-  // INSERT operations -> Object creation and validation
-  if (activity.includes('insert')) {
-    if (activity.includes('ceviche')) {
-      return 'Write a JavaScript function validateCeviche(recipe) that checks: fish is "fresh", citrusTime is between 10-60 minutes, temperature is "cold". Return validation results.';
-    }
-    if (activity.includes('bbq') || activity.includes('transaction')) {
-      return 'Create an async function orderBBQCombo() that simulates ordering multiple items. Use Promise.all() to handle multiple async operations and proper error handling.';
-    }
-  }
-  
-  // API design -> Fetch and REST
-  if (activity.includes('api') || activity.includes('endpoint')) {
-    if (activity.includes('taco')) {
-      return 'Write a JavaScript function getTacos(filling, spice) that builds a query URL and uses fetch() to get taco data. Include error handling and response parsing.';
-    }
-    if (activity.includes('food truck')) {
-      return 'Design JavaScript functions for a food truck API: getMenu(), createOrder(items), getOrderStatus(id). Use async/await and include proper error handling.';
-    }
-  }
-  
-  // Validation and security -> Input sanitization
-  if (activity.includes('validation') || activity.includes('sanitiz')) {
-    return 'Create a JavaScript function sanitizeUserInput(data) that validates and cleans user inputs. Handle special characters, length limits, and prevent XSS attacks.';
-  }
-  
-  // Pagination -> Array methods and pagination logic
-  if (activity.includes('pagination') || activity.includes('limit')) {
-    return 'Write JavaScript pagination functions: getPage(data, pageNum, itemsPerPage), calculateTotalPages(totalItems, itemsPerPage). Include navigation logic.';
-  }
-  
-  // Indexing/optimization -> Caching and performance
-  if (activity.includes('index') || activity.includes('optimization')) {
-    return 'Implement a JavaScript caching system using Map. Create functions: setCache(key, value, ttl), getCache(key), clearExpired(). Add performance timing with console.time().';
-  }
-  
-  // JOIN operations -> Object merging and data combination
-  if (activity.includes('join')) {
-    return 'Write JavaScript functions to combine data from multiple arrays (dishes, ingredients, suppliers). Use array methods like map(), filter(), and reduce() to merge related data.';
-  }
-  
-  // Backup/migration -> LocalStorage and data management
-  if (activity.includes('backup') || activity.includes('migration')) {
-    return 'Create JavaScript functions for data backup: saveToLocalStorage(data), restoreFromBackup(timestamp), listAvailableBackups(). Handle storage quota and data validation.';
-  }
-  
-  // Monitoring/logging -> Performance tracking
-  if (activity.includes('logging') || activity.includes('monitoring')) {
-    return 'Build a JavaScript performance monitoring system. Track function execution times, API call durations, and user interactions. Store metrics and display simple analytics.';
-  }
-  
-  // Generic conversion
-  return 'JavaScript Challenge: ' + originalActivity.replace(/SQL|CREATE TABLE|INSERT|SELECT|UPDATE|DELETE/gi, function(match) {
-    var replacements = {
-      'SQL': 'JavaScript',
-      'CREATE TABLE': 'Create a JavaScript class',
-      'INSERT': 'Add data using JavaScript',
-      'SELECT': 'Filter data using JavaScript',
-      'UPDATE': 'Modify data using JavaScript',
-      'DELETE': 'Remove data using JavaScript'
-    };
-    return replacements[match.toUpperCase()] || match;
-  });
+  return activities[pitstopIndex];
 }
 
 function toggleActivity(activityId) {
@@ -787,172 +1021,147 @@ function toggleActivity(activityId) {
 function checkActivity(activityId) {
   var input = document.getElementById('input-' + activityId);
   var feedback = document.getElementById('feedback-' + activityId);
+  var prompt = document.getElementById('prompt-' + activityId);
   
-  if (!input || !feedback) {
-    console.error('Input or feedback element not found for:', activityId);
+  if (!input || !feedback || !prompt) {
+    console.error('Required elements not found for:', activityId);
     return;
   }
   
   var userInput = input.value.trim();
+  var cityIndex = parseInt(prompt.getAttribute('data-city'));
   
-  if (userInput.length < 15) {
-    showFeedback(feedback, "Try to provide a more detailed JavaScript solution! Add more code and explanation.", "warning");
+  if (userInput.length < 20) {
+    showFeedback(feedback, "Please provide a more detailed solution! Your code should be at least 20 characters.", "warning");
     return;
   }
   
-  // Check for JavaScript-specific terms
-  var jsTerms = ['function', 'const', 'let', 'var', 'class', 'async', 'await', 'fetch', 'map', 'filter', 'reduce', '=>', 'return'];
-  var hasJSTerms = jsTerms.some(function(term) {
-    return userInput.toLowerCase().includes(term);
-  });
+  // City-specific validation
+  var validation = validateCityActivity(cityIndex, userInput);
   
-  if (hasJSTerms) {
-    var hasGoodPractices = userInput.includes('//') || userInput.includes('const') || userInput.includes('let') || userInput.includes('try');
-    
-    if (hasGoodPractices) {
-      showFeedback(feedback, "Excellent JavaScript! Great use of modern syntax and best practices! 🚀", "success");
-      // SAVE PROGRESS - Mark activity as completed
+  if (validation.isValid) {
+    if (validation.isExcellent) {
+      showFeedback(feedback, `🎉 Excellent work! ${validation.message} +50 XP earned!`, "success");
       saveActivityProgress(activityId, true);
     } else {
-      showFeedback(feedback, "Good JavaScript! Try adding comments and using const/let for better practices. ✨", "info");
-      // SAVE PARTIAL PROGRESS
-      saveActivityProgress(activityId, false);
+      showFeedback(feedback, `✅ Good job! ${validation.message} +25 XP earned!`, "success");
+      saveActivityProgress(activityId, true);
     }
   } else {
-    showFeedback(feedback, "Good start! Try including JavaScript syntax like functions, variables (const/let), or array methods. 📝", "info");
+    showFeedback(feedback, `💡 ${validation.message} Keep trying!`, "info");
   }
 }
 
-// NEW: Progress saving functions
-function saveActivityProgress(activityId, isCompleted) {
-  // Get current theme from URL
-  var currentTheme = getCurrentTheme();
+// UPDATED: City-specific validation based on your requirements
+function validateCityActivity(cityIndex, userCode) {
+  const code = userCode.toLowerCase();
   
-  if (!currentTheme) {
-    console.error('Could not determine current theme');
-    return;
-  }
-  
-  // Load existing progress
-  var progress = loadProgress();
-  
-  // Create unique activity identifier
-  var fullActivityId = currentTheme + '_' + activityId;
-  
-  if (isCompleted) {
-    // Mark as completed if not already
-    if (!progress.themes[currentTheme].completedActivities.includes(fullActivityId)) {
-      progress.themes[currentTheme].completedActivities.push(fullActivityId);
-      progress.globalStats.totalActivitiesCompleted++;
-      progress.globalStats.tokensEarned += 10;
+  const cityValidators = {
+    // San Diego - CREATE operations
+    0: () => {
+      const hasClass = code.includes('class') || code.includes('function');
+      const hasValidation = code.includes('validate') || code.includes('required');
+      const hasFormData = code.includes('form') || code.includes('input') || code.includes('dish');
+      const hasErrorHandling = code.includes('error') || code.includes('try') || code.includes('catch');
       
-      // Update theme progress
-      progress.themes[currentTheme].totalProgress = calculateThemeProgress(progress.themes[currentTheme]);
-      
-      // Check if we completed a new city (every 3 activities)
-      var activitiesCount = progress.themes[currentTheme].completedActivities.length;
-      var newCitiesVisited = Math.floor(activitiesCount / 3);
-      var oldCitiesVisited = Math.floor((activitiesCount - 1) / 3);
-      
-      if (newCitiesVisited > oldCitiesVisited) {
-        progress.globalStats.citiesVisited++;
-        showCityCompletionFeedback(currentTheme, newCitiesVisited);
+      if (hasClass && hasValidation && hasFormData && hasErrorHandling) {
+        return { isValid: true, isExcellent: true, message: "Perfect form validation with error handling!" };
+      } else if (hasClass && hasValidation) {
+        return { isValid: true, isExcellent: false, message: "Good validation logic! Consider adding error handling." };
+      } else {
+        return { isValid: false, message: "Include class/function definition and validation logic." };
       }
-      
-      saveProgress(progress);
-      showActivityCompletionFeedback(fullActivityId);
-    }
-  } else {
-    // Save partial progress (attempt made)
-    if (!progress.themes[currentTheme].attemptedActivities) {
-      progress.themes[currentTheme].attemptedActivities = [];
-    }
-    if (!progress.themes[currentTheme].attemptedActivities.includes(fullActivityId)) {
-      progress.themes[currentTheme].attemptedActivities.push(fullActivityId);
-      progress.globalStats.tokensEarned += 2; // Smaller reward for attempts
-      saveProgress(progress);
-    }
-  }
-}
-
-function getCurrentTheme() {
-  // Try to get theme from URL
-  var urlPath = window.location.pathname;
-  var urlMatch = urlPath.match(/\/node\/(\w+)/);
-  if (urlMatch) {
-    return urlMatch[1];
-  }
-  
-  // Try to get from page title or other indicators
-  var title = document.title.toLowerCase();
-  if (title.includes('ai')) return 'ai';
-  if (title.includes('sports')) return 'sports';
-  if (title.includes('food')) return 'food';
-  if (title.includes('travel')) return 'travel';
-  
-  // Fallback - try to detect from page content
-  var heading = document.querySelector('h2');
-  if (heading) {
-    var headingText = heading.textContent.toLowerCase();
-    if (headingText.includes('ai')) return 'ai';
-    if (headingText.includes('sports')) return 'sports';
-    if (headingText.includes('food')) return 'food';
-    if (headingText.includes('travel')) return 'travel';
-  }
-  
-  return null;
-}
-
-function loadProgress() {
-  const PROGRESS_KEY = 'mchopiee_travel_progress';
-  var saved = localStorage.getItem(PROGRESS_KEY);
-  if (saved) {
-    try {
-      return JSON.parse(saved);
-    } catch (e) {
-      console.error('Error loading progress:', e);
-    }
-  }
-  
-  // Default progress structure
-  return {
-    themes: {
-      ai: { completedActivities: [], attemptedActivities: [], totalProgress: 0 },
-      sports: { completedActivities: [], attemptedActivities: [], totalProgress: 0 },
-      food: { completedActivities: [], attemptedActivities: [], totalProgress: 0 },
-      travel: { completedActivities: [], attemptedActivities: [], totalProgress: 0 }
     },
-    globalStats: {
-      totalActivitiesCompleted: 0,
-      totalSegmentsCompleted: 0,
-      citiesVisited: 0,
-      tokensEarned: 0
+    
+    // Los Angeles - READ & FILTER operations
+    1: () => {
+      const hasFilter = code.includes('filter') || code.includes('where');
+      const hasPagination = code.includes('page') || code.includes('limit') || code.includes('slice');
+      const hasSearch = code.includes('search') || code.includes('includes') || code.includes('indexof');
+      const hasPerformance = code.includes('index') || code.includes('performance') || code.includes('time');
+      
+      if (hasFilter && hasPagination && hasSearch && hasPerformance) {
+        return { isValid: true, isExcellent: true, message: "Excellent filtering with performance optimization!" };
+      } else if (hasFilter && hasSearch) {
+        return { isValid: true, isExcellent: false, message: "Good filtering! Add pagination and performance metrics." };
+      } else {
+        return { isValid: false, message: "Include filtering and search functionality." };
+      }
+    },
+    
+    // San Francisco - UPDATE & TRANSACTIONS
+    2: () => {
+      const hasUpdate = code.includes('update') || code.includes('edit') || code.includes('modify');
+      const hasTransaction = code.includes('transaction') || code.includes('rollback') || code.includes('commit');
+      const hasConflict = code.includes('conflict') || code.includes('version') || code.includes('lock');
+      const hasPreview = code.includes('preview') || code.includes('diff') || code.includes('before');
+      
+      if (hasUpdate && hasTransaction && hasConflict && hasPreview) {
+        return { isValid: true, isExcellent: true, message: "Perfect transaction handling with conflict resolution!" };
+      } else if (hasUpdate && hasTransaction) {
+        return { isValid: true, isExcellent: false, message: "Good transaction logic! Add conflict resolution." };
+      } else {
+        return { isValid: false, message: "Include update operations and transaction handling." };
+      }
+    },
+    
+    // Seattle - DELETE & ANALYTICS
+    3: () => {
+      const hasDelete = code.includes('delete') || code.includes('remove') || code.includes('archive');
+      const hasSoftDelete = code.includes('soft') || code.includes('deleted_at') || code.includes('archived');
+      const hasAnalytics = code.includes('analytics') || code.includes('aggregate') || code.includes('group');
+      const hasCascade = code.includes('cascade') || code.includes('related') || code.includes('dependencies');
+      
+      if (hasDelete && hasSoftDelete && hasAnalytics && hasCascade) {
+        return { isValid: true, isExcellent: true, message: "Excellent deletion system with analytics!" };
+      } else if (hasDelete && hasSoftDelete) {
+        return { isValid: true, isExcellent: false, message: "Good deletion logic! Add analytics and cascading." };
+      } else {
+        return { isValid: false, message: "Include deletion operations and soft delete functionality." };
+      }
     }
   };
-}
-
-function saveProgress(progressData) {
-  const PROGRESS_KEY = 'mchopiee_travel_progress';
-  try {
-    localStorage.setItem(PROGRESS_KEY, JSON.stringify(progressData));
-    console.log('Progress saved:', progressData);
-  } catch (e) {
-    console.error('Error saving progress:', e);
+  
+  const validator = cityValidators[cityIndex];
+  if (!validator) {
+    return { isValid: false, message: "Unknown city validation." };
   }
+  
+  return validator();
 }
 
-function calculateThemeProgress(themeData) {
-  // Each theme has 4 cities, estimate 3-4 activities per city
-  var estimatedTotalActivities = 12; // 4 cities × 3 activities average
-  var completedActivities = themeData.completedActivities.length;
-  return Math.min(100, Math.round((completedActivities / estimatedTotalActivities) * 100));
+// ENHANCED: Progress saving functions with city unlocking
+function saveActivityProgress(activityId, isCompleted) {
+  if (isCompleted) {
+    // Mark activity as completed
+    gameProgress.completedActivities[activityId] = true;
+    gameProgress.totalActivitiesCompleted++;
+    
+    // Get city index from activity ID
+    const cityIndex = parseInt(activityId.split('-')[0]);
+    
+    // Mark pitstop as completed visually
+    const pitstopElement = document.getElementById(`pitstop-${activityId}`);
+    if (pitstopElement) {
+      pitstopElement.classList.add('completed');
+    }
+    
+    // Check if city should be completed
+    checkCityCompletion(cityIndex);
+    
+    // Save progress
+    saveGameProgress();
+    
+    // Show completion feedback
+    showActivityCompletionFeedback(activityId);
+  }
 }
 
 function showActivityCompletionFeedback(activityId) {
   // Create a toast notification
   var toast = document.createElement('div');
   toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300';
-  toast.innerHTML = '<div class="flex items-center gap-2"><span class="text-lg">🎉</span><div><div class="font-bold">Activity Completed!</div><div class="text-sm">+10 tokens earned</div></div></div>';
+  toast.innerHTML = '<div class="flex items-center gap-2"><span class="text-lg">🎉</span><div><div class="font-bold">Activity Completed!</div><div class="text-sm">Progress saved!</div></div></div>';
   
   document.body.appendChild(toast);
   
@@ -972,50 +1181,14 @@ function showActivityCompletionFeedback(activityId) {
   }, 3000);
 }
 
-function showCityCompletionFeedback(theme, cityNumber) {
-  var toast = document.createElement('div');
-  toast.className = 'fixed top-4 right-4 bg-purple-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300';
-  toast.innerHTML = '<div class="flex items-center gap-2"><span class="text-lg">🏙️</span><div><div class="font-bold">City Completed!</div><div class="text-sm">City ' + cityNumber + ' in ' + theme.toUpperCase() + ' route!</div></div></div>';
-  
-  document.body.appendChild(toast);
-  
-  setTimeout(function() {
-    toast.style.transform = 'translateX(0)';
-  }, 100);
-  
-  setTimeout(function() {
-    toast.style.transform = 'translateX(100%)';
-    setTimeout(function() {
-      if (document.body.contains(toast)) {
-        document.body.removeChild(toast);
-      }
-    }, 300);
-  }, 4000);
-}
-
 // Load and display existing progress when page loads
-document.addEventListener('DOMContentLoaded', function() {
-  // ... existing DOMContentLoaded code ...
-  
-  // Load progress and mark completed activities
-  loadAndDisplayProgress();
-});
-
 function loadAndDisplayProgress() {
-  var progress = loadProgress();
-  var currentTheme = getCurrentTheme();
-  
-  if (!currentTheme) return;
-  
-  var themeData = progress.themes[currentTheme];
-  if (!themeData) return;
-  
   // Mark completed activities with visual indicators
-  themeData.completedActivities.forEach(function(fullActivityId) {
-    var activityId = fullActivityId.replace(currentTheme + '_', '');
+  Object.keys(gameProgress.completedActivities).forEach(function(activityId) {
     var activityElement = document.getElementById('activity-' + activityId);
     var inputElement = document.getElementById('input-' + activityId);
     var feedbackElement = document.getElementById('feedback-' + activityId);
+    var pitstopElement = document.getElementById('pitstop-' + activityId);
     
     if (activityElement) {
       // Add completed styling
@@ -1029,21 +1202,16 @@ function loadAndDisplayProgress() {
       if (inputElement) {
         inputElement.style.background = 'rgba(16, 185, 129, 0.1)';
       }
+      
+      if (pitstopElement) {
+        pitstopElement.classList.add('completed');
+      }
     }
   });
   
-  // Mark attempted activities
-  if (themeData.attemptedActivities) {
-    themeData.attemptedActivities.forEach(function(fullActivityId) {
-      var activityId = fullActivityId.replace(currentTheme + '_', '');
-      var activityElement = document.getElementById('activity-' + activityId);
-      
-      if (activityElement && !themeData.completedActivities.includes(fullActivityId)) {
-        // Add attempted styling
-        activityElement.style.border = '2px solid #f59e0b';
-        activityElement.style.background = 'rgba(245, 158, 11, 0.1)';
-      }
-    });
+  // Update city progress for all cities
+  for (let i = 0; i < 4; i++) {
+    checkCityCompletion(i);
   }
 }
 
@@ -1098,14 +1266,42 @@ function hintActivity(activityId) {
     return;
   }
   
-  var hints = promptElement.getAttribute('data-hints');
-  if (hints) {
-    var hintArray = hints.split('||');
-    var randomHint = hintArray[Math.floor(Math.random() * hintArray.length)];
-    showFeedback(feedbackElement, "💡 Hint: " + randomHint, "info");
-  } else {
-    showFeedback(feedbackElement, "💡 Hint: Try using modern JavaScript features like const/let, arrow functions, or array methods like map(), filter(), reduce().", "info");
-  }
+  var cityIndex = parseInt(promptElement.getAttribute('data-city'));
+  var hints = getCityHints(cityIndex);
+  var randomHint = hints[Math.floor(Math.random() * hints.length)];
+  
+  showFeedback(feedbackElement, "💡 Hint: " + randomHint, "info");
+}
+
+function getCityHints(cityIndex) {
+  const cityHints = {
+    0: [ // San Diego
+      "Start with a class or function that handles form data",
+      "Include validation for required fields like dish name",
+      "Add error handling with try/catch blocks",
+      "Consider using methods like validateRequired() and getFormData()"
+    ],
+    1: [ // Los Angeles
+      "Use array methods like filter() and slice() for pagination",
+      "Include search functionality with includes() or indexOf()",
+      "Add performance metrics with console.time()",
+      "Think about indexing for faster queries"
+    ],
+    2: [ // San Francisco
+      "Wrap multiple operations in a transaction",
+      "Include version checking for conflict resolution",
+      "Add a preview system that shows changes before saving",
+      "Consider rollback functionality for failed operations"
+    ],
+    3: [ // Seattle
+      "Implement both soft delete (archived_at) and hard delete",
+      "Use reduce() and groupBy() for analytics",
+      "Add cascading deletion for related records",
+      "Include confirmation dialogs for destructive operations"
+    ]
+  };
+  
+  return cityHints[cityIndex] || ["Try including relevant keywords and concepts for this challenge."];
 }
 
 function resetActivity(activityId) {
@@ -1129,108 +1325,5 @@ function resetActivity(activityId) {
   }
   
   showFeedback(feedbackElement, "🔄 Activity reset! Try again with a fresh start.", "info");
-}
-
-// Enhanced progress structure for Food Module
-function createFoodModuleProgress() {
-  return {
-    currentCity: 'san_diego',
-    xp: 0,
-    badges: [],
-    dishes: [],
-    cities: {
-      san_diego: {
-        unlocked: true,
-        completed: false,
-        tasks: {
-          'create_baja_bowl': { completed: false, xp: 50 },
-          'add_ingredients': { completed: false, xp: 30 },
-          'photo_upload': { completed: false, xp: 20 }
-        }
-      },
-      los_angeles: {
-        unlocked: false,
-        completed: false,
-        tasks: {
-          'filter_trucks': { completed: false, xp: 40 },
-          'search_dishes': { completed: false, xp: 30 },
-          'performance_test': { completed: false, xp: 30 }
-        }
-      },
-      san_francisco: {
-        unlocked: false,
-        completed: false,
-        tasks: {
-          'edit_menu': { completed: false, xp: 60 },
-          'handle_conflicts': { completed: false, xp: 40 },
-          'transaction_demo': { completed: false, xp: 50 }
-        }
-      },
-      seattle: {
-        unlocked: false,
-        completed: false,
-        tasks: {
-          'soft_delete': { completed: false, xp: 40 },
-          'analytics_dashboard': { completed: false, xp: 60 },
-          'cleanup_master': { completed: false, xp: 30 }
-        }
-      }
-    }
-  };
-}
-
-// Enhanced activity validation for different city types
-function validateFoodActivity(cityName, taskName, userCode) {
-  const validators = {
-    san_diego: {
-      create_baja_bowl: (code) => {
-        return code.includes('class') && code.includes('constructor') && 
-               code.includes('ingredients') && code.includes('calories');
-      },
-      add_ingredients: (code) => {
-        return code.includes('push') || code.includes('add') && 
-               code.includes('array') || code.includes('ingredients');
-      }
-    },
-    los_angeles: {
-      filter_trucks: (code) => {
-        return code.includes('filter') && (code.includes('includes') || code.includes('indexOf'));
-      },
-      search_dishes: (code) => {
-        return code.includes('search') && code.includes('toLowerCase');
-      }
-    },
-    san_francisco: {
-      edit_menu: (code) => {
-        return code.includes('update') || code.includes('modify') && 
-               code.includes('transaction') || code.includes('try');
-      },
-      handle_conflicts: (code) => {
-        return code.includes('version') || code.includes('conflict') && 
-               code.includes('merge') || code.includes('resolve');
-      }
-    },
-    seattle: {
-      soft_delete: (code) => {
-        return code.includes('deleted_at') || code.includes('archived') && 
-               code.includes('Date') || code.includes('timestamp');
-      },
-      analytics_dashboard: (code) => {
-        return code.includes('reduce') || code.includes('group') && 
-               code.includes('count') || code.includes('sum');
-      }
-    }
-  };
-  
-  const cityValidators = validators[cityName];
-  if (!cityValidators || !cityValidators[taskName]) {
-    return { valid: false, message: "Unknown task" };
-  }
-  
-  const isValid = cityValidators[taskName](userCode.toLowerCase());
-  return {
-    valid: isValid,
-    message: isValid ? "Great work!" : "Try including the required concepts for this task"
-  };
 }
 </script>
