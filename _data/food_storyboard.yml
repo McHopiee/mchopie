@@ -12,86 +12,46 @@ LearningObjectives:
   - "Interpret aggregated results using GROUP BY, COUNT, SUM and simple analytics queries."
   - "Apply basic indexing and measure performance differences for common queries."
 
-Topics:
-  - city: "sd"
-    title: "San Diego — Build the Baja Bowl"
-    subtitle: "CREATE: INSERT & Client Form"
-    description: "Introductory pitstop where learners create their first dish (Baja Bowl) by adding dishes, ingredients, and join records. Focus on form validation, required fields, and POST endpoints."
-    image: "/images/baja.jpg"
-    alt: "Baja Bowl — San Diego"
-    keyPoints:
-      - "Design dish creation form (name, category, ingredients list, calories, photo upload)."
-      - "Create dish, ingredient, and dish_ingredients records atomically."
-      - "Client-side validation and server-side request validation."
-      - "Seeded examples: Fish Tacos, California Burrito, Baja Bowl."
-    tasks:
-      - "Create Dish form: name, category, ingredients (name, qty, unit), calories, photo"
-      - "POST /api/dishes to create dish + dish_ingredients"
-      - "Unit test: POST /api/dishes returns 201 and created resource"
-      - "UI: show toast 'Baja Bowl added — +50 XP'"
-      - "Seed at least three dishes for SD"
-    xp: 50
-    badge: "First Insert"
+Cities:
+  - Name: "San Diego"
+    Description: "Start your journey by creating the perfect Baja Bowl with fresh ingredients."
+    Challenge: "Master CREATE operations and form validation"
+    Analogy: "Like adding ingredients to your bowl, we're adding records to our database"
+    Pitstops:
+      - Name: "Baja Bowl Creation Station"
+        Description: "Build a dish creation form with validation and error handling"
+        Activity: "Create form validation for dish creation"
+        Hints: ["Use classes or functions", "Include error handling", "Validate required fields", "Add form data methods"]
 
-  - city: "la"
-    title: "Los Angeles — Food Truck Tasting"
-    subtitle: "READ: SELECT, Filtering & Index Basics"
-    description: "Search and filter pitstop. Learners implement list and detail views, paginated queries, and basic full-text search. Demonstrates the value of indices and query examples in a Dev Console."
-    image: "/images/foodtruck.jpg"
-    alt: "LA Food Trucks"
-    keyPoints:
-      - "Implement GET /api/dishes with filters: city, ingredient, min_cal, pagination."
-      - "Show example SQL and safe parameterization."
-      - "Add index on ingredient.name (demo indexed field)."
-      - "Seeded examples: Korean BBQ, Street Tacos, Food Truck specials."
-    tasks:
-      - "List & detail views with pagination and filters"
-      - "Dev Console: show safe sample SQL queries"
-      - "Measure (simulated) index performance for ingredient searches"
-      - "Student writes a query to find dishes containing 'halibut'"
-      - "Seed at least three dishes for LA"
-    xp: 10
-    badge: "Query Master"
+  - Name: "Los Angeles"
+    Description: "Explore the diverse food truck scene and master searching and filtering."
+    Challenge: "Master READ operations and advanced filtering"
+    Analogy: "Like browsing food trucks, we're querying and filtering database records"
+    Pitstops:
+      - Name: "Food Truck Filter Hub"
+        Description: "Implement search and filter functionality for the dish database"
+        Activity: "Build filtering and search capabilities"
+        Hints: ["Use array methods", "Add pagination", "Include performance metrics", "Think about indexing"]
 
-  - city: "sf"
-    title: "San Francisco — Gourmet Pop-Up"
-    subtitle: "UPDATE: Transactions, Concurrency & Rollback"
-    description: "Advanced pitstop focused on multi-table updates wrapped in transactions. Learners preview diffs, simulate concurrent edits, and implement optimistic locking and rollback behavior."
-    image: "/images/sourdough.jpg"
-    alt: "San Francisco Sourdough & Pop-Up"
-    keyPoints:
-      - "Wrap multi-table updates (dish + dish_ingredients) in transactions."
-      - "Implement optimistic locking (versioning) and conflict resolution UI."
-      - "Provide a 'Preview Changes' modal showing diffs before commit."
-      - "Simulate concurrent edits and demonstrate rollback."
-    tasks:
-      - "Edit dish UI: change ingredient quantities, swap ingredients, rename dish"
-      - "PUT /api/dishes/:id with transaction semantics"
-      - "PATCH /api/dishes/:id for partial updates"
-      - "Simulate conflicting updates and show conflict modal"
-      - "Unit/integration test for transaction rollback"
-    xp: 40
-    badge: "Transactional Pro"
+  - Name: "San Francisco"
+    Description: "Update gourmet recipes at a pop-up restaurant while handling conflicts."
+    Challenge: "Master UPDATE operations and transaction handling"
+    Analogy: "Like modifying recipes mid-service, we're updating records safely with transactions"
+    Pitstops:
+      - Name: "Gourmet Recipe Editor"
+        Description: "Edit dishes with transaction support and conflict resolution"
+        Activity: "Implement transactional updates with conflict handling"
+        Hints: ["Use transactions", "Add version checking", "Include rollback functionality", "Add preview system"]
 
-  - city: "sea"
-    title: "Seattle — Sustainable Cleanup & Analytics"
-    subtitle: "DELETE: Soft Delete, Hard Delete, Joins & Aggregation"
-    description: "Final pitstop where learners archive or delete dishes (clam chowder centerpiece). Focus on soft-delete patterns, cascading hard deletes, archival strategies, and analytics queries for reporting."
-    image: "/images/breadbowl.jpg"
-    alt: "Seattle Clam Chowder in Sourdough Bread Bowl"
-    keyPoints:
-      - "Implement deleted_at soft-delete column and archive toggle in UI."
-      - "Hard delete with cascading rules to remove dish_ingredients links."
-      - "Analytics: top ingredients, average calories by city, dishes per category."
-      - "Seed includes 'Clam Chowder in a Sourdough Bread Bowl' for SEA."
-    tasks:
-      - "Add 'Archive dish' UI toggle (sets deleted_at)"
-      - "Hard delete flow with confirmation and cascade cleanup"
-      - "Analytics dashboard with GROUP BY queries"
-      - "Seed at least three dishes for SEA including clam chowder"
-      - "Acceptance tests for archival visibility and hard-delete cascade"
-    xp: 20
-    badge: "Cleanup Crew"
+  - Name: "Seattle"
+    Description: "Clean up your database while enjoying clam chowder and analyzing your food journey."
+    Challenge: "Master DELETE operations and data analytics"
+    Analogy: "Like deciding what leftovers to keep, we're managing data lifecycle and analyzing patterns"
+    Pitstops:
+      - Name: "Clam Chowder Cleanup Center"
+        Description: "Implement soft/hard delete and generate analytics reports"
+        Activity: "Build deletion system with analytics dashboard"
+        Hints: ["Implement soft delete", "Add analytics functions", "Include cascading deletes", "Add confirmation dialogs"]
 
 Storyboard:
   - title: "Opening — Road-Trip Map"
