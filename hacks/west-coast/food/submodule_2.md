@@ -35,66 +35,105 @@ Your task? To *query* the database and uncover details about dishes, chefs, and 
 ---
 
 <style>
+/* === Theme variables matching submodule 1 === */
+:root{
+  --bg-0: #060712;            /* page background deep */
+  --bg-1: rgba(8,12,25,0.75); /* card background translucent */
+  --card-border: rgba(99,102,241,0.18);
+  --muted: #94a3b8;
+  --text: #e6eef6;
+  --accent-1: #8b5cf6;  /* purple */
+  --accent-2: #3b82f6;  /* blue */
+  --accent-3: #06b6d4;  /* teal/cyan */
+  --success: #10b981;
+  --danger: #fb7185;
+  --glass: rgba(255,255,255,0.03);
+  --terminal-bg: #071827;
+  --input-border: rgba(148,163,184,0.12);
+  --input-bg: rgba(255,255,255,0.02);
+  --code-bg: linear-gradient(180deg, rgba(8,12,25,0.6), rgba(12,16,28,0.6));
+}
+
+/* Base page */
+body {
+  background: radial-gradient(1200px 500px at 10% 10%, rgba(59,130,246,0.06), transparent),
+              radial-gradient(900px 400px at 90% 80%, rgba(139,92,246,0.05), transparent),
+              var(--bg-0);
+  color: var(--text);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  line-height: 1.5;
+  padding: 1.25rem;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Headings */
+h1, h2, h3, h4 { color: #e6e9ff; margin-top: 0.25rem; }
+strong { color: #f8f9ff; }
+
 .table-container {
   width: 90%;
   margin: 20px auto;
   border-collapse: collapse;
-  font-family: "Poppins", sans-serif;
+  font-family: Inter, ui-sans-serif, system-ui;
+  background: var(--bg-1);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(2,6,23,0.45);
 }
 
 .table-container th {
-  background-color: #ffb6c1;
+  background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
   color: white;
   padding: 12px;
   font-size: 1.2rem;
+  font-weight: 600;
 }
 
 .table-container td {
-  background-color: #add8e6;
-  color: #000;
+  background: var(--bg-1);
+  color: var(--text);
   padding: 12px;
   font-size: 1.1rem;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 
 .table-container tr:nth-child(even) td {
-  background-color: #87cefa;
-}
-
-.table-container {
-  border-radius: 12px;
-  overflow: hidden;
+  background: rgba(255,255,255,0.02);
 }
 
 .code-button {
-  display: inline-block;
-  background-color: #4b9cd3;
+  background: linear-gradient(90deg, var(--accent-3), rgba(6,182,212,0.15));
   color: white;
-  font-family: "Poppins", sans-serif;
+  font-family: Inter, ui-sans-serif, system-ui;
   font-weight: 600;
   font-size: 1rem;
-  border: none;
+  border: 1px solid rgba(6,182,212,0.18);
   border-radius: 8px;
   padding: 10px 20px;
   margin: 20px auto;
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 20px rgba(6,182,212,0.12);
 }
 
 .code-button:hover {
-  background-color: #357ab7;
-  transform: scale(1.05);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(6,182,212,0.2);
 }
 
 .code-snippet {
   display: none;
-  background-color: #1e1e1e;
-  color: #dcdcdc;
-  font-family: "Courier New", monospace;
+  background: var(--terminal-bg);
+  color: var(--text);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Courier New", monospace;
   padding: 15px;
   border-radius: 8px;
   margin-top: 10px;
   width: 90%;
   overflow-x: auto;
+  border: 1px solid var(--card-border);
 }
 
 .code-section {
@@ -103,56 +142,237 @@ Your task? To *query* the database and uncover details about dishes, chefs, and 
 
 /* Itinerary Foods Display */
 .itinerary-foods {
-  background: linear-gradient(135deg, #ffb6c1, #ff69b4);
-  border: 3px solid #ff1493;
+  background: linear-gradient(135deg, rgba(139,92,246,0.08), rgba(59,130,246,0.06));
+  border: 2px solid var(--card-border);
   padding: 1.5rem;
   border-radius: 12px;
   margin: 1.5rem auto;
   width: 90%;
-  box-shadow: 0 8px 30px rgba(255, 20, 147, 0.3);
+  box-shadow: 0 8px 30px rgba(2,6,23,0.45);
 }
 
 .itinerary-foods h3 {
-  color: white;
+  color: var(--accent-1);
   margin: 0 0 1rem 0;
   font-size: 1.5rem;
   text-align: center;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
 }
 
 .food-item {
-  background: rgba(255, 255, 255, 0.95);
-  border-left: 4px solid #ff1493;
+  background: rgba(255, 255, 255, 0.02);
+  border-left: 4px solid var(--accent-1);
   border-radius: 10px;
   padding: 1rem;
   margin: 0.75rem 0;
   transition: transform 0.2s ease;
+  color: var(--text);
 }
 
 .food-item:hover {
   transform: translateX(4px);
-  box-shadow: 0 4px 12px rgba(255, 20, 147, 0.2);
+  box-shadow: 0 4px 12px rgba(139,92,246,0.2);
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .food-item h4 {
-  color: #ff1493;
+  color: var(--accent-2);
   margin: 0 0 0.5rem 0;
   font-size: 1.1rem;
 }
 
 .food-item p {
-  color: #555;
+  color: var(--muted);
   margin: 0;
   font-size: 0.95rem;
 }
 
 .no-itinerary-msg {
   text-align: center;
-  color: white;
+  color: var(--muted);
   padding: 2rem;
   font-style: italic;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.02);
   border-radius: 8px;
+}
+
+/* Dropdown explanations */
+.topic-dropdown {
+  width: 90%;
+  max-width: 700px;
+  margin: 20px auto;
+  font-family: Inter, ui-sans-serif, system-ui;
+}
+
+.topic-dropdown summary {
+  background: linear-gradient(135deg, var(--accent-2), var(--accent-3));
+  color: white;
+  padding: 12px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+  box-shadow: 0 4px 12px rgba(59,130,246,0.15);
+}
+
+.topic-dropdown details[open] summary {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.topic-dropdown div {
+  background: var(--bg-1);
+  color: var(--text);
+  padding: 12px;
+  border-radius: 0 0 10px 10px;
+  font-size: 1rem;
+  border: 1px solid var(--card-border);
+  border-top: none;
+}
+
+/* Quiz styling */
+.quiz-container {
+  background: var(--bg-1);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(2,6,23,0.45);
+  padding: 25px;
+  width: 90%;
+  max-width: 700px;
+  margin: 30px auto;
+}
+
+.quiz-container h2 {
+  text-align: center;
+  color: var(--accent-1);
+  margin-bottom: 20px;
+}
+
+.quiz-question {
+  margin-bottom: 20px;
+  color: var(--text);
+}
+
+.quiz-option {
+  display: block;
+  background: rgba(255,255,255,0.02);
+  color: var(--text);
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+  padding: 10px 16px;
+  margin: 8px 0;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  text-align: left;
+}
+
+.quiz-option:hover {
+  background: rgba(255,255,255,0.05);
+  transform: scale(1.02);
+  border-color: var(--accent-2);
+}
+
+.quiz-option.correct {
+  background: rgba(16,185,129,0.2);
+  border-color: var(--success);
+}
+
+.quiz-option.incorrect {
+  background: rgba(251,113,133,0.2);
+  border-color: var(--danger);
+}
+
+#quiz-result, #fill-result {
+  margin-top: 20px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 1.2rem;
+  color: var(--success);
+}
+
+/* XP Progress Bar */
+.progress-container {
+  width: 90%;
+  max-width: 700px;
+  margin: 30px auto;
+  background: var(--bg-1);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 8px 30px rgba(2,6,23,0.45);
+}
+
+.progress-bar {
+  background: rgba(2,6,23,0.45);
+  border-radius: 12px;
+  overflow: hidden;
+  height: 16px;
+}
+
+.progress-fill {
+  background: linear-gradient(90deg, var(--success), #059669);
+  height: 100%;
+  width: 0%;
+  transition: width 1s ease-in-out;
+}
+
+.progress-text {
+  margin-top: 8px;
+  font-weight: bold;
+  text-align: right;
+  font-family: Inter, ui-sans-serif, system-ui;
+  color: var(--text);
+}
+
+/* Fill-in-the-blanks styling */
+.fill-container {
+  width: 90%;
+  max-width: 700px;
+  margin: 30px auto;
+  background: var(--bg-1);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 20px;
+  font-family: Inter, ui-sans-serif, system-ui;
+  box-shadow: 0 8px 30px rgba(2,6,23,0.45);
+}
+
+.fill-container h3 {
+  color: var(--accent-2);
+}
+
+.fill-container input {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid var(--input-border);
+  background: var(--input-bg);
+  color: var(--text);
+  width: 200px;
+  margin: 0 6px;
+}
+
+.fill-container button {
+  background: linear-gradient(90deg, var(--accent-3), rgba(6,182,212,0.15));
+  color: white;
+  border: 1px solid rgba(6,182,212,0.18);
+  border-radius: 8px;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(6,182,212,0.12);
+}
+
+.fill-container button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(6,182,212,0.2);
+}
+
+/* Task completion styling */
+.task-complete { 
+  color: var(--success) !important; 
+  font-weight: 700; 
 }
 
 /* Filter the table to show only itinerary foods */
@@ -259,11 +479,11 @@ Your task? To *query* the database and uncover details about dishes, chefs, and 
   width: 90%;
   max-width: 700px;
   margin: 20px auto;
-  font-family: "Poppins", sans-serif;
+  font-family: Inter, ui-sans-serif, system-ui;
 }
 
 .topic-dropdown summary {
-  background-color: #ffb347;
+  background: linear-gradient(135deg, var(--accent-2), var(--accent-3));
   color: white;
   padding: 12px 16px;
   border-radius: 10px;
@@ -271,6 +491,7 @@ Your task? To *query* the database and uncover details about dishes, chefs, and 
   font-weight: 600;
   font-size: 1.1rem;
   margin-bottom: 8px;
+  box-shadow: 0 4px 12px rgba(59,130,246,0.15);
 }
 
 .topic-dropdown details[open] summary {
@@ -279,17 +500,21 @@ Your task? To *query* the database and uncover details about dishes, chefs, and 
 }
 
 .topic-dropdown div {
-  background-color: #fff3e0;
+  background: var(--bg-1);
+  color: var(--text);
   padding: 12px;
   border-radius: 0 0 10px 10px;
   font-size: 1rem;
+  border: 1px solid var(--card-border);
+  border-top: none;
 }
 
 /* Quiz styling */
 .quiz-container {
-  background: #fffaf0;
+  background: var(--bg-1);
+  border: 1px solid var(--card-border);
   border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 8px 32px rgba(2,6,23,0.45);
   padding: 25px;
   width: 90%;
   max-width: 700px;
@@ -298,40 +523,44 @@ Your task? To *query* the database and uncover details about dishes, chefs, and 
 
 .quiz-container h2 {
   text-align: center;
-  color: #ff6f61;
+  color: var(--accent-1);
   margin-bottom: 20px;
 }
 
 .quiz-question {
   margin-bottom: 20px;
+  color: var(--text);
 }
 
 .quiz-option {
   display: block;
-  background-color: #e0f7fa;
-  color: #333;
-  border: none;
+  background: rgba(255,255,255,0.02);
+  color: var(--text);
+  border: 1px solid var(--input-border);
   border-radius: 8px;
   padding: 10px 16px;
   margin: 8px 0;
   font-size: 1rem;
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
+  transition: all 0.3s ease;
   width: 100%;
   text-align: left;
 }
 
 .quiz-option:hover {
-  background-color: #b2ebf2;
+  background: rgba(255,255,255,0.05);
   transform: scale(1.02);
+  border-color: var(--accent-2);
 }
 
 .quiz-option.correct {
-  background-color: #c8e6c9;
+  background: rgba(16,185,129,0.2);
+  border-color: var(--success);
 }
 
 .quiz-option.incorrect {
-  background-color: #ffcdd2;
+  background: rgba(251,113,133,0.2);
+  border-color: var(--danger);
 }
 
 #quiz-result, #fill-result {
@@ -339,7 +568,7 @@ Your task? To *query* the database and uncover details about dishes, chefs, and 
   text-align: center;
   font-weight: 600;
   font-size: 1.2rem;
-  color: #2e7d32;
+  color: var(--success);
 }
 
 /* XP Progress Bar */
@@ -347,17 +576,22 @@ Your task? To *query* the database and uncover details about dishes, chefs, and 
   width: 90%;
   max-width: 700px;
   margin: 30px auto;
+  background: var(--bg-1);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 8px 30px rgba(2,6,23,0.45);
 }
 
 .progress-bar {
-  background-color: #eee;
+  background: rgba(2,6,23,0.45);
   border-radius: 12px;
   overflow: hidden;
   height: 16px;
 }
 
 .progress-fill {
-  background-color: #4caf50;
+  background: linear-gradient(90deg, var(--success), #059669);
   height: 100%;
   width: 0%;
   transition: width 1s ease-in-out;
@@ -367,7 +601,8 @@ Your task? To *query* the database and uncover details about dishes, chefs, and 
   margin-top: 8px;
   font-weight: bold;
   text-align: right;
-  font-family: "Poppins", sans-serif;
+  font-family: Inter, ui-sans-serif, system-ui;
+  color: var(--text);
 }
 
 /* Fill-in-the-blanks styling */
@@ -375,37 +610,47 @@ Your task? To *query* the database and uncover details about dishes, chefs, and 
   width: 90%;
   max-width: 700px;
   margin: 30px auto;
-  background: #f0f4f8;
+  background: var(--bg-1);
+  border: 1px solid var(--card-border);
   border-radius: 12px;
   padding: 20px;
-  font-family: "Poppins", sans-serif;
+  font-family: Inter, ui-sans-serif, system-ui;
+  box-shadow: 0 8px 30px rgba(2,6,23,0.45);
+}
+
+.fill-container h3 {
+  color: var(--accent-2);
 }
 
 .fill-container input {
   padding: 8px;
   border-radius: 6px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--input-border);
+  background: var(--input-bg);
+  color: var(--text);
   width: 200px;
   margin: 0 6px;
 }
 
 .fill-container button {
-  background-color: #4b9cd3;
+  background: linear-gradient(90deg, var(--accent-3), rgba(6,182,212,0.15));
   color: white;
-  border: none;
+  border: 1px solid rgba(6,182,212,0.18);
   border-radius: 8px;
   padding: 8px 14px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(6,182,212,0.12);
 }
 
 .fill-container button:hover {
-  background-color: #357ab7;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(6,182,212,0.2);
 }
 
 /* Task completion styling */
 .task-complete { 
-  color: #10b981 !important; 
+  color: var(--success) !important; 
   font-weight: 700; 
 }
 </style>
