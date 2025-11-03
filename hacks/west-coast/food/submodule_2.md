@@ -11,9 +11,9 @@ tags: [food, losangeles]
 author: "Syntax Terrors"
 date: 2025-10-24
 footer:
-  previous: hacks/west-coast/food/SD/
-  home: hacks/west-coast/food/
-  next: hacks/west-coast/food/SF/
+  previous: /west-coast/food/SD/
+  home: /west-coast/food/
+  next: /west-coast/food/SF/
 permalink: /west-coast/food/LA/
 ---
 
