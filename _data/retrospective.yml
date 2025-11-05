@@ -1,0 +1,31 @@
+title: "End-of-Year Reflection"
+sections:
+  - title: "Compare Yourself to the Beginning of the Year"
+    content: "I've grown more confident in debugging and collaborating with peers. My understanding of core programming concepts has deepened."
+
+  - title: "Key Takeaways from 3 Sprints"
+    bullets:
+      - "Learned how to use GitHub and VS Code effectively"
+      - "Built foundational skills in JavaScript and Python"
+      - "Explored West Coast Travel and Digital Famine themes through creative projects"
+
+  - title: "How N@tM Went"
+    content: "It was exciting to present! I received great feedback, especially one comment about how intuitive my UI was."
+
+  - title: "Next Steps for Your Project"
+    content: "I'd like to add user authentication and expand the analytics dashboard if time allows."
+
+  - title: "What You Want to Learn Next in CompSci"
+    content: "I'm curious about machine learning and want to explore how recommendation systems work."
+
+  - title: "Analytics Review"
+    content: "Our user engagement spiked after we added interactive elements. Most users spent over 2 minutes on the site."
+
+  - title: "MCQ Review"
+    bullets:
+      - "Score: 85%"
+      - "Corrected mistakes on recursion and scope"
+      - "Plan to review concepts weekly and practice with flashcards"
+
+  - title: "Something Cool You'd Like to Share"
+    content: "I built a mini game in JavaScript that tracks your typing speed. It was fun and surprisingly challenging!"

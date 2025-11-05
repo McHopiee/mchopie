@@ -1,0 +1,191 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800;900&display=swap');
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes pulse-glow {
+    0%, 100% {
+      box-shadow: 0 0 20px rgba(147, 51, 234, 0.3);
+    }
+    50% {
+      box-shadow: 0 0 40px rgba(147, 51, 234, 0.5);
+    }
+  }
+  
+  .fade-in-up {
+    animation: fadeInUp 0.6s ease-out forwards;
+  }
+  
+  .pulse-glow {
+    animation: pulse-glow 3s ease-in-out infinite;
+  }
+  
+  .gradient-border {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 2px;
+    border-radius: 12px;
+  }
+  
+  .gradient-border-content {
+    background: #1f2937;
+    border-radius: 10px;
+  }
+  
+  * {
+    font-family: 'Nunito', sans-serif;
+  }
+</style>
+
+<div class="relative max-w-5xl mx-auto p-8 bg-gray-900 text-gray-100 min-h-screen">
+  <!-- Hero Header -->
+  <div class="text-center mb-16 fade-in-up">
+    <div class="inline-block pulse-glow rounded-full bg-gradient-to-r from-purple-500 to-pink-500 p-4 mb-6">
+    </div>
+    <h1 class="text-5xl font-bold bg-gradient-to-r from-purple-300 via-pink-300 to-indigo-300 bg-clip-text text-transparent mb-4">
+      End-of-Year Reflection
+    </h1>
+    <p class="text-xl text-purple-200 max-w-2xl mx-auto">
+      A journey through growth, learning, and discovery
+    </p>
+  </div>
+
+  <!-- Grid Layout for Sections -->
+  <div class="grid gap-8 md:gap-12">
+    <!-- Growth Reflection -->
+    <div class="gradient-border fade-in-up hover:scale-105 transition-all duration-300">
+      <div class="gradient-border-content p-6">
+        <h2 class="text-2xl font-bold text-purple-300 mb-4">Compare Yourself to the Beginning of the Year</h2>
+        <div class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-lg border border-purple-500/20">
+          <p class="text-gray-300 leading-relaxed">Reflect on how you've grown, what you've learned, and how your mindset has changed.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sprint Takeaways -->
+    <div class="gradient-border fade-in-up hover:scale-105 transition-all duration-300">
+      <div class="gradient-border-content p-6">
+        <h2 class="text-2xl font-bold text-violet-300 mb-4">Key Takeaways from 3 Sprints</h2>
+        <div class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-lg border border-violet-500/20">
+          <ul class="space-y-3">
+            <li class="flex items-center text-gray-300">
+              <span class="w-3 h-3 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full mr-3"></span>
+              Tools
+            </li>
+            <li class="flex items-center text-gray-300">
+              <span class="w-3 h-3 bg-gradient-to-r from-violet-400 to-purple-400 rounded-full mr-3"></span>
+              Fundamentals of JavaScript/Python
+            </li>
+            <li class="flex items-center text-gray-300">
+              <span class="w-3 h-3 bg-gradient-to-r from-indigo-400 to-violet-400 rounded-full mr-3"></span>
+              West Coast Travel or Digital Famine
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Two Column Layout -->
+    <div class="grid md:grid-cols-2 gap-8">
+      <!-- N@tM Experience -->
+      <div class="gradient-border fade-in-up hover:scale-105 transition-all duration-300">
+        <div class="gradient-border-content p-6 h-full">
+          <h2 class="text-xl font-bold text-pink-300 mb-4">How N@tM Went</h2>
+          <div class="bg-gray-800/50 backdrop-blur-sm p-4 rounded-lg border border-pink-500/20">
+            <p class="text-gray-300 text-sm leading-relaxed">Share your experience presenting, and any memorable comments or feedback you received.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Project Next Steps -->
+      <div class="gradient-border fade-in-up hover:scale-105 transition-all duration-300">
+        <div class="gradient-border-content p-6 h-full">
+          <h2 class="text-xl font-bold text-indigo-300 mb-4">Next Steps for Your Project</h2>
+          <div class="bg-gray-800/50 backdrop-blur-sm p-4 rounded-lg border border-indigo-500/20">
+            <p class="text-gray-300 text-sm leading-relaxed">What would you like to build or improve if you had more time?</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Learning Goals -->
+    <div class="gradient-border fade-in-up hover:scale-105 transition-all duration-300">
+      <div class="gradient-border-content p-6">
+        <h2 class="text-2xl font-bold text-cyan-300 mb-4">What You Want to Learn Next in CompSci</h2>
+        <div class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-lg border border-cyan-500/20">
+          <p class="text-gray-300 leading-relaxed">Think about new topics, languages, or skills you're curious about.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Analytics & MCQ Row -->
+    <div class="grid md:grid-cols-2 gap-8">
+      <!-- Analytics -->
+      <div class="gradient-border fade-in-up hover:scale-105 transition-all duration-300">
+        <div class="gradient-border-content p-6 h-full">
+          <h2 class="text-xl font-bold text-emerald-300 mb-4">Analytics Review</h2>
+          <div class="bg-gray-800/50 backdrop-blur-sm p-4 rounded-lg border border-emerald-500/20">
+            <p class="text-gray-300 text-sm leading-relaxed">Summarize what your data showed and what insights you gained.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="gradient-border fade-in-up hover:scale-105 transition-all duration-300">
+        <div class="gradient-border-content p-6 h-full">
+          <h2 class="text-xl font-bold text-orange-300 mb-4">MCQ Review</h2>
+          <div class="bg-gray-800/50 backdrop-blur-sm p-4 rounded-lg border border-orange-500/20">
+            <ul class="space-y-2">
+              <li class="flex items-center text-gray-300 text-sm">
+                <span class="w-2 h-2 bg-gradient-to-r from-orange-400 to-red-400 rounded-full mr-3"></span>
+                Score
+              </li>
+              <li class="flex items-center text-gray-300 text-sm">
+                <span class="w-2 h-2 bg-gradient-to-r from-red-400 to-pink-400 rounded-full mr-3"></span>
+                Corrections
+              </li>
+              <li class="flex items-center text-gray-300 text-sm">
+                <span class="w-2 h-2 bg-gradient-to-r from-pink-400 to-purple-400 rounded-full mr-3"></span>
+                Approach to future questions
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cool Share -->
+    <div class="gradient-border fade-in-up hover:scale-105 transition-all duration-300">
+      <div class="gradient-border-content p-6">
+        <h2 class="text-2xl font-bold bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent mb-4">Something Cool You'd Like to Share</h2>
+        <div class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-lg border border-yellow-500/20">
+          <p class="text-gray-300 leading-relaxed">This could be a fun fact, a project, a discovery, or anything you're proud of!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="text-center mt-16 fade-in-up">
+    <div class="inline-block bg-gradient-to-r from-purple-600/20 to-pink-600/20 backdrop-blur-sm rounded-full px-8 py-4 border border-purple-500/30">
+      <p class="text-purple-200">Reflecting on an amazing year of growth</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Add staggered animation delays
+  document.addEventListener('DOMContentLoaded', function() {
+    const elements = document.querySelectorAll('.fade-in-up');
+    elements.forEach((el, index) => {
+      el.style.animationDelay = `${index * 0.1}s`;
+    });
+  });
+</script>
