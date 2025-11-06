@@ -125,6 +125,21 @@
   .markdown-content em {
     font-style: italic;
   }
+
+  /* Card dropdown animations */
+  .card-content {
+    transition: all 0.3s ease-in-out;
+    overflow: hidden;
+  }
+  
+  .card-header {
+    cursor: pointer;
+  }
+  
+  .card-header:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+  }
 </style>
 
 <div class="relative max-w-5xl mx-auto p-8 bg-gray-900 text-gray-100 min-h-screen">
@@ -140,17 +155,37 @@
     </p>
   </div>
 
+  <!-- Expand/Collapse All Controls -->
+  <div class="text-center mb-8 fade-in-up">
+    <div class="inline-flex gap-4">
+      <button onclick="expandAll()" class="px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white rounded-lg transition-all duration-300 font-medium">
+        Expand All
+      </button>
+      <button onclick="collapseAll()" class="px-4 py-2 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white rounded-lg transition-all duration-300 font-medium">
+        Collapse All
+      </button>
+    </div>
+  </div>
+
   <!-- Grid Layout for Sections -->
   <div class="grid gap-8 md:gap-12">
+    {% assign section_index = 0 %}
     {% for section in site.data.retrospective.sections %}
       {% if section.title == "Key Takeaways from 3 Sprints" %}
         <!-- Sprint Takeaways -->
         <div class="gradient-border fade-in-up hover:scale-105 transition-all duration-300">
           <div class="gradient-border-content p-6">
-            <h2 class="text-2xl font-bold text-violet-300 mb-4">{{ section.title }}</h2>
-            <div class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-lg border border-violet-500/20">
-              <div class="text-gray-300 leading-relaxed markdown-content">
-                {{ section.content | markdownify }}
+            <div class="card-header flex items-center justify-between p-2 -m-2 rounded-lg transition-all duration-200" onclick="toggleCard('card-{{ section_index }}')">
+              <h2 class="text-2xl font-bold text-violet-300">{{ section.title }}</h2>
+              <svg id="arrow-{{ section_index }}" class="w-6 h-6 text-violet-300 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </div>
+            <div id="card-{{ section_index }}" class="card-content max-h-0 opacity-0 mt-4">
+              <div class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-lg border border-violet-500/20">
+                <div class="text-gray-300 leading-relaxed markdown-content">
+                  {{ section.content | markdownify }}
+                </div>
               </div>
             </div>
           </div>
@@ -160,57 +195,64 @@
         <!-- N@tM Experience -->
         <div class="gradient-border fade-in-up hover:scale-105 transition-all duration-300">
           <div class="gradient-border-content p-6">
-            <h2 class="text-2xl font-bold text-pink-300 mb-4">{{ section.title }}</h2>
-            <div class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-lg border border-pink-500/20">
-              <div class="text-gray-300 leading-relaxed markdown-content mb-6">
-                {{ section.content | markdownify }}
-              </div>
-              
-              {% if section.gallery %}
-                <!-- Image Gallery Dropdown -->
-                <div class="mt-6">
-                  <button onclick="toggleGallery()" class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-500 hover:to-rose-500 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-pink-500/25">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                    </svg>
-                    View N@tM Photos
-                    <svg id="gallery-arrow" class="w-4 h-4 ml-2 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                    </svg>
-                  </button>
-                  
-                  <div id="gallery-dropdown" class="hidden mt-4 bg-gray-700/50 backdrop-blur-sm rounded-lg border border-pink-500/20 p-4">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {% for image in section.gallery %}
-                        <div class="group cursor-pointer" onclick="openModal('{{ image.src }}', '{{ image.caption }}', '{{ image.alt }}')">
-                          <div class="relative overflow-hidden rounded-lg shadow-lg group-hover:shadow-pink-500/25 transition-all duration-300">
-                            <img src="{{ site.baseurl }}{{ image.src }}" alt="{{ image.alt }}" class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                            <div class="absolute bottom-0 left-0 right-0 p-3 text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                              <p class="text-sm font-medium">{{ image.caption }}</p>
-                            </div>
-                          </div>
-                        </div>
-                      {% endfor %}
-                    </div>
-                  </div>
+            <div class="card-header flex items-center justify-between p-2 -m-2 rounded-lg transition-all duration-200" onclick="toggleCard('card-{{ section_index }}')">
+              <h2 class="text-2xl font-bold text-pink-300">{{ section.title }}</h2>
+              <svg id="arrow-{{ section_index }}" class="w-6 h-6 text-pink-300 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </div>
+            <div id="card-{{ section_index }}" class="card-content max-h-0 opacity-0 mt-4">
+              <div class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-lg border border-pink-500/20">
+                <div class="text-gray-300 leading-relaxed markdown-content mb-6">
+                  {{ section.content | markdownify }}
                 </div>
                 
-                <!-- Image Modal -->
-                <div id="image-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-                  <div class="relative max-w-4xl w-full">
-                    <button onclick="closeModal()" class="absolute top-4 right-4 z-10 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 transition-colors duration-200">
-                      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                {% if section.gallery %}
+                  <!-- Image Gallery Dropdown -->
+                  <div class="mt-6">
+                    <button onclick="toggleGallery()" class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-500 hover:to-purple-700 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-purple-500/25">
+                      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                      </svg>
+                      View N@tM Photos
+                      <svg id="gallery-arrow" class="w-4 h-4 ml-2 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                       </svg>
                     </button>
-                    <img id="modal-image" src="" alt="" class="w-full h-auto rounded-lg shadow-2xl">
-                    <div class="mt-4 text-center">
-                      <p id="modal-caption" class="text-white text-lg font-medium"></p>
+                    
+                    <div id="gallery-dropdown" class="hidden mt-4 bg-gray-700/50 backdrop-blur-sm rounded-lg border border-purple-500/20 p-4">
+                      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {% for image in section.gallery %}
+                          <div class="group cursor-pointer" onclick="openModal('{{ image.src }}', '{{ image.caption }}', '{{ image.alt }}')">
+                            <div class="relative overflow-hidden rounded-lg shadow-lg group-hover:shadow-purple-500/25 transition-all duration-300">
+                              <img src="{{ site.baseurl }}{{ image.src }}" alt="{{ image.alt }}" class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300">
+                              <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                              <div class="absolute bottom-0 left-0 right-0 p-3 text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                                <p class="text-sm font-medium">{{ image.caption }}</p>
+                              </div>
+                            </div>
+                          </div>
+                        {% endfor %}
+                      </div>
                     </div>
                   </div>
-                </div>
-              {% endif %}
+                  
+                  <!-- Image Modal -->
+                  <div id="image-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+                    <div class="relative max-w-4xl w-full">
+                      <button onclick="closeModal()" class="absolute top-4 right-4 z-10 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 transition-colors duration-200">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                      </button>
+                      <img id="modal-image" src="" alt="" class="w-full h-auto rounded-lg shadow-2xl">
+                      <div class="mt-4 text-center">
+                        <p id="modal-caption" class="text-white text-lg font-medium"></p>
+                      </div>
+                    </div>
+                  </div>
+                {% endif %}
+              </div>
             </div>
           </div>
         </div>
@@ -219,10 +261,17 @@
         <!-- Project Next Steps -->
         <div class="gradient-border fade-in-up hover:scale-105 transition-all duration-300">
           <div class="gradient-border-content p-6">
-            <h2 class="text-2xl font-bold text-indigo-300 mb-4">{{ section.title }}</h2>
-            <div class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-lg border border-indigo-500/20">
-              <div class="text-gray-300 leading-relaxed markdown-content">
-                {{ section.content | markdownify }}
+            <div class="card-header flex items-center justify-between p-2 -m-2 rounded-lg transition-all duration-200" onclick="toggleCard('card-{{ section_index }}')">
+              <h2 class="text-2xl font-bold text-indigo-300">{{ section.title }}</h2>
+              <svg id="arrow-{{ section_index }}" class="w-6 h-6 text-indigo-300 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </div>
+            <div id="card-{{ section_index }}" class="card-content max-h-0 opacity-0 mt-4">
+              <div class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-lg border border-indigo-500/20">
+                <div class="text-gray-300 leading-relaxed markdown-content">
+                  {{ section.content | markdownify }}
+                </div>
               </div>
             </div>
           </div>
@@ -232,23 +281,30 @@
         <!-- Analytics Review -->
         <div class="gradient-border fade-in-up hover:scale-105 transition-all duration-300">
           <div class="gradient-border-content p-6">
-            <h2 class="text-2xl font-bold text-emerald-300 mb-4">{{ section.title }}</h2>
-            <div class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-lg border border-emerald-500/20">
-              <div class="text-gray-300 leading-relaxed markdown-content mb-6">
-                {{ section.content | markdownify }}
-              </div>
-              {% if section.buttons %}
-                <div class="flex flex-col sm:flex-row gap-4">
-                  {% for button in section.buttons %}
-                    <a href="{{ button.url }}" target="_blank" class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-purple-700 to-purple-900 hover:from-purple-600 hover:to-purple-800 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-purple-500/25">
-                      {{ button.text }}
-                      <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-                      </svg>
-                    </a>
-                  {% endfor %}
+            <div class="card-header flex items-center justify-between p-2 -m-2 rounded-lg transition-all duration-200" onclick="toggleCard('card-{{ section_index }}')">
+              <h2 class="text-2xl font-bold text-emerald-300">{{ section.title }}</h2>
+              <svg id="arrow-{{ section_index }}" class="w-6 h-6 text-emerald-300 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </div>
+            <div id="card-{{ section_index }}" class="card-content max-h-0 opacity-0 mt-4">
+              <div class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-lg border border-emerald-500/20">
+                <div class="text-gray-300 leading-relaxed markdown-content mb-6">
+                  {{ section.content | markdownify }}
                 </div>
-              {% endif %}
+                {% if section.buttons %}
+                  <div class="flex flex-col sm:flex-row gap-4">
+                    {% for button in section.buttons %}
+                      <a href="{{ button.url }}" target="_blank" class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-purple-700 to-purple-900 hover:from-purple-600 hover:to-purple-800 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-purple-500/25">
+                        {{ button.text }}
+                        <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                        </svg>
+                      </a>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
             </div>
           </div>
         </div>
@@ -257,19 +313,26 @@
         <!-- MCQ Review -->
         <div class="gradient-border fade-in-up hover:scale-105 transition-all duration-300">
           <div class="gradient-border-content p-6">
-            <h2 class="text-2xl font-bold text-orange-300 mb-4">{{ section.title }}</h2>
-            <div class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-lg border border-orange-500/20">
-              <div class="mb-6">
-                <p class="text-gray-300 text-lg font-semibold mb-2">{{ section.content }}</p>
-                {% if section.link %}
-                  <a href="{{ site.baseurl}}{{ section.link }}" class="text-orange-300 hover:text-orange-400 underline">View Detailed Analysis</a>
+            <div class="card-header flex items-center justify-between p-2 -m-2 rounded-lg transition-all duration-200" onclick="toggleCard('card-{{ section_index }}')">
+              <h2 class="text-2xl font-bold text-orange-300">{{ section.title }}</h2>
+              <svg id="arrow-{{ section_index }}" class="w-6 h-6 text-orange-300 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </div>
+            <div id="card-{{ section_index }}" class="card-content max-h-0 opacity-0 mt-4">
+              <div class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-lg border border-orange-500/20">
+                <div class="mb-6">
+                  <p class="text-gray-300 text-lg font-semibold mb-2">{{ section.content }}</p>
+                  {% if section.link %}
+                    <a href="{{ section.link }}" class="text-orange-300 hover:text-orange-400 underline">View Detailed Analysis</a>
+                  {% endif %}
+                </div>
+                {% if section.reflection %}
+                  <div class="text-gray-300 text-sm leading-relaxed markdown-content">
+                    {{ section.reflection | markdownify }}
+                  </div>
                 {% endif %}
               </div>
-              {% if section.reflection %}
-                <div class="text-gray-300 text-sm leading-relaxed markdown-content">
-                  {{ section.reflection | markdownify }}
-                </div>
-              {% endif %}
             </div>
           </div>
         </div>
@@ -278,38 +341,56 @@
         <!-- Other sections -->
         <div class="gradient-border fade-in-up hover:scale-105 transition-all duration-300">
           <div class="gradient-border-content p-6">
-            {% if section.title == "Compare Yourself to the Beginning of the Year" %}
-              <h2 class="text-2xl font-bold text-purple-300 mb-4">{{ section.title }}</h2>
-              <div class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-lg border border-purple-500/20">
-                <div class="text-gray-300 leading-relaxed markdown-content">
-                  {{ section.content | markdownify }}
+            <div class="card-header flex items-center justify-between p-2 -m-2 rounded-lg transition-all duration-200" onclick="toggleCard('card-{{ section_index }}')">
+              {% if section.title == "Compare Yourself to the Beginning of the Year" %}
+                <h2 class="text-2xl font-bold text-purple-300">{{ section.title }}</h2>
+                <svg id="arrow-{{ section_index }}" class="w-6 h-6 text-purple-300 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+              {% elsif section.title == "What You Want to Learn Next in CompSci" %}
+                <h2 class="text-2xl font-bold text-cyan-300">{{ section.title }}</h2>
+                <svg id="arrow-{{ section_index }}" class="w-6 h-6 text-cyan-300 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+              {% else %}
+                <h2 class="text-2xl font-bold bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent">{{ section.title }}</h2>
+                <svg id="arrow-{{ section_index }}" class="w-6 h-6 text-yellow-300 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+              {% endif %}
+            </div>
+            <div id="card-{{ section_index }}" class="card-content max-h-0 opacity-0 mt-4">
+              {% if section.title == "Compare Yourself to the Beginning of the Year" %}
+                <div class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-lg border border-purple-500/20">
+                  <div class="text-gray-300 leading-relaxed markdown-content">
+                    {{ section.content | markdownify }}
+                  </div>
                 </div>
-              </div>
-            {% elsif section.title == "What You Want to Learn Next in CompSci" %}
-              <h2 class="text-2xl font-bold text-cyan-300 mb-4">{{ section.title }}</h2>
-              <div class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-lg border border-cyan-500/20">
-                <div class="text-gray-300 leading-relaxed markdown-content">
-                  {{ section.content | markdownify }}
+              {% elsif section.title == "What You Want to Learn Next in CompSci" %}
+                <div class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-lg border border-cyan-500/20">
+                  <div class="text-gray-300 leading-relaxed markdown-content">
+                    {{ section.content | markdownify }}
+                  </div>
                 </div>
-              </div>
-            {% else %}
-              <h2 class="text-2xl font-bold bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent mb-4">{{ section.title }}</h2>
-              <div class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-lg border border-yellow-500/20">
-                <div class="text-gray-300 leading-relaxed markdown-content">
-                  {{ section.content | markdownify }}
+              {% else %}
+                <div class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-lg border border-yellow-500/20">
+                  <div class="text-gray-300 leading-relaxed markdown-content">
+                    {{ section.content | markdownify }}
+                  </div>
                 </div>
-              </div>
-            {% endif %}
+              {% endif %}
+            </div>
           </div>
         </div>
       {% endif %}
+      {% assign section_index = section_index | plus: 1 %}
     {% endfor %}
   </div>
 
   <!-- Footer -->
   <div class="text-center mt-16 fade-in-up">
     <div class="inline-block bg-gradient-to-r from-purple-600/20 to-pink-600/20 backdrop-blur-sm rounded-full px-8 py-4 border border-purple-500/30">
-      <p class="text-purple-200">Reflecting on an amazing trimester of growth</p>
+      <p class="text-purple-200">Reflecting on an amazing year of growth</p>
     </div>
   </div>
 </div>
@@ -323,31 +404,89 @@
     });
   });
 
-  // Image gallery and modal script
-  function toggleGallery() {
-    const galleryDropdown = document.getElementById('gallery-dropdown');
-    const isHidden = galleryDropdown.classList.contains('hidden');
-    galleryDropdown.classList.toggle('hidden', !isHidden);
-    galleryDropdown.classList.toggle('block', isHidden);
+  // Card toggle functionality
+  function toggleCard(cardId) {
+    const content = document.getElementById(cardId);
+    const arrow = document.getElementById(cardId.replace('card-', 'arrow-'));
     
-    const arrow = document.getElementById('gallery-arrow');
-    arrow.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+    if (content.style.maxHeight === '0px' || content.style.maxHeight === '') {
+      content.style.maxHeight = content.scrollHeight + 'px';
+      content.style.opacity = '1';
+      arrow.classList.add('rotate-180');
+    } else {
+      content.style.maxHeight = '0px';
+      content.style.opacity = '0';
+      arrow.classList.remove('rotate-180');
+    }
   }
 
-  function openModal(imageSrc, caption, altText) {
+  // Expand all cards
+  function expandAll() {
+    const allCards = document.querySelectorAll('.card-content');
+    const allArrows = document.querySelectorAll('[id^="arrow-"]');
+    
+    allCards.forEach(card => {
+      card.style.maxHeight = card.scrollHeight + 'px';
+      card.style.opacity = '1';
+    });
+    
+    allArrows.forEach(arrow => {
+      arrow.classList.add('rotate-180');
+    });
+  }
+
+  // Collapse all cards
+  function collapseAll() {
+    const allCards = document.querySelectorAll('.card-content');
+    const allArrows = document.querySelectorAll('[id^="arrow-"]');
+    
+    allCards.forEach(card => {
+      card.style.maxHeight = '0px';
+      card.style.opacity = '0';
+    });
+    
+    allArrows.forEach(arrow => {
+      arrow.classList.remove('rotate-180');
+    });
+  }
+
+  // Gallery dropdown functionality
+  function toggleGallery() {
+    const dropdown = document.getElementById('gallery-dropdown');
+    const arrow = document.getElementById('gallery-arrow');
+    
+    if (dropdown.classList.contains('hidden')) {
+      dropdown.classList.remove('hidden');
+      arrow.classList.add('rotate-180');
+    } else {
+      dropdown.classList.add('hidden');
+      arrow.classList.remove('rotate-180');
+    }
+  }
+
+  // Modal functionality
+  function openModal(src, caption, alt) {
     const modal = document.getElementById('image-modal');
     const modalImage = document.getElementById('modal-image');
     const modalCaption = document.getElementById('modal-caption');
     
-    modalImage.src = imageSrc;
-    modalCaption.innerText = caption;
+    modalImage.src = src;
+    modalImage.alt = alt;
+    modalCaption.textContent = caption;
     modal.classList.remove('hidden');
-    modal.classList.add('flex');
+    document.body.style.overflow = 'hidden';
   }
 
   function closeModal() {
     const modal = document.getElementById('image-modal');
     modal.classList.add('hidden');
-    modal.classList.remove('flex');
+    document.body.style.overflow = 'auto';
   }
+
+  // Close modal on escape key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      closeModal();
+    }
+  });
 </script>
