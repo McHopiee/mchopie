@@ -43,6 +43,88 @@
   * {
     font-family: 'Nunito', sans-serif;
   }
+
+  /* Markdown content styling */
+  .markdown-content h1 {
+    font-size: 1.875rem;
+    font-weight: 800;
+    color: #f9fafb;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+  }
+  
+  .markdown-content h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #f3f4f6;
+    margin-top: 1.75rem;
+    margin-bottom: 0.875rem;
+    line-height: 1.3;
+  }
+  
+  .markdown-content h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #e5e7eb;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+  }
+  
+  .markdown-content h4 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #d1d5db;
+    margin-top: 1.25rem;
+    margin-bottom: 0.625rem;
+  }
+  
+  .markdown-content h5 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #d1d5db;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .markdown-content h6 {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #9ca3af;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .markdown-content p {
+    margin-bottom: 1rem;
+    line-height: 1.7;
+    color: #d1d5db;
+  }
+  
+  .markdown-content ul {
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
+  }
+  
+  .markdown-content ol {
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
+  }
+  
+  .markdown-content li {
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+  }
+  
+  .markdown-content strong {
+    font-weight: 700;
+    color: #f9fafb;
+  }
+  
+  .markdown-content em {
+    font-style: italic;
+  }
 </style>
 
 <div class="relative max-w-5xl mx-auto p-8 bg-gray-900 text-gray-100 min-h-screen">
@@ -51,7 +133,7 @@
     <div class="inline-block pulse-glow rounded-full bg-gradient-to-r from-purple-500 to-pink-500 p-4 mb-6">
     </div>
     <h1 class="text-5xl font-bold bg-gradient-to-r from-purple-300 via-pink-300 to-indigo-300 bg-clip-text text-transparent mb-4">
-      End-of-Year Reflection
+      {{ site.data.retrospective.title }}
     </h1>
     <p class="text-xl text-purple-200 max-w-2xl mx-auto">
       A journey through growth, learning, and discovery
@@ -60,122 +142,174 @@
 
   <!-- Grid Layout for Sections -->
   <div class="grid gap-8 md:gap-12">
-    <!-- Growth Reflection -->
-    <div class="gradient-border fade-in-up hover:scale-105 transition-all duration-300">
-      <div class="gradient-border-content p-6">
-        <h2 class="text-2xl font-bold text-purple-300 mb-4">Compare Yourself to the Beginning of the Year</h2>
-        <div class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-lg border border-purple-500/20">
-          <p class="text-gray-300 leading-relaxed">Reflect on how you've grown, what you've learned, and how your mindset has changed.</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Sprint Takeaways -->
-    <div class="gradient-border fade-in-up hover:scale-105 transition-all duration-300">
-      <div class="gradient-border-content p-6">
-        <h2 class="text-2xl font-bold text-violet-300 mb-4">Key Takeaways from 3 Sprints</h2>
-        <div class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-lg border border-violet-500/20">
-          <ul class="space-y-3">
-            <li class="flex items-center text-gray-300">
-              <span class="w-3 h-3 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full mr-3"></span>
-              Tools
-            </li>
-            <li class="flex items-center text-gray-300">
-              <span class="w-3 h-3 bg-gradient-to-r from-violet-400 to-purple-400 rounded-full mr-3"></span>
-              Fundamentals of JavaScript/Python
-            </li>
-            <li class="flex items-center text-gray-300">
-              <span class="w-3 h-3 bg-gradient-to-r from-indigo-400 to-violet-400 rounded-full mr-3"></span>
-              West Coast Travel or Digital Famine
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
-    <!-- Two Column Layout -->
-    <div class="grid md:grid-cols-2 gap-8">
-      <!-- N@tM Experience -->
-      <div class="gradient-border fade-in-up hover:scale-105 transition-all duration-300">
-        <div class="gradient-border-content p-6 h-full">
-          <h2 class="text-xl font-bold text-pink-300 mb-4">How N@tM Went</h2>
-          <div class="bg-gray-800/50 backdrop-blur-sm p-4 rounded-lg border border-pink-500/20">
-            <p class="text-gray-300 text-sm leading-relaxed">Share your experience presenting, and any memorable comments or feedback you received.</p>
+    {% for section in site.data.retrospective.sections %}
+      {% if section.title == "Key Takeaways from 3 Sprints" %}
+        <!-- Sprint Takeaways -->
+        <div class="gradient-border fade-in-up hover:scale-105 transition-all duration-300">
+          <div class="gradient-border-content p-6">
+            <h2 class="text-2xl font-bold text-violet-300 mb-4">{{ section.title }}</h2>
+            <div class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-lg border border-violet-500/20">
+              <div class="text-gray-300 leading-relaxed markdown-content">
+                {{ section.content | markdownify }}
+              </div>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- Project Next Steps -->
-      <div class="gradient-border fade-in-up hover:scale-105 transition-all duration-300">
-        <div class="gradient-border-content p-6 h-full">
-          <h2 class="text-xl font-bold text-indigo-300 mb-4">Next Steps for Your Project</h2>
-          <div class="bg-gray-800/50 backdrop-blur-sm p-4 rounded-lg border border-indigo-500/20">
-            <p class="text-gray-300 text-sm leading-relaxed">What would you like to build or improve if you had more time?</p>
+      {% elsif section.title == "How N@tM Went" %}
+        <!-- N@tM Experience -->
+        <div class="gradient-border fade-in-up hover:scale-105 transition-all duration-300">
+          <div class="gradient-border-content p-6">
+            <h2 class="text-2xl font-bold text-pink-300 mb-4">{{ section.title }}</h2>
+            <div class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-lg border border-pink-500/20">
+              <div class="text-gray-300 leading-relaxed markdown-content mb-6">
+                {{ section.content | markdownify }}
+              </div>
+              
+              {% if section.gallery %}
+                <!-- Image Gallery Dropdown -->
+                <div class="mt-6">
+                  <button onclick="toggleGallery()" class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-500 hover:to-rose-500 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-pink-500/25">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    View N@tM Photos
+                    <svg id="gallery-arrow" class="w-4 h-4 ml-2 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                  </button>
+                  
+                  <div id="gallery-dropdown" class="hidden mt-4 bg-gray-700/50 backdrop-blur-sm rounded-lg border border-pink-500/20 p-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {% for image in section.gallery %}
+                        <div class="group cursor-pointer" onclick="openModal('{{ image.src }}', '{{ image.caption }}', '{{ image.alt }}')">
+                          <div class="relative overflow-hidden rounded-lg shadow-lg group-hover:shadow-pink-500/25 transition-all duration-300">
+                            <img src="{{ site.baseurl }}{{ image.src }}" alt="{{ image.alt }}" class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            <div class="absolute bottom-0 left-0 right-0 p-3 text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                              <p class="text-sm font-medium">{{ image.caption }}</p>
+                            </div>
+                          </div>
+                        </div>
+                      {% endfor %}
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Image Modal -->
+                <div id="image-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+                  <div class="relative max-w-4xl w-full">
+                    <button onclick="closeModal()" class="absolute top-4 right-4 z-10 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 transition-colors duration-200">
+                      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                      </svg>
+                    </button>
+                    <img id="modal-image" src="" alt="" class="w-full h-auto rounded-lg shadow-2xl">
+                    <div class="mt-4 text-center">
+                      <p id="modal-caption" class="text-white text-lg font-medium"></p>
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+            </div>
           </div>
         </div>
-      </div>
-    </div>
 
-    <!-- Learning Goals -->
-    <div class="gradient-border fade-in-up hover:scale-105 transition-all duration-300">
-      <div class="gradient-border-content p-6">
-        <h2 class="text-2xl font-bold text-cyan-300 mb-4">What You Want to Learn Next in CompSci</h2>
-        <div class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-lg border border-cyan-500/20">
-          <p class="text-gray-300 leading-relaxed">Think about new topics, languages, or skills you're curious about.</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Analytics & MCQ Row -->
-    <div class="grid md:grid-cols-2 gap-8">
-      <!-- Analytics -->
-      <div class="gradient-border fade-in-up hover:scale-105 transition-all duration-300">
-        <div class="gradient-border-content p-6 h-full">
-          <h2 class="text-xl font-bold text-emerald-300 mb-4">Analytics Review</h2>
-          <div class="bg-gray-800/50 backdrop-blur-sm p-4 rounded-lg border border-emerald-500/20">
-            <p class="text-gray-300 text-sm leading-relaxed">Summarize what your data showed and what insights you gained.</p>
+      {% elsif section.title == "Next Steps for Your Project" %}
+        <!-- Project Next Steps -->
+        <div class="gradient-border fade-in-up hover:scale-105 transition-all duration-300">
+          <div class="gradient-border-content p-6">
+            <h2 class="text-2xl font-bold text-indigo-300 mb-4">{{ section.title }}</h2>
+            <div class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-lg border border-indigo-500/20">
+              <div class="text-gray-300 leading-relaxed markdown-content">
+                {{ section.content | markdownify }}
+              </div>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="gradient-border fade-in-up hover:scale-105 transition-all duration-300">
-        <div class="gradient-border-content p-6 h-full">
-          <h2 class="text-xl font-bold text-orange-300 mb-4">MCQ Review</h2>
-          <div class="bg-gray-800/50 backdrop-blur-sm p-4 rounded-lg border border-orange-500/20">
-            <ul class="space-y-2">
-              <li class="flex items-center text-gray-300 text-sm">
-                <span class="w-2 h-2 bg-gradient-to-r from-orange-400 to-red-400 rounded-full mr-3"></span>
-                Score
-              </li>
-              <li class="flex items-center text-gray-300 text-sm">
-                <span class="w-2 h-2 bg-gradient-to-r from-red-400 to-pink-400 rounded-full mr-3"></span>
-                Corrections
-              </li>
-              <li class="flex items-center text-gray-300 text-sm">
-                <span class="w-2 h-2 bg-gradient-to-r from-pink-400 to-purple-400 rounded-full mr-3"></span>
-                Approach to future questions
-              </li>
-            </ul>
+      {% elsif section.title == "Analytics Review" %}
+        <!-- Analytics Review -->
+        <div class="gradient-border fade-in-up hover:scale-105 transition-all duration-300">
+          <div class="gradient-border-content p-6">
+            <h2 class="text-2xl font-bold text-emerald-300 mb-4">{{ section.title }}</h2>
+            <div class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-lg border border-emerald-500/20">
+              <div class="text-gray-300 leading-relaxed markdown-content mb-6">
+                {{ section.content | markdownify }}
+              </div>
+              {% if section.buttons %}
+                <div class="flex flex-col sm:flex-row gap-4">
+                  {% for button in section.buttons %}
+                    <a href="{{ button.url }}" target="_blank" class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-purple-700 to-purple-900 hover:from-purple-600 hover:to-purple-800 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-purple-500/25">
+                      {{ button.text }}
+                      <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                      </svg>
+                    </a>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
           </div>
         </div>
-      </div>
-    </div>
 
-    <!-- Cool Share -->
-    <div class="gradient-border fade-in-up hover:scale-105 transition-all duration-300">
-      <div class="gradient-border-content p-6">
-        <h2 class="text-2xl font-bold bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent mb-4">Something Cool You'd Like to Share</h2>
-        <div class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-lg border border-yellow-500/20">
-          <p class="text-gray-300 leading-relaxed">This could be a fun fact, a project, a discovery, or anything you're proud of!</p>
+      {% elsif section.title == "MCQ Review" %}
+        <!-- MCQ Review -->
+        <div class="gradient-border fade-in-up hover:scale-105 transition-all duration-300">
+          <div class="gradient-border-content p-6">
+            <h2 class="text-2xl font-bold text-orange-300 mb-4">{{ section.title }}</h2>
+            <div class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-lg border border-orange-500/20">
+              <div class="mb-6">
+                <p class="text-gray-300 text-lg font-semibold mb-2">{{ section.content }}</p>
+                {% if section.link %}
+                  <a href="{{ site.baseurl}}{{ section.link }}" class="text-orange-300 hover:text-orange-400 underline">View Detailed Analysis</a>
+                {% endif %}
+              </div>
+              {% if section.reflection %}
+                <div class="text-gray-300 text-sm leading-relaxed markdown-content">
+                  {{ section.reflection | markdownify }}
+                </div>
+              {% endif %}
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+
+      {% else %}
+        <!-- Other sections -->
+        <div class="gradient-border fade-in-up hover:scale-105 transition-all duration-300">
+          <div class="gradient-border-content p-6">
+            {% if section.title == "Compare Yourself to the Beginning of the Year" %}
+              <h2 class="text-2xl font-bold text-purple-300 mb-4">{{ section.title }}</h2>
+              <div class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-lg border border-purple-500/20">
+                <div class="text-gray-300 leading-relaxed markdown-content">
+                  {{ section.content | markdownify }}
+                </div>
+              </div>
+            {% elsif section.title == "What You Want to Learn Next in CompSci" %}
+              <h2 class="text-2xl font-bold text-cyan-300 mb-4">{{ section.title }}</h2>
+              <div class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-lg border border-cyan-500/20">
+                <div class="text-gray-300 leading-relaxed markdown-content">
+                  {{ section.content | markdownify }}
+                </div>
+              </div>
+            {% else %}
+              <h2 class="text-2xl font-bold bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent mb-4">{{ section.title }}</h2>
+              <div class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-lg border border-yellow-500/20">
+                <div class="text-gray-300 leading-relaxed markdown-content">
+                  {{ section.content | markdownify }}
+                </div>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
+    {% endfor %}
   </div>
 
   <!-- Footer -->
   <div class="text-center mt-16 fade-in-up">
     <div class="inline-block bg-gradient-to-r from-purple-600/20 to-pink-600/20 backdrop-blur-sm rounded-full px-8 py-4 border border-purple-500/30">
-      <p class="text-purple-200">Reflecting on an amazing year of growth</p>
+      <p class="text-purple-200">Reflecting on an amazing trimester of growth</p>
     </div>
   </div>
 </div>
@@ -188,4 +322,32 @@
       el.style.animationDelay = `${index * 0.1}s`;
     });
   });
+
+  // Image gallery and modal script
+  function toggleGallery() {
+    const galleryDropdown = document.getElementById('gallery-dropdown');
+    const isHidden = galleryDropdown.classList.contains('hidden');
+    galleryDropdown.classList.toggle('hidden', !isHidden);
+    galleryDropdown.classList.toggle('block', isHidden);
+    
+    const arrow = document.getElementById('gallery-arrow');
+    arrow.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+  }
+
+  function openModal(imageSrc, caption, altText) {
+    const modal = document.getElementById('image-modal');
+    const modalImage = document.getElementById('modal-image');
+    const modalCaption = document.getElementById('modal-caption');
+    
+    modalImage.src = imageSrc;
+    modalCaption.innerText = caption;
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  }
+
+  function closeModal() {
+    const modal = document.getElementById('image-modal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }
 </script>

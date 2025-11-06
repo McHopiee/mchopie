@@ -1,31 +1,192 @@
 title: "End-of-Year Reflection"
 sections:
   - title: "Compare Yourself to the Beginning of the Year"
-    content: "I've grown more confident in debugging and collaborating with peers. My understanding of core programming concepts has deepened."
+    content: |
+      I've grown significantly more confident in debugging, collaborating with peers, and tackling programming challenges independently. My understanding of core concepts has deepened, especially in problem-solving and breaking complex tasks into manageable steps. I'm now comfortable reading others' code and have developed better testing and documentation habits.
+
+      ## **Key Growth Areas:**
+
+      • **Technical Skills** - Improved debugging, code comprehension, and collaborative programming
+
+      • **UI/UX Design** - Learned to balance functionality with aesthetics and create intuitive interfaces
+
+      • **Communication** - Transformed from intimidated to confident when presenting and explaining projects
+
+      • **Problem-Solving** - Better at decomposing complex problems and seeking appropriate feedback
 
   - title: "Key Takeaways from 3 Sprints"
-    bullets:
-      - "Learned how to use GitHub and VS Code effectively"
-      - "Built foundational skills in JavaScript and Python"
-      - "Explored West Coast Travel and Digital Famine themes through creative projects"
+    content: |
+      ## **Sprint One**
+      
+      This sprint reinforced my understanding of the tools introduced in CSSE and taught me how to properly set up and use a virtual environment. I also learned the most effective ways to commit changes, manage versions, and collaborate on shared projects using Git. These experiences built a strong foundation for working more efficiently in future sprints.
+
+      ### *Key Takeaways*:
+     
+      • Strengthened understanding of CSSE development tools
+
+      • Learned to create and manage a virtual environment
+
+      • Practiced clean and consistent Git commits
+
+      • Improved confidence in handling setup and project organization
+
+      ## **Sprint Two**
+
+      During this sprint, I began developing my teamwork and leadership skills. As the Scrum Master for Syntax Terrors, I took responsibility for keeping our group organized and on track. I was also in charge of designing visuals for all the lessons, which helped me strengthen my creative and technical abilities while ensuring our work was both clear and engaging.
+
+      ### *Key Takeaways*:
+     
+      • Gained experience as a Scrum Master
+
+      • Practiced organizing team tasks and tracking progress
+
+      • Created lesson visuals that supported team projects
+
+      • Improved collaboration and leadership skills
+
+      ## **Sprint Three**
+
+      In this sprint, I expanded my communication and collaboration skills by working with the entire class on the West Coast Project. I continued my leadership and design work with Syntax Terrors while learning how to coordinate across larger teams and manage feedback from multiple perspectives. This experience helped me understand the importance of clear communication and adaptability in group projects.
+
+      ### *Key Takeaways*:
+      
+      • Strengthened communication with large groups
+
+      • Practiced coordinating between multiple teams
+
+      • Continued refining visuals and team leadership with Syntax Terrors
+
+      • Learned to adapt and problem-solve based on group feedback
 
   - title: "How N@tM Went"
-    content: "It was exciting to present! I received great feedback, especially one comment about how intuitive my UI was."
+    content: |
+      N@tM was an exciting and memorable experience! I was really happy to present our project to people who were genuinely interested in what we created. It gave me a chance to share not just the final product, but also the process and challenges behind it. I enjoyed explaining the technical side of our work and seeing how others responded to it.
+
+      It was also great presentation practice, I was asked a lot of thoughtful questions about my project, not just general ones, but ones that connected directly to computer science concepts. Some of the questions I remember being asked included:
+
+      • What database is being used for the project?
+
+      • What was the key takeaway from making this project?
+      
+      • Why did you tie CRUD operations into food?
+
+      Answering these helped me realize how much I've learned and how confidently I can talk about programming concepts now. Overall, the night made me proud of my progress and gave me valuable experience communicating my work to others.
+    gallery:
+      - src: "/images/nightone.png"
+        alt: "Presenting our project at N@tM"
+      - src: "/images/nighttwo.png"
+        alt: "Team collaboration during N@tM"
+      - src: "/images/nightthree.png"
+        alt: "Interactive demo session"
+      - src: "/images/nightfour.png"
+      - src: "/images/nightfive.png"
+      - src: "/images/nightsix.png"
 
   - title: "Next Steps for Your Project"
-    content: "I'd like to add user authentication and expand the analytics dashboard if time allows."
+    content: |
+      If I had more time to continue developing my N@tM project, I would have loved to dive deeper into the specific CRUD operations and focus on what each one teaches. Instead of just showing simple one-step examples, I'd like to create more interactive activities that help users understand the logic and real-world applications behind each operation. This would make the learning experience more meaningful and connected to actual programming concepts.
+
+      I also would have liked to improve the Food module's functionality to make it more personalized for users. Right now, after completing the quiz at the end of the AI module, users are given two foods to complete for each city. My goal would be to make it so users only see and complete those two recommended foods instead of all six before moving on. It would be really cool to have the submodule adapt dynamically based on each user's quiz results, making the experience feel more tailored and responsive.
+
+      ### **Planned Improvements:**
+
+      **CRUD Operations Enhancement:**
+
+      • Expand on CRUD operations to show deeper understanding
+
+      • Create more detailed, interactive examples for each operation
+
+      • Explain what each operation teaches and how it applies to real-world programming
+
+      **Food Module Enhancements:**
+
+      • Personalize user experience based on quiz results
+
+      • Allow users to see and complete only their two recommended foods instead of all six
+
+      • Make submodules update dynamically depending on each user's quiz outcome
 
   - title: "What You Want to Learn Next in CompSci"
-    content: "I'm curious about machine learning and want to explore how recommendation systems work."
+    content: |
+      I'm curious about machine learning and want to explore how other systems work. There are so many areas I'd love to dive deeper into as I continue my computer science journey:
+
+      ## **Technical Skills:**
+
+      • **Full-Stack Development** - How to build more complex web applications that connect front-end and back-end systems
+
+      • **APIs and Data Integration** - Using real-world data sources in projects
+
+      • **Advanced Programming** - More advanced Python and JavaScript concepts, like classes, modules, and asynchronous functions
+
+      • **Algorithm Optimization** - How to write more efficient algorithms and analyze their performance
+
+      ## **Specialized Areas:**
+
+      • **AI and Machine Learning** - Exploring AI and machine learning basics to understand how recommendations and predictions work
+
+      • **Cybersecurity** - Learning about cybersecurity and data privacy to keep users' information safe
+
+      • **Game Development** - Experimenting with game development or interactive storytelling using code
+
+      ## **Professional Development:**
+
+      • **Communication Skills** - Practicing presentation and documentation skills to clearly explain my work to others
 
   - title: "Analytics Review"
-    content: "Our user engagement spiked after we added interactive elements. Most users spent over 2 minutes on the site."
+    content: |
+      After this trimester, my analytics have improved drastically. This growth came from the consistent work I did on our group projects, many of which were submitted as pull requests to the Open Coding Society repository. Since I was the main person responsible for creating and managing these pull requests, I gained a lot of experience with version control and collaborative workflows.
+
+      I also made a significant number of commits this trimester. I was constantly testing our group's projects, fixing issues, and making improvements to ensure everything ran smoothly. This hands-on involvement not only boosted my analytics but also strengthened my understanding of how teamwork, iteration, and consistent testing contribute to successful project development.
+
+      ## **Key Improvements:**
+
+      • Increased number of commits and pull requests
+
+      • Improved understanding of Git and version control processes
+
+      • Strengthened collaboration and communication within team projects
+
+      • Enhanced debugging and testing workflow
+
+      • Gained confidence in maintaining and updating shared repositories
+    buttons:
+      - text: "Profile Dashboard"
+        url: "https://pages.opencodingsociety.com/dashboard"
+      - text: "Contribution Chart"
+        url: "https://github.com/McHopiee"
+  - title: "Something Cool You'd Like to Share"
+    content: |
+      This trimester, I became much more familiar with Tailwind CSS, a tool that was first introduced to me last year during CSSE. Since then, I've grown close to mastering it! I used Tailwind throughout this trimester to design and style multiple projects, including:
+
+      • The lessons we created in Sprint Two
+
+      • The Food Module home page
+
+      • The Food Module storyboard
+
+      • And even this very retrospective
+
+      It's been exciting to see how much cleaner and faster I can build interfaces using Tailwind now compared to before.
+
+      My proudest moment this trimester was figuring out a way for users to input code into a cell and have the computer analyze their code to determine if it was correct or not (during Sprint Two). Solving that challenge was incredibly rewarding. It combined both logic and creativity, and it showed me how much I've grown as a programmer and problem-solver.
 
   - title: "MCQ Review"
-    bullets:
-      - "Score: 85%"
-      - "Corrected mistakes on recursion and scope"
-      - "Plan to review concepts weekly and practice with flashcards"
+    content: "Score: 31/66 (47%)"
+    link: "/personal/practiceMCQ"
+    reflection: |
+      ## Main Error Patterns
+      
+      • **Definitions** - Boolean types, lossless vs lossy encoding  
+      • **Probability** - Spinner ratios, proportional reasoning  
+      • **Loops** - Increment/display order, off-by-one errors  
+      • **Runtime** - Expensive calls inside loops  
+      • **Math** - Powers of 2, modulus operations, logic operators  
 
-  - title: "Something Cool You'd Like to Share"
-    content: "I built a mini game in JavaScript that tracks your typing speed. It was fun and surprisingly challenging!"
+      ## Study Plan
+      
+      1. **Flashcards** - Core CS definitions and concepts  
+      2. **Loop Practice** - Trace variables step-by-step  
+      3. **Probability Drills** - Convert ratios to counts  
+      4. **Runtime Analysis** - Count expensive function calls  
+      5. **Math Review** - Modulus, powers of 2 (2^5 to 2^10)  
+      6. **Timed Practice** - Redo similar problems under time pressure
