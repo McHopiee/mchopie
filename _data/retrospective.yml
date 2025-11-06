@@ -14,6 +14,9 @@ sections:
 
       • **Problem-Solving** - Better at decomposing complex problems and seeking appropriate feedback
 
+      • **Leadership** - Although I've already been a sort of 'Group Leader' in CSSE1&2, being an official scrum master and having scrum meetings was a great experience
+
+
   - title: "Key Takeaways from 3 Sprints"
     content: |
       ## **Sprint One**
@@ -33,6 +36,7 @@ sections:
       ## **Sprint Two**
 
       During this sprint, I began developing my teamwork and leadership skills. As the Scrum Master for Syntax Terrors, I took responsibility for keeping our group organized and on track. I was also in charge of designing visuals for all the lessons, which helped me strengthen my creative and technical abilities while ensuring our work was both clear and engaging.
+      Not only that, but I was also the main teacher for the first two out of four lessons for our group.
 
       ### *Key Takeaways*:
      
@@ -43,6 +47,10 @@ sections:
       • Created lesson visuals that supported team projects
 
       • Improved collaboration and leadership skills
+
+      • Taught Lists and Algorithms 
+      
+      • Raised the bar for teaching by creating a way for users to input code right in the lesson rather than in VSCode
 
       ## **Sprint Three**
 
@@ -116,7 +124,7 @@ sections:
 
       • **APIs and Data Integration** - Using real-world data sources in projects
 
-      • **Advanced Programming** - More advanced Python and JavaScript concepts, like classes, modules, and asynchronous functions
+      • **Advanced Programming** - More advanced Python and JavaScript concepts
 
       • **Algorithm Optimization** - How to write more efficient algorithms and analyze their performance
 
@@ -124,14 +132,7 @@ sections:
 
       • **AI and Machine Learning** - Exploring AI and machine learning basics to understand how recommendations and predictions work
 
-      • **Cybersecurity** - Learning about cybersecurity and data privacy to keep users' information safe
-
       • **Game Development** - Experimenting with game development or interactive storytelling using code
-
-      ## **Professional Development:**
-
-      • **Communication Skills** - Practicing presentation and documentation skills to clearly explain my work to others
-
   - title: "Analytics Review"
     content: |
       After this trimester, my analytics have improved drastically. This growth came from the consistent work I did on our group projects, many of which were submitted as pull requests to the Open Coding Society repository. Since I was the main person responsible for creating and managing these pull requests, I gained a lot of experience with version control and collaborative workflows.

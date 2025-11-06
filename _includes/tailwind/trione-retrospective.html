@@ -150,6 +150,59 @@
     background: rgba(255, 255, 255, 0.05);
     border-radius: 8px;
   }
+
+  /* Skills table styling */
+  .skills-table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 1rem;
+    font-size: 0.875rem;
+  }
+
+  .skills-table th,
+  .skills-table td {
+    border: 1px solid #374151;
+    padding: 0.75rem 0.5rem;
+    text-align: center;
+  }
+
+  .skills-table th {
+    background: #1f2937;
+    color: #f3f4f6;
+    font-weight: 600;
+  }
+
+  .skills-table td {
+    background: #111827;
+    color: #d1d5db;
+  }
+
+  .skills-table tr:hover td {
+    background: #1f2937;
+  }
+
+  .skill-category {
+    background: #4c1d95 !important;
+    color: #e5e7eb !important;
+    font-weight: 700;
+  }
+
+  .total-row {
+    background: #7c3aed !important;
+    color: #f3f4f6 !important;
+    font-weight: 700;
+  }
+
+  @media (max-width: 768px) {
+    .skills-table {
+      font-size: 0.75rem;
+    }
+    
+    .skills-table th,
+    .skills-table td {
+      padding: 0.5rem 0.25rem;
+    }
+  }
 </style>
 
 <div class="relative max-w-5xl mx-auto p-8 bg-gray-900 text-gray-100 min-h-screen">
@@ -418,6 +471,147 @@
       {% endif %}
       {% assign section_index = section_index | plus: 1 %}
     {% endfor %}
+  </div>
+
+  <!-- Skills Assessment Table -->
+  <div class="mt-16 fade-in-up">
+    <div class="gradient-border">
+      <div class="gradient-border-content p-6">
+        <h2 class="text-2xl font-bold text-center mb-6 bg-gradient-to-r from-purple-300 to-pink-300 bg-clip-text text-transparent">
+          Skills Assessment - Post CSP One 
+        </h2>
+        
+        <div class="overflow-x-auto">
+          <table class="skills-table">
+            <thead>
+              <tr>
+                <th style="text-align: left; width: 35%;">Skill</th>
+                <th style="width: 15%;">Mastered (Y/N)</th>
+                <th style="width: 15%;">Self Rank (1-5)</th>
+                <th style="width: 35%;">Notes/Evidence</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Core Behaviors -->
+              <tr>
+                <td class="skill-category" style="text-align: left;">🎯 <strong>Core Behaviors</strong></td>
+                <td class="skill-category"></td>
+                <td class="skill-category"></td>
+                <td class="skill-category"></td>
+              </tr>
+              <tr>
+                <td style="text-align: left;">Attendance</td>
+                <td>Y</td>
+                <td>5</td>
+                <td>I've been here every day.</td>
+              </tr>
+              <tr>
+                <td style="text-align: left;">Work Habits</td>
+                <td>Y</td>
+                <td>5</td>
+                <td>I've been able to keep up with the workload and stay on track.</td>
+              </tr>
+              <tr>
+                <td style="text-align: left;">Behavior</td>
+                <td>Y</td>
+                <td>5</td>
+                <td>I don't bother others when doing work, and I don't let others bother me.</td>
+              </tr>
+              <tr>
+                <td style="text-align: left;">Timeliness</td>
+                <td>Y</td>
+                <td>5</td>
+                <td>I get things done when I need to and make sure to keep deadlines in mind.</td>
+              </tr>
+              
+              <!-- Technical Skills -->
+              <tr>
+                <td class="skill-category" style="text-align: left;">💻 <strong>Technical Skills</strong></td>
+                <td class="skill-category"></td>
+                <td class="skill-category"></td>
+                <td class="skill-category"></td>
+              </tr>
+              <tr>
+                <td style="text-align: left;">Tech/Cyber Sense</td>
+                <td>N</td>
+                <td>4</td>
+                <td>Not yet mastered the way of JavaScript, but I may be ahead of others.</td>
+              </tr>
+              <tr>
+                <td style="text-align: left;">Tech/Cyber Talk</td>
+                <td>N</td>
+                <td>4</td>
+                <td>I've improved talking about JavaScript, but I wouldn't say I've completely mastered it.</td>
+              </tr>
+              <tr>
+                <td style="text-align: left;">Tech Growth</td>
+                <td>N</td>
+                <td>4</td>
+                <td>I'm learning new things about JavaScript every day, and I've grown from the beginner of the year, but I haven't mastered it yet.</td>
+              </tr>
+              
+              <!-- Collaboration -->
+              <tr>
+                <td class="skill-category" style="text-align: left;">🤝 <strong>Collaboration</strong></td>
+                <td class="skill-category"></td>
+                <td class="skill-category"></td>
+                <td class="skill-category"></td>
+              </tr>
+              <tr>
+                <td style="text-align: left;">Advocacy</td>
+                <td>Y</td>
+                <td>5</td>
+                <td>As this trimester passed, I found myself able to talk to others about my ideas and what I want.</td>
+              </tr>
+              <tr>
+                <td style="text-align: left;">Communication & Collab</td>
+                <td>N</td>
+                <td>4</td>
+                <td>Throughout this trimester I've worked in Syntax Terrors. But I can't say that I've mastered it because sometimes I end up doing the majority of the work.</td>
+              </tr>
+              
+              <!-- Professional Skills -->
+              <tr>
+                <td class="skill-category" style="text-align: left;">🎨 <strong>Professional Skills</strong></td>
+                <td class="skill-category"></td>
+                <td class="skill-category"></td>
+                <td class="skill-category"></td>
+              </tr>
+              <tr>
+                <td style="text-align: left;">Integrity</td>
+                <td>Y</td>
+                <td>5</td>
+                <td>Why would I lie about my work?</td>
+              </tr>
+              <tr>
+                <td style="text-align: left;">Organization</td>
+                <td>Y</td>
+                <td>5</td>
+                <td>I'm an organized person, I successfully kept everything organized and clean throughout this class and found it easy to find things when I need them.</td>
+              </tr>
+              
+              <!-- Totals -->
+              <tr>
+                <td class="total-row" style="text-align: left;">📈 <strong>TOTAL SELF RANKING</strong></td>
+                <td class="total-row"></td>
+                <td class="total-row"><strong>51</strong></td>
+                <td class="total-row"></td>
+              </tr>
+              <tr>
+                <td class="total-row" style="text-align: left;">🎯 <strong>AVERAGE SCORE</strong></td>
+                <td class="total-row"></td>
+                <td class="total-row"><strong>4.5</strong></td>
+                <td class="total-row"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <div class="mt-4 text-center text-sm text-gray-400">
+          <p><em>Self-assessment skills evaluation</em></p>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Footer -->
