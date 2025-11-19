@@ -1,0 +1,204 @@
+Title: "RPG Learning Hub"
+Description: "A personalized, interactive guide for students to design and build their own RPG. User choices directly influence the lessons they see."
+
+GeneralFeatures:
+  - name: "Progress Tracking"
+    icon: "📊"
+    description: "Automatic progress saving with localStorage to track completion across all modules."
+    details:
+      - "Save progress after each module completion"
+      - "Visual progress bar showing percentage complete"
+      - "Resume from where you left off on return visits"
+      - "Track quiz responses and module completions"
+
+  - name: "Adaptive Content"
+    icon: "🎯"
+    description: "Dynamic module content that changes based on user preferences from the starter quiz."
+    details:
+      - "Module 3 (Worldbuilding) adapts to chosen RPG style"
+      - "Module 6 (Gameplay Design) personalizes to preferences"
+      - "Real-time content generation based on quiz answers"
+      - "Customized learning path for each student"
+
+  - name: "Experience Summary"
+    icon: "📝"
+    description: "Comprehensive summary of user's journey and ideal RPG design based on all choices made."
+    details:
+      - "Aggregates all quiz responses and module choices"
+      - "Generates personalized RPG blueprint document"
+      - "Exportable summary for future reference"
+      - "Visualizes your unique RPG design pathway"
+
+Locations:
+  - name: "Login Page"
+    description: "Students create or load a personalized profile that tracks preferences and choices."
+    focus: "Personalized learning path"
+
+  - name: "Starter Page"
+    description: "Students answer interactive questions about what type of RPG they want to build."
+    focus: "Preference gathering and adaptive learning"
+
+  - name: "Worldbuilding"
+    description: "Guided world creation tailored to the student's selected RPG style."
+    focus: "Dynamic content generation"
+
+  - name: "Controls & Keybinds"
+    description: "Practice implementing WASD movement and interactive key events."
+    focus: "Hands-on coding fundamentals"
+
+  - name: "Animation"
+    description: "Learn techniques for animating characters, tiles, and UI."
+    focus: "Core game development concepts"
+
+  - name: "RPG Gameplay Design"
+    description: "A curated idea hub that adapts suggestions to the student's preferred RPG style."
+    focus: "Mechanic theory building"
+
+Categories:
+  - User Profiling
+  - Worldbuilding Techniques
+  - Game Controls
+  - Animation Logic
+  - Mechanic Design
+  - Personalization Systems
+
+LearningObjectives:
+  - "Understand how user preferences can influence learning pathways."
+  - "Practice building foundational RPG components in small modules."
+  - "Learn to integrate input controls and animation into interactive games."
+  - "Develop the ability to design and personalize game worlds and mechanics."
+
+Topics:
+
+  - title: "Login Page"
+    subtitle: "Module 1"
+    description: "Students are able to use the login page to start the page"
+    keyPoints:
+      - "Makes it so each person has their personalized data on the next few modules"
+      - "LocalStorage or simple backend use"
+      - "Dynamic student experiences"
+    tasks:
+      - "Build login form"
+      - "Store user profile in localStorage"
+      - "Load personalized preferences on each page"
+    interactives:
+      - "Save username"
+      - "Load existing profile"
+      - "Display profile-based UI"
+
+  - title: "Starter Page – RPG Preference Quiz"
+    subtitle: "Module 2"
+    description: "The student selects what kind of RPG they want to build. These choices shape modules 3 and 6."
+    keyPoints:
+      - "Defining tone (dark, cozy, fantasy, sci-fi)"
+      - "Choosing gameplay focus (combat, story, exploration)"
+      - "Choosing progression style (quests, leveling, relationships)"
+    tasks:
+      - "Create preference-selection UI"
+      - "Store choices in profile"
+    interactives:
+      - "Dynamic preference quiz"
+      - "Preview of personalized path"
+
+  - title: "Worldbuilding"
+    subtitle: "Module 3"
+    description: "Worldbuilding content adapts based on the preferences selected in Module 2."
+    keyPoints:
+      - "Lore depth"
+      - "Conflict vs harmony"
+      - "NPC and environment design"
+    tasks:
+      - "Design a starter zone"
+      - "Create factions or peaceful societies"
+    interactives:
+      - "Auto-generated world suggestions based on chosen RPG style"
+      - "Editable world outline"
+
+  - title: "Keybinds & Controls"
+    subtitle: "Module 4"
+    description: "Students learn WASD movement coding and basic interaction keys."
+    keyPoints:
+      - "Keyboard event listeners"
+      - "Movement logic"
+      - "Interaction triggers"
+    tasks:
+      - "Implement WASD movement"
+      - "Add interaction key (E, F)"
+    interactives:
+      - "Live JS movement demo"
+      - "Task: Add custom keybinding"
+
+  - title: "Animation"
+    subtitle: "Module 5"
+    description: "The student learns sprite animation logic for an RPG system."
+    keyPoints:
+      - "Sprite sheets"
+      - "Idle, walk, and action animations"
+    tasks:
+      - "Import sprite sheet"
+      - "Animate walking"
+    interactives:
+      - "Code examples"
+      - "Understanding examples"
+
+  - title: "RPG Gameplay Design Hub"
+    subtitle: "Module 6"
+    description: "Personalized gameplay ideas based on the student's responses in module two."
+    keyPoints:
+      - "Game ideas, such as interactables and storylines"
+      - "Mechanic depth based on player interest"
+    tasks:
+      - "Select a core mechanic set"
+    interactives:
+      - "Adaptive idea generator"
+      - "Combat / peaceful / story presets"
+
+StoryboardTitle: "System Flow"
+Storyboard:
+  - title: "Login"
+    location: "Module 1"
+    goal: "Load or create personalized student profile"
+    steps:
+      - "Enter username"
+      - "Save profile to localStorage"
+      - "Load saved preferences"
+
+  - title: "Starter Page Quiz"
+    location: "Module 2"
+    goal: "Gather RPG-style preferences"
+    steps:
+      - "Choose game tone"
+      - "Choose RPG format"
+      - "Choose mechanic focus"
+      - "Store selections"
+
+  - title: "Personalized Modules"
+    location: "Modules 3–6"
+    goal: "Modify content based on user choices"
+    steps:
+      - "Load profile data"
+      - "Alter worldbuilding suggestions"
+      - "Alter gameplay ideas"
+      - "Render adaptive tasks"
+
+Analytics:
+  - "Track most-selected RPG style"
+  - "Record user progress across modules"
+  - "Monitor animated components loaded"
+
+AcceptanceCriteria:
+  - "Login stores and loads user personalization"
+  - "Starter page quiz populates user profile"
+  - "Worldbuilding adjusts based on profile"
+  - "Gameplay design ideas adjust accordingly"
+
+TaskChecklist:
+  - "Create login page"
+  - "Build preference quiz"
+  - "Store user profile"
+  - "Render adaptive modules"
+  - "Implement WASD movement"
+  - "Animate basic sprite"
+  - "Build RPG mechanic suggestions"
+
+FooterText: "RPG Interactive Learning Project"
