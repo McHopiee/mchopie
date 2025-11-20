@@ -29,6 +29,16 @@ GeneralFeatures:
       - "Exportable summary for future reference"
       - "Visualizes your unique RPG design pathway"
 
+  - name: "Admin Dashboard"
+    icon: "👨‍💼"
+    description: "Administrative page displaying user analytics and information after students complete the modules."
+    details:
+      - "View all student progress and completion rates"
+      - "Analyze most popular RPG style preferences"
+      - "Track module engagement and time spent"
+      - "Export student data and personalized RPG designs"
+      - "Monitor quiz responses and learning patterns"
+
 Locations:
   - name: "Login Page"
     description: "Students create or load a personalized profile that tracks preferences and choices."
@@ -54,6 +64,10 @@ Locations:
     description: "A curated idea hub that adapts suggestions to the student's preferred RPG style."
     focus: "Mechanic theory building"
 
+  - name: "Admin Dashboard"
+    description: "Instructor-only view to monitor student analytics, progress, and gathered preferences."
+    focus: "Data visualization and assessment"
+
 Categories:
   - User Profiling
   - Worldbuilding Techniques
@@ -61,6 +75,7 @@ Categories:
   - Animation Logic
   - Mechanic Design
   - Personalization Systems
+  - Analytics & Reporting
 
 LearningObjectives:
   - "Understand how user preferences can influence learning pathways."
@@ -153,6 +168,23 @@ Topics:
       - "Adaptive idea generator"
       - "Combat / peaceful / story presets"
 
+  - title: "Admin Dashboard"
+    subtitle: "Instructor Module"
+    description: "View comprehensive analytics of all students who have completed the RPG learning modules."
+    keyPoints:
+      - "Aggregate student data and preferences"
+      - "Visual charts showing popular RPG styles"
+      - "Module completion tracking per student"
+      - "Export functionality for reports"
+    tasks:
+      - "Display user analytics dashboard"
+      - "Generate summary reports"
+      - "Filter by module or student"
+    interactives:
+      - "Real-time analytics charts"
+      - "Student detail view"
+      - "CSV/PDF export options"
+
 StoryboardTitle: "System Flow"
 Storyboard:
   - title: "Login"
@@ -181,16 +213,30 @@ Storyboard:
       - "Alter gameplay ideas"
       - "Render adaptive tasks"
 
+  - title: "Admin Analytics View"
+    location: "Admin Dashboard"
+    goal: "Display aggregated user data and analytics"
+    steps:
+      - "Retrieve all user profiles from storage"
+      - "Calculate completion percentages"
+      - "Generate preference distribution charts"
+      - "Display individual student summaries"
+      - "Provide export functionality"
+
 Analytics:
   - "Track most-selected RPG style"
   - "Record user progress across modules"
   - "Monitor animated components loaded"
+  - "Admin dashboard access and usage tracking"
+  - "Student completion time per module"
 
 AcceptanceCriteria:
   - "Login stores and loads user personalization"
   - "Starter page quiz populates user profile"
   - "Worldbuilding adjusts based on profile"
   - "Gameplay design ideas adjust accordingly"
+  - "Admin dashboard displays all user analytics"
+  - "Admin can export student data and progress reports"
 
 TaskChecklist:
   - "Create login page"
@@ -200,5 +246,8 @@ TaskChecklist:
   - "Implement WASD movement"
   - "Animate basic sprite"
   - "Build RPG mechanic suggestions"
+  - "Create admin dashboard"
+  - "Implement analytics visualization"
+  - "Add data export functionality"
 
 FooterText: "RPG Interactive Learning Project"
