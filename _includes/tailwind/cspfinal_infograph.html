@@ -8,21 +8,21 @@
     <p class="text-xl text-zinc-200">{{ data.Description }}</p>
   </section>
 
-  <section class="w-full max-w-full space-y-4 rounded-xl shadow-md border border-sky-700/40 bg-sky-950/30 p-6 box-border">
+  <section class="w-full max-w-full space-y-4 rounded-xl shadow-md border border-violet-400/35 bg-violet-900/15 p-6 box-border">
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
       <h2 class="text-2xl md:text-3xl font-semibold">Skill A · Individual Task</h2>
-      <span class="text-base text-sky-100/90">Problem framing, workflow, and presentation evidence</span>
+      <span class="text-base text-violet-100">Problem framing, workflow, and presentation evidence</span>
     </div>
 
     <div class="grid gap-5">
       {% for topic in data.Topics %}
         {% if topic.section == 'A' %}
           {% assign descParts = topic.description | split: '```' %}
-          <article class="w-full max-w-full min-w-0 rounded-xl shadow-md border border-sky-500/30 bg-sky-900/20 p-5 space-y-4 box-border">
+          <article class="w-full max-w-full min-w-0 rounded-xl shadow-md border border-violet-300/30 bg-violet-800/15 p-5 space-y-4 box-border">
 
             <div>
               <h3 class="text-xl font-semibold mb-2">{{ topic.title }}</h3>
-              <p class="text-base font-medium mb-2 text-sky-100/90">{{ topic.subtitle }}</p>
+              <p class="text-base font-medium mb-2 text-violet-100">{{ topic.subtitle }}</p>
               <ul class="list-disc list-inside space-y-1 text-base">
                 {% for point in topic.keyPoints %}
                   <li>{{ point }}</li>
@@ -46,7 +46,7 @@
               {% endif %}
               {% assign codeBody = codeChunk | replace_first: 'javascript', '' | replace_first: 'json', '' | replace_first: 'python', '' | strip %}
               <div class="w-full max-w-full min-w-0 rounded-lg border border-zinc-700 bg-zinc-950 overflow-hidden box-border">
-                <div class="px-4 py-2.5 text-sm font-mono text-sky-200 bg-zinc-900 border-b border-zinc-700">
+                <div class="px-4 py-2.5 text-sm font-mono text-violet-100 bg-zinc-900 border-b border-zinc-700">
                   {{ codeLanguage }}
                 </div>
                 <pre class="w-full max-w-full p-5 text-base font-mono leading-7 whitespace-pre-wrap break-words overflow-x-auto box-border"><code class="block language-{{ codeLanguage }}">{{ codeBody | escape }}</code></pre>
