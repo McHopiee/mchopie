@@ -1,0 +1,119 @@
+Title: "AP CSP Final Tri 2"
+Description: "This infographic summarizes my AP CSP Final Tri 2 evidence for Skill A and Skill B using GameBuilder examples: problem framing, custom asset workflow, and program elements (input, lists, procedures, algorithms, calls, and output)."
+
+Topics:
+	- title: "Skill A: 1-Minute Task Choice"
+		image: "/gamify/wizard.png"
+		link: "/personal/finaltri2"
+		alt: "Skill A task choice and problem statement"
+		keyPoints:
+			- "Problem: limited built-in visual choices"
+			- "Solution: extensible image onboarding workflow"
+			- "No new page required"
+			- "Reusable across team pages"
+		subtitle: "Problem → Solution"
+		description: "The task replaces a fixed built-in asset list with a dynamic file + manifest workflow so users can use their own game art without rewriting engine logic."
+
+	- title: "Custom Asset Upload Workflow"
+		image: "/imagesdir.png"
+		link: "/personal/finaltri2"
+		alt: "Folder and manifest workflow for custom assets"
+		keyPoints:
+			- "Put files in `images/gamebuilder/bg` and `images/gamebuilder/sprites`"
+			- "Register each item in folder `index.json`"
+			- "Use `rows` and `cols` for sprite-sheet slicing"
+			- "Click Refresh Assets to repopulate UI"
+		subtitle: "Implementation Workflow"
+		description: |
+			Background manifest example:
+
+			```json
+			[
+				{
+					"name": "Forest Night",
+					"src": "/images/gamebuilder/bg/forest_night.png",
+					"w": 1280,
+					"h": 720
+				}
+			]
+			```
+
+	- title: "Skill A: Presentation Script"
+		image: "/gamify/helpbutton.png"
+		link: "/personal/finaltri2"
+		alt: "One-minute presentation summary"
+		keyPoints:
+			- "States original fixed-choice bottleneck"
+			- "Explains file + manifest process clearly"
+			- "Shows immediate availability after refresh"
+			- "Connects directly to AP CSP constraints"
+		subtitle: "Communication Evidence"
+		description: "The script explains that users add files, update manifests, refresh assets, and immediately select new visuals—demonstrating impact and feasibility in one minute."
+
+	- title: "Skill B: User Input"
+		image: "/buttons/github.png"
+		link: "/personal/finaltri2"
+		alt: "Event-driven input in GameBuilder"
+		keyPoints:
+			- "Button click creates NPC slots"
+			- "Slider `input` events update player position"
+			- "Input is event-triggered from UI actions"
+		subtitle: "Input Requirement"
+		description: |
+			Example event listeners:
+
+			```javascript
+			if (ui.addNpcBtn) {
+				ui.addNpcBtn.addEventListener('click', () => {
+					const slot = makeNpcSlot(ui.npcs.length + 1);
+				});
+			}
+
+			if (ui.pX) ui.pX.addEventListener('input', updatePlayerPositionInEditor);
+			if (ui.pY) ui.pY.addEventListener('input', updatePlayerPositionInEditor);
+			```
+
+	- title: "Skill B: List Data Abstraction"
+		image: "/image_matrix.png"
+		link: "/personal/finaltri2"
+		alt: "Arrays and iteration for complexity management"
+		keyPoints:
+			- "Uses `npcs`, `walls`, and `drawShapes` arrays"
+			- "Processes all items with `forEach`"
+			- "Avoids repeated variables like `npc1`, `npc2`"
+			- "Scales as object count changes"
+		subtitle: "List Requirement"
+		description: "Collections centralize related data and iteration applies one logic path to many objects, reducing code duplication and managing complexity."
+
+	- title: "Skill B: Procedure + Algorithm"
+		image: "/classStructures.png"
+		link: "/personal/finaltri2"
+		alt: "Student-developed procedure and algorithm structure"
+		keyPoints:
+			- "Procedure: `barriers_generate(walls, drawShapes, options = {})`"
+			- "Selection: defaults and barrier-type filtering"
+			- "Iteration: loops through walls and drawn barriers"
+			- "Output: returns `{ defs, classes }`"
+		subtitle: "Procedure + Algorithm Requirement"
+		description: |
+			Core procedure signature:
+
+			```javascript
+			function barriers_generate(walls, drawShapes, options = {}) {
+				const defs = [];
+				const classes = [];
+				return { defs, classes };
+			}
+			```
+
+	- title: "Skill B: Procedure Calls + Output"
+		image: "/web_server.png"
+		link: "/personal/finaltri2"
+		alt: "Calls to custom procedure and visual output"
+		keyPoints:
+			- "Multiple call sites show reusable procedure"
+			- "Generated defs/classes feed final game output"
+			- "Overlay rendering reflects user-created shapes"
+			- "Run action updates game display"
+		subtitle: "Calls + Output Requirement"
+		description: "The program calls the same custom procedure in different places, then uses returned structures and rendering logic to produce visible on-screen changes from user input."
