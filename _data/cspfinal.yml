@@ -40,6 +40,98 @@ Topics:
       ]
       ```
 
+      JSON scan logic used to load the correct image entries:
+
+      ```javascript
+      const GB_BG_DIRS = ['/images/gamebuilder/bg'];
+      const GB_SPR_DIRS = ['/images/gamebuilder/sprites'];
+      ```
+
+      Part 1 — Define search paths:
+      - GB_BG_DIRS stores background directories.
+      - GB_SPR_DIRS stores sprite directories.
+      - Using arrays keeps scan logic reusable.
+
+      ```javascript
+      async function fetchJson(url) {
+        try {
+          const res = await fetch((SITE_BASE ? (SITE_BASE + url) : url), { cache: 'no-store' });
+          if (!res.ok) return null;
+          const ct = res.headers.get('content-type') || '';
+          if (ct.includes('application/json')) return await res.json();
+          return null;
+        } catch (_) {
+          return null;
+        }
+      }
+      ```
+
+      Part 2 — Fetch JSON safely:
+      - Requests the URL without stale cache.
+      - Verifies content type is JSON.
+      - Returns null when fetch fails so the scan can keep going.
+
+      ```javascript
+      for (const dir of GB_BG_DIRS) {
+        const manifestUrls = [dir + '/index.json', dir + '/manifest.json'];
+        let data = null;
+        for (const u of manifestUrls) {
+          data = await fetchJson(u);
+          if (data) break;
+        }
+
+        if (data && Array.isArray(data)) {
+          for (const item of data) {
+            const name = item.name || item.key || item.src;
+            const key = sanitizeKey(name);
+            const srcRel = item.src?.startsWith('/')
+              ? item.src
+              : (dir.replace(/\/$/, '') + '/' + (item.src || ''));
+            assets.bg[key] = { src: srcRel, h: item.h, w: item.w };
+          }
+        }
+      }
+      ```
+
+      Part 3 — Load background manifests:
+      - Tries index.json first, then manifest.json.
+      - Uses the first valid JSON file found.
+      - Normalizes each item and stores it in assets.bg.
+
+      ```javascript
+      for (const dir of GB_SPR_DIRS) {
+        const manifestUrls = [dir + '/index.json', dir + '/manifest.json'];
+        let data = null;
+        for (const u of manifestUrls) {
+          data = await fetchJson(u);
+          if (data) break;
+        }
+
+        if (data && Array.isArray(data)) {
+          for (const item of data) {
+            const name = item.name || item.key || item.src;
+            const key = sanitizeKey(name);
+            const srcRel = item.src?.startsWith('/')
+              ? item.src
+              : (dir.replace(/\/$/, '') + '/' + (item.src || ''));
+            assets.sprites[key] = {
+              src: srcRel,
+              h: item.h,
+              w: item.w,
+              rows: item.rows || 4,
+              cols: item.cols || 3
+            };
+          }
+        }
+      }
+      ```
+
+      Part 4 — Load sprite manifests:
+      - Follows the same manifest-search pattern as backgrounds.
+      - Saves sprite metadata in assets.sprites.
+      - Applies default rows and cols for sprite-sheet slicing.
+      - Together, these loops build the final background and sprite catalogs used by the editor UI.
+
   - title: "Presentation Script"
     section: "A"
     image: "/gamify/helpbutton.png"

@@ -30,28 +30,39 @@
               </ul>
             </div>
 
-            <div class="max-w-none min-w-0 text-base leading-relaxed">
-              {{ descParts[0] | markdownify }}
-            </div>
-
-            {% if topic.description contains '```' %}
-              {% assign codeChunk = descParts[1] %}
-              {% assign codeLanguage = 'plaintext' %}
-              {% if codeChunk contains 'javascript' %}
-                {% assign codeLanguage = 'javascript' %}
-              {% elsif codeChunk contains 'json' %}
-                {% assign codeLanguage = 'json' %}
-              {% elsif codeChunk contains 'python' %}
-                {% assign codeLanguage = 'python' %}
-              {% endif %}
-              {% assign codeBody = codeChunk | replace_first: 'javascript', '' | replace_first: 'json', '' | replace_first: 'python', '' | strip %}
-              <div class="w-full max-w-full min-w-0 rounded-lg border border-zinc-700 bg-zinc-950 overflow-hidden box-border">
-                <div class="px-4 py-2.5 text-sm font-mono text-violet-100 bg-zinc-900 border-b border-zinc-700">
-                  {{ codeLanguage }}
+            {% for part in descParts %}
+              {% assign chunkType = forloop.index0 | modulo: 2 %}
+              {% if forloop.index0 == 0 %}
+                <div class="max-w-none min-w-0 text-base leading-relaxed">
+                  {{ part | markdownify }}
                 </div>
-                <pre class="w-full max-w-full p-5 text-base font-mono leading-7 whitespace-pre-wrap break-words overflow-x-auto box-border"><code class="block language-{{ codeLanguage }}">{{ codeBody | escape }}</code></pre>
-              </div>
-            {% endif %}
+              {% elsif chunkType == 1 %}
+                {% assign codeChunk = part %}
+                {% assign codeLanguage = 'plaintext' %}
+                {% if codeChunk contains 'javascript' %}
+                  {% assign codeLanguage = 'javascript' %}
+                {% elsif codeChunk contains 'json' %}
+                  {% assign codeLanguage = 'json' %}
+                {% elsif codeChunk contains 'python' %}
+                  {% assign codeLanguage = 'python' %}
+                {% endif %}
+                {% assign codeBody = codeChunk | replace_first: 'javascript', '' | replace_first: 'json', '' | replace_first: 'python', '' | strip %}
+                {% unless codeBody == '' %}
+                  <div class="w-full max-w-full min-w-0 rounded-lg border border-zinc-700 bg-zinc-950 overflow-hidden box-border">
+                    {% unless codeLanguage == 'plaintext' %}
+                      <div class="px-4 py-2.5 text-sm font-mono text-violet-100 bg-zinc-900 border-b border-zinc-700">
+                        {{ codeLanguage }}
+                      </div>
+                    {% endunless %}
+                    <pre class="w-full max-w-full p-5 text-base font-mono leading-7 whitespace-pre-wrap break-words overflow-x-auto box-border"><code class="block language-{{ codeLanguage }}">{{ codeBody | escape }}</code></pre>
+                  </div>
+                {% endunless %}
+              {% else %}
+                <div class="max-w-none min-w-0 text-base leading-relaxed">
+                  {{ part | markdownify }}
+                </div>
+              {% endif %}
+            {% endfor %}
           </article>
         {% endif %}
       {% endfor %}
@@ -79,28 +90,39 @@
               </ul>
             </div>
 
-            <div class="max-w-none min-w-0 text-base leading-relaxed">
-              {{ descParts[0] | markdownify }}
-            </div>
-
-            {% if topic.description contains '```' %}
-              {% assign codeChunk = descParts[1] %}
-              {% assign codeLanguage = 'plaintext' %}
-              {% if codeChunk contains 'javascript' %}
-                {% assign codeLanguage = 'javascript' %}
-              {% elsif codeChunk contains 'json' %}
-                {% assign codeLanguage = 'json' %}
-              {% elsif codeChunk contains 'python' %}
-                {% assign codeLanguage = 'python' %}
-              {% endif %}
-              {% assign codeBody = codeChunk | replace_first: 'javascript', '' | replace_first: 'json', '' | replace_first: 'python', '' | strip %}
-              <div class="w-full max-w-full min-w-0 rounded-lg border border-zinc-700 bg-zinc-950 overflow-hidden box-border">
-                <div class="px-4 py-2.5 text-sm font-mono text-sky-200 bg-zinc-900 border-b border-zinc-700">
-                  {{ codeLanguage }}
+            {% for part in descParts %}
+              {% assign chunkType = forloop.index0 | modulo: 2 %}
+              {% if forloop.index0 == 0 %}
+                <div class="max-w-none min-w-0 text-base leading-relaxed">
+                  {{ part | markdownify }}
                 </div>
-                <pre class="w-full max-w-full p-5 text-base font-mono leading-7 whitespace-pre-wrap break-words overflow-x-auto box-border"><code class="block language-{{ codeLanguage }}">{{ codeBody | escape }}</code></pre>
-              </div>
-            {% endif %}
+              {% elsif chunkType == 1 %}
+                {% assign codeChunk = part %}
+                {% assign codeLanguage = 'plaintext' %}
+                {% if codeChunk contains 'javascript' %}
+                  {% assign codeLanguage = 'javascript' %}
+                {% elsif codeChunk contains 'json' %}
+                  {% assign codeLanguage = 'json' %}
+                {% elsif codeChunk contains 'python' %}
+                  {% assign codeLanguage = 'python' %}
+                {% endif %}
+                {% assign codeBody = codeChunk | replace_first: 'javascript', '' | replace_first: 'json', '' | replace_first: 'python', '' | strip %}
+                {% unless codeBody == '' %}
+                  <div class="w-full max-w-full min-w-0 rounded-lg border border-zinc-700 bg-zinc-950 overflow-hidden box-border">
+                    {% unless codeLanguage == 'plaintext' %}
+                      <div class="px-4 py-2.5 text-sm font-mono text-sky-200 bg-zinc-900 border-b border-zinc-700">
+                        {{ codeLanguage }}
+                      </div>
+                    {% endunless %}
+                    <pre class="w-full max-w-full p-5 text-base font-mono leading-7 whitespace-pre-wrap break-words overflow-x-auto box-border"><code class="block language-{{ codeLanguage }}">{{ codeBody | escape }}</code></pre>
+                  </div>
+                {% endunless %}
+              {% else %}
+                <div class="max-w-none min-w-0 text-base leading-relaxed">
+                  {{ part | markdownify }}
+                </div>
+              {% endif %}
+            {% endfor %}
           </article>
         {% endif %}
       {% endfor %}
