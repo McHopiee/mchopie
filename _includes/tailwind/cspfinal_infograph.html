@@ -1,0 +1,120 @@
+<div class="w-full max-w-full min-h-screen overflow-x-hidden p-4 md:p-8 space-y-8 text-zinc-100 box-border"
+  style="width: 85vw !important; max-width: 1500px !important; margin-left: calc(50% - 44vw) !important; margin-right: calc(50% - 44vw) !important;">
+  {% assign data = site.data[page.infoGraph] %}
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark-dimmed.min.css">
+
+  <section class="w-full rounded-xl shadow-md border border-zinc-700/70 bg-zinc-900/60 p-6">
+    <h1 class="text-4xl md:text-5xl font-bold mb-3">{{ data.Title }}</h1>
+    <p class="text-xl text-zinc-200">{{ data.Description }}</p>
+  </section>
+
+  <section class="w-full max-w-full space-y-4 rounded-xl shadow-md border border-sky-700/40 bg-sky-950/30 p-6 box-border">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+      <h2 class="text-2xl md:text-3xl font-semibold">Skill A · Individual Task</h2>
+      <span class="text-base text-sky-100/90">Problem framing, workflow, and presentation evidence</span>
+    </div>
+
+    <div class="grid gap-5">
+      {% for topic in data.Topics %}
+        {% if topic.section == 'A' %}
+          {% assign descParts = topic.description | split: '```' %}
+          <article class="w-full max-w-full min-w-0 rounded-xl shadow-md border border-sky-500/30 bg-sky-900/20 p-5 space-y-4 box-border">
+
+            <div>
+              <h3 class="text-xl font-semibold mb-2">{{ topic.title }}</h3>
+              <p class="text-base font-medium mb-2 text-sky-100/90">{{ topic.subtitle }}</p>
+              <ul class="list-disc list-inside space-y-1 text-base">
+                {% for point in topic.keyPoints %}
+                  <li>{{ point }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+
+            <div class="max-w-none min-w-0 text-base leading-relaxed">
+              {{ descParts[0] | markdownify }}
+            </div>
+
+            {% if topic.description contains '```' %}
+              {% assign codeChunk = descParts[1] %}
+              {% assign codeLanguage = 'plaintext' %}
+              {% if codeChunk contains 'javascript' %}
+                {% assign codeLanguage = 'javascript' %}
+              {% elsif codeChunk contains 'json' %}
+                {% assign codeLanguage = 'json' %}
+              {% elsif codeChunk contains 'python' %}
+                {% assign codeLanguage = 'python' %}
+              {% endif %}
+              {% assign codeBody = codeChunk | replace_first: 'javascript', '' | replace_first: 'json', '' | replace_first: 'python', '' | strip %}
+              <div class="w-full max-w-full min-w-0 rounded-lg border border-zinc-700 bg-zinc-950 overflow-hidden box-border">
+                <div class="px-4 py-2.5 text-sm font-mono text-sky-200 bg-zinc-900 border-b border-zinc-700">
+                  {{ codeLanguage }}
+                </div>
+                <pre class="w-full max-w-full p-5 text-base font-mono leading-7 whitespace-pre-wrap break-words overflow-x-auto box-border"><code class="block language-{{ codeLanguage }}">{{ codeBody | escape }}</code></pre>
+              </div>
+            {% endif %}
+          </article>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="w-full max-w-full space-y-4 rounded-xl shadow-md border border-indigo-700/40 bg-indigo-950/30 p-6 box-border">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+      <h2 class="text-2xl md:text-3xl font-semibold">Skill B · Program Evidence</h2>
+      <span class="text-base text-indigo-100/90">Input, data abstraction, procedures, and output</span>
+    </div>
+
+    <div class="grid gap-5">
+      {% for topic in data.Topics %}
+        {% if topic.section == 'B' %}
+          {% assign descParts = topic.description | split: '```' %}
+          <article class="w-full max-w-full min-w-0 rounded-xl shadow-md border border-indigo-500/30 bg-indigo-900/20 p-5 space-y-4 box-border">
+            <div>
+              <h3 class="text-xl font-semibold mb-2">{{ topic.title }}</h3>
+              <p class="text-base font-medium mb-2 text-indigo-100/90">{{ topic.subtitle }}</p>
+              <ul class="list-disc list-inside space-y-1 text-base">
+                {% for point in topic.keyPoints %}
+                  <li>{{ point }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+
+            <div class="max-w-none min-w-0 text-base leading-relaxed">
+              {{ descParts[0] | markdownify }}
+            </div>
+
+            {% if topic.description contains '```' %}
+              {% assign codeChunk = descParts[1] %}
+              {% assign codeLanguage = 'plaintext' %}
+              {% if codeChunk contains 'javascript' %}
+                {% assign codeLanguage = 'javascript' %}
+              {% elsif codeChunk contains 'json' %}
+                {% assign codeLanguage = 'json' %}
+              {% elsif codeChunk contains 'python' %}
+                {% assign codeLanguage = 'python' %}
+              {% endif %}
+              {% assign codeBody = codeChunk | replace_first: 'javascript', '' | replace_first: 'json', '' | replace_first: 'python', '' | strip %}
+              <div class="w-full max-w-full min-w-0 rounded-lg border border-zinc-700 bg-zinc-950 overflow-hidden box-border">
+                <div class="px-4 py-2.5 text-sm font-mono text-sky-200 bg-zinc-900 border-b border-zinc-700">
+                  {{ codeLanguage }}
+                </div>
+                <pre class="w-full max-w-full p-5 text-base font-mono leading-7 whitespace-pre-wrap break-words overflow-x-auto box-border"><code class="block language-{{ codeLanguage }}">{{ codeBody | escape }}</code></pre>
+              </div>
+            {% endif %}
+          </article>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </section>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    if (window.hljs) {
+      document.querySelectorAll('pre code').forEach(function (block) {
+        window.hljs.highlightElement(block);
+      });
+    }
+  });
+</script>
