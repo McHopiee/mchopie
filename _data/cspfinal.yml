@@ -154,12 +154,12 @@ Topics:
     image: "/gamify/helpbutton.png"
     link: "https://drive.google.com/file/d/11r0AT4fGogZ3TSR16W-01ZJbl0099a5E/view?usp=sharing"
     videoEmbed: "https://drive.google.com/file/d/11r0AT4fGogZ3TSR16W-01ZJbl0099a5E/preview"
-    alt: "Previous video moved to JSON Explanation"
+    alt: "Previous video moved to JSON Tutorial"
     keyPoints:
-      - "Previous Skill A video moved to JSON Explanation"
+      - "Previous Skill A video moved to JSON Tutorial"
     subtitle: "Video Evidence"
     description: |
-      Previous video (now in JSON Explanation):
+      Previous video (now in JSON Tutorial):
 
       [Watch on Google Drive](https://drive.google.com/file/d/11r0AT4fGogZ3TSR16W-01ZJbl0099a5E/view?usp=sharing)
 
@@ -283,5 +283,54 @@ Topics:
       - **Peak Periods:** Highest concentration appears during November and again across January to February.
       - **Recent Momentum:** Early February remains active, showing continued progress close to project deadlines.
       - **Work Pattern:** Most contributions are commit-driven, supported by issue tracking and periodic pull request activity.
+
+  - title: "Transactional Data Example"
+    section: "T"
+    image: "/web_server.png"
+    link: "/gamebuilder"
+    alt: "Transactional data flow from UI edits to confirmed game state"
+    keyPoints:
+      - "User actions are staged before commit (`stagedCode`, `stagedStep`)"
+      - "Confirm action applies a transaction to editor and runtime"
+      - "Barrier updates are sent as payloads with `postMessage`"
+      - "State transitions are explicit: draft → confirmed → rendered"
+    subtitle: "Draft-to-Commit State Flow"
+    description: |
+      **Why this is transactional data:**
+
+      In GameBuilder, updates are not immediately final. Changes are first staged, then committed through a confirm action, then synchronized to the running game. That staged-to-committed lifecycle is transactional behavior.
+
+      **Example transaction lifecycle**
+
+      1. User edits controls or draws barriers.
+      2. Builder stores pending updates in staged state.
+      3. Confirm applies the staged transaction to code and game objects.
+      4. Runtime receives synchronized barrier payloads and replaces prior overlay barriers.
+
+      ```javascript
+      // Stage changes before commit
+      stagedCode = composed;
+      stagedStep = composedStep;
+
+      // Commit transaction on confirm
+      document.getElementById('btn-confirm').addEventListener('click', () => {
+        const merged = mergeDefsAndClasses(oldCode, ins.defs, ins.classes);
+        simulateTypingChange(oldCode, merged, () => {
+          stagedCode = null;
+          stagedStep = null;
+          runInRunner();
+        });
+      });
+      ```
+
+      ```javascript
+      // Transaction payload sent to runtime and applied
+      window.addEventListener('message', (e) => {
+        if (e.data.type === 'rpg:set-drawn-barriers') {
+          const arr = Array.isArray(e.data.barriers) ? e.data.barriers : [];
+          // remove old overlay barriers, then add new committed set
+        }
+      });
+      ```
 
      

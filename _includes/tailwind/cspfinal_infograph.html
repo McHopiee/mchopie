@@ -52,11 +52,11 @@
             </div>
 
             {% if topic.image %}
-              <div class="w-full rounded-lg border border-zinc-700 bg-zinc-950 overflow-hidden">
+              <div class="w-full max-w-4xl mx-auto rounded-lg border border-zinc-700 bg-zinc-950 overflow-hidden">
                 <img
                   src="{{ topic.image | relative_url }}"
                   alt="{{ topic.alt | default: topic.title }}"
-                  class="w-full h-auto block"
+                  class="w-full h-auto max-h-[420px] object-contain block"
                   loading="lazy">
               </div>
             {% endif %}
@@ -194,13 +194,13 @@
 
   <section class="w-full max-w-full space-y-4 rounded-xl shadow-md border border-indigo-700/40 bg-indigo-950/30 p-6 box-border">
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-      <h2 class="text-2xl md:text-3xl font-semibold">JSON Explanation</h2>
-      <span class="text-base text-indigo-100/90">Problem framing, workflow, and presentation evidence</span>
+      <h2 class="text-2xl md:text-3xl font-semibold">Transactional Data</h2>
+      <span class="text-base text-indigo-100/90">State changes, staged updates, and confirm flow in GameBuilder</span>
     </div>
 
     <div class="grid gap-5">
       {% for topic in data.Topics %}
-        {% if topic.section == 'A' and topic.videoOnly != true %}
+        {% if topic.section == 'T' and topic.videoOnly != true %}
           {% assign descParts = topic.description | split: '```' %}
           <article class="w-full max-w-full min-w-0 rounded-xl shadow-md border border-indigo-500/30 bg-indigo-900/20 p-5 space-y-4 box-border">
 
@@ -251,6 +251,76 @@
                   <div class="w-full max-w-full min-w-0 rounded-lg border border-zinc-700 bg-zinc-950 overflow-hidden box-border">
                     {% unless codeLanguage == 'plaintext' %}
                       <div class="px-4 py-2.5 text-sm font-mono text-sky-200 bg-zinc-900 border-b border-zinc-700">
+                        {{ codeLanguage }}
+                      </div>
+                    {% endunless %}
+                    <pre class="w-full max-w-full p-5 text-base font-mono leading-7 whitespace-pre-wrap break-words overflow-x-auto box-border"><code class="block language-{{ codeLanguage }}">{{ codeBody | escape }}</code></pre>
+                  </div>
+                {% endunless %}
+              {% else %}
+                <div class="max-w-none min-w-0 text-base leading-relaxed">
+                  {{ part | markdownify }}
+                </div>
+              {% endif %}
+            {% endfor %}
+          </article>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="w-full max-w-full space-y-4 rounded-xl shadow-md border border-sky-500/35 bg-sky-900/15 p-6 box-border">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+      <h2 class="text-2xl md:text-3xl font-semibold">JSON Tutorial</h2>
+      <span class="text-base text-sky-100/90">Problem framing, workflow, and presentation evidence</span>
+    </div>
+
+    <div class="grid gap-5">
+      {% for topic in data.Topics %}
+        {% if topic.section == 'A' and topic.videoOnly != true %}
+          {% assign descParts = topic.description | split: '```' %}
+          <article class="w-full max-w-full min-w-0 rounded-xl shadow-md border border-sky-400/30 bg-sky-900/20 p-5 space-y-4 box-border">
+            <div>
+              <h3 class="text-xl font-semibold mb-2">{{ topic.title }}</h3>
+              <p class="text-base font-medium mb-2 text-sky-100/90">{{ topic.subtitle }}</p>
+              <ul class="list-disc list-inside space-y-1 text-base">
+                {% for point in topic.keyPoints %}
+                  <li>{{ point }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+
+            {% if topic.image %}
+              <div class="w-full rounded-lg border border-zinc-700 bg-zinc-950 overflow-hidden">
+                <img
+                  src="{{ topic.image | relative_url }}"
+                  alt="{{ topic.alt | default: topic.title }}"
+                  class="w-full h-auto block"
+                  loading="lazy">
+              </div>
+            {% endif %}
+
+            {% for part in descParts %}
+              {% assign chunkType = forloop.index0 | modulo: 2 %}
+              {% if forloop.index0 == 0 %}
+                <div class="max-w-none min-w-0 text-base leading-relaxed">
+                  {{ part | markdownify }}
+                </div>
+              {% elsif chunkType == 1 %}
+                {% assign codeChunk = part %}
+                {% assign codeLanguage = 'plaintext' %}
+                {% if codeChunk contains 'javascript' %}
+                  {% assign codeLanguage = 'javascript' %}
+                {% elsif codeChunk contains 'json' %}
+                  {% assign codeLanguage = 'json' %}
+                {% elsif codeChunk contains 'python' %}
+                  {% assign codeLanguage = 'python' %}
+                {% endif %}
+                {% assign codeBody = codeChunk | replace_first: 'javascript', '' | replace_first: 'json', '' | replace_first: 'python', '' | strip %}
+                {% unless codeBody == '' %}
+                  <div class="w-full max-w-full min-w-0 rounded-lg border border-zinc-700 bg-zinc-950 overflow-hidden box-border">
+                    {% unless codeLanguage == 'plaintext' %}
+                      <div class="px-4 py-2.5 text-sm font-mono text-sky-100 bg-zinc-900 border-b border-zinc-700">
                         {{ codeLanguage }}
                       </div>
                     {% endunless %}
