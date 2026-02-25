@@ -259,16 +259,29 @@ Topics:
       classes.push(...generated.classes);
       ```
 
-      ```javascript
-      // Output example
-      function renderDrawShapes() {
-        ui.drawOverlay.innerHTML = '';
-        ui.drawShapes.forEach(shape => {
-          const el = document.createElement('div');
-          el.className = `draw-rect ${shape.type}`;
-          el.style.left = shape.x + 'px';
-          el.style.top = shape.y + 'px';
-          ui.drawOverlay.appendChild(el);
-        });
-      }
-      ```
+  - title: "Individual Review - GitHub Analytics"
+    section: "AB"
+    image: "/images/contributions.png"
+    link: "/personal/finaltri2"
+    alt: "GitHub contribution heatmap and activity analytics"
+    keyPoints:
+      - "407 total contributions in the last year"
+      - "Strong consistency from late August onward"
+      - "Consistent commits throughout the past school year"
+    subtitle: "GitHub Analytics Summary"
+    description: |
+      **GitHub Analytics Summary**
+
+      **User:** Individual review profile
+      **Total Contributions (Last Year):** 407
+      <br>
+      **Main Repositories:** `McHopiee/pages_mchopiee`, `McHopiee/mchopie`, `Open-Coding-Society/pages`
+
+      **Key Observations & Trends**
+
+      - **Activity Growth:** The squares shows a noticeable increase in consistency beginning in late August, with recurring activity blocks through fall and winter.
+      - **Peak Periods:** Highest concentration appears during November and again across January to February.
+      - **Recent Momentum:** Early February remains active, showing continued progress close to project deadlines.
+      - **Work Pattern:** Most contributions are commit-driven, supported by issue tracking and periodic pull request activity.
+
+     
