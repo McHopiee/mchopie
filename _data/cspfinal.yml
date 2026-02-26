@@ -170,16 +170,16 @@ Topics:
     alt: "Event-driven input in GameBuilder"
     keyPoints:
       - "Button click creates NPC slots"
-      - "Slider `input` events update player position"
+      - "NPC X/Y slider `input` events update NPC position values"
       - "Input is event-triggered from UI actions"
     subtitle: "Input Requirement"
     description: |
       **Explanation:**
 
-      This is how the game listens to the player. When someone clicks a button or moves a slider, the game immediately reacts. Think of it like pressing buttons on a controller: your action becomes a signal that tells the program what to do next.
+      This is how the game listens to user actions. When someone clicks a button or moves an NPC slider, the program immediately reacts and updates generated code.
 
       - Clicking **Add NPC** creates a new character slot.
-      - Moving **X/Y sliders** changes where the player appears.
+      - Moving NPC **X/Y sliders** changes NPC position input values.
       - The game updates in real time as the user interacts.
 
       Example event listeners:
@@ -191,8 +191,10 @@ Topics:
         });
       }
 
-      if (ui.pX) ui.pX.addEventListener('input', updatePlayerPositionInEditor);
-      if (ui.pY) ui.pY.addEventListener('input', updatePlayerPositionInEditor);
+      ['input', 'change'].forEach((evt) => {
+        slot.nX?.addEventListener(evt, () => { rerun(); });
+        slot.nY?.addEventListener(evt, () => { rerun(); });
+      });
       ```
 
   - title: "List Data Abstraction"
@@ -201,36 +203,31 @@ Topics:
     link: "/personal/finaltri2"
     alt: "Arrays and iteration for complexity management"
     keyPoints:
-      - "Uses `npcs`, `walls`, and `drawShapes` arrays"
-      - "Processes all items with `forEach`"
-      - "Avoids repeated variables like `npc1`, `npc2`"
-      - "Scales as object count changes"
+      - "Uses `this.classes` list to store all game object definitions"
+      - "Each item pairs a class type with its data object"
+      - "New NPCs/barriers are added as new list entries"
+      - "One structure scales as game object count changes"
     subtitle: "List Requirement"
     description: |
       **Explanation:**
 
-      A list is like a container that stores many similar things together. Instead of making separate variables for every character or wall, the program keeps them in organized groups and processes them the same way.
+      While the user is creating their game, it creates a list that contains all the assets for the game they are building, `this.classes`, to hold all game objects that should be created for the level. Each entry has the same structure: `{ class: SomeClass, data: someDataObject }`.
 
       This matters because:
-      - The code stays shorter and easier to manage.
-      - Adding more characters or walls does not require rewriting the logic.
-      - The same loop can handle 1 item or 100 items.
+      - The program can treat all object setups in a consistent format.
+      - Adding new objects (like another barrier or NPC) only requires adding another list item.
+      - The game engine can iterate through one list to initialize many objects.
 
-      Collections centralize related data and iteration applies one logic path to many objects, reducing code duplication and managing complexity.
+      This reduces complexity because I do not need separate hard-coded initialization flows for each object type.
 
       ```javascript
-      const ui = {
-        npcs: [],
-        walls: [],
-        drawShapes: []
-      };
-
-      ui.npcs.forEach((slot, idx) => {
-        const nx = npc_extract(slot, assets);
-        const npcCode = npc_code(nx, idx + 1, false);
-        defs.push(npcCode.def);
-        classes.push(npcCode.classEntry);
-      });
+      this.classes = [
+        { class: GameEnvBackground, data: bgData },
+        { class: Player, data: playerData },
+        { class: Npc, data: npcData1 },
+        { class: Barrier, data: dbarrier_1 },
+        { class: Barrier, data: dbarrier_2 }
+      ];
       ```
 
   - title: "Procedure + Algorithm"
@@ -263,6 +260,27 @@ Topics:
       function barriers_generate(walls, drawShapes, options = {}) {
         const defs = [];
         const classes = [];
+        const visible = options.visible !== undefined ? options.visible : true;
+        const scaleX = options.scaleX || 1;
+        const scaleY = options.scaleY || 1;
+
+        // Process walls (manual panel entries)
+        walls.forEach((w, idx) => {
+          const bData = barrier_extract(w, 'wall', idx, { visible: visible });
+          const barrierCode = barrier_code(bData);
+          defs.push(barrierCode.def);
+          classes.push(barrierCode.classEntry);
+        });
+
+        // Process drawn barriers (from Draw Collision Wall button)
+        const drawnBarriers = (drawShapes || []).filter(s => s.type === 'barrier');
+        drawnBarriers.forEach((b, bIdx) => {
+          const bData = barrier_extract(b, 'drawn', bIdx, { scaleX: scaleX, scaleY: scaleY });
+          const barrierCode = barrier_code(bData);
+          defs.push(barrierCode.def);
+          classes.push(barrierCode.classEntry);
+        });
+
         return { defs, classes };
       }
       ```

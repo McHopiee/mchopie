@@ -2,6 +2,26 @@
   style="width: 85vw !important; max-width: 1500px !important; margin-left: calc(50% - 44vw) !important; margin-right: calc(50% - 44vw) !important;">
   {% assign data = site.data[page.infoGraph] %}
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark-dimmed.min.css">
+  <style>
+    .csp-markdown p {
+      margin: 0 0 0.8rem 0;
+      white-space: pre-line;
+    }
+    .csp-markdown ul {
+      list-style-type: disc;
+      margin: 0.45rem 0 0.9rem 1.2rem;
+      padding-left: 0.8rem;
+    }
+    .csp-markdown ol {
+      list-style-type: decimal;
+      margin: 0.45rem 0 0.9rem 1.2rem;
+      padding-left: 0.8rem;
+    }
+    .csp-markdown li {
+      display: list-item;
+      margin: 0.22rem 0;
+    }
+  </style>
 
   <section class="w-full rounded-xl shadow-md border border-zinc-700/70 bg-zinc-900/60 p-6">
     <h1 class="text-4xl md:text-5xl font-bold mb-3">{{ data.Title }}</h1>
@@ -80,7 +100,7 @@
             {% for part in descParts %}
               {% assign chunkType = forloop.index0 | modulo: 2 %}
               {% if forloop.index0 == 0 %}
-                <div class="max-w-none min-w-0 text-base leading-relaxed">
+                <div class="max-w-none min-w-0 text-base leading-relaxed csp-markdown">
                   {{ part | markdownify }}
                 </div>
               {% elsif chunkType == 1 %}
@@ -105,7 +125,7 @@
                   </div>
                 {% endunless %}
               {% else %}
-                <div class="max-w-none min-w-0 text-base leading-relaxed">
+                <div class="max-w-none min-w-0 text-base leading-relaxed csp-markdown">
                   {{ part | markdownify }}
                 </div>
               {% endif %}
@@ -156,7 +176,7 @@
             {% for part in descParts %}
               {% assign chunkType = forloop.index0 | modulo: 2 %}
               {% if forloop.index0 == 0 %}
-                <div class="max-w-none min-w-0 text-base leading-relaxed">
+                <div class="max-w-none min-w-0 text-base leading-relaxed csp-markdown">
                   {{ part | markdownify }}
                 </div>
               {% elsif chunkType == 1 %}
@@ -181,7 +201,7 @@
                   </div>
                 {% endunless %}
               {% else %}
-                <div class="max-w-none min-w-0 text-base leading-relaxed">
+                <div class="max-w-none min-w-0 text-base leading-relaxed csp-markdown">
                   {{ part | markdownify }}
                 </div>
               {% endif %}
@@ -233,7 +253,7 @@
             {% for part in descParts %}
               {% assign chunkType = forloop.index0 | modulo: 2 %}
               {% if forloop.index0 == 0 %}
-                <div class="max-w-none min-w-0 text-base leading-relaxed">
+                <div class="max-w-none min-w-0 text-base leading-relaxed csp-markdown">
                   {{ part | markdownify }}
                 </div>
               {% elsif chunkType == 1 %}
@@ -258,7 +278,7 @@
                   </div>
                 {% endunless %}
               {% else %}
-                <div class="max-w-none min-w-0 text-base leading-relaxed">
+                <div class="max-w-none min-w-0 text-base leading-relaxed csp-markdown">
                   {{ part | markdownify }}
                 </div>
               {% endif %}
@@ -303,7 +323,7 @@
             {% for part in descParts %}
               {% assign chunkType = forloop.index0 | modulo: 2 %}
               {% if forloop.index0 == 0 %}
-                <div class="max-w-none min-w-0 text-base leading-relaxed">
+                <div class="max-w-none min-w-0 text-base leading-relaxed csp-markdown">
                   {{ part | markdownify }}
                 </div>
               {% elsif chunkType == 1 %}
@@ -328,7 +348,7 @@
                   </div>
                 {% endunless %}
               {% else %}
-                <div class="max-w-none min-w-0 text-base leading-relaxed">
+                <div class="max-w-none min-w-0 text-base leading-relaxed csp-markdown">
                   {{ part | markdownify }}
                 </div>
               {% endif %}
