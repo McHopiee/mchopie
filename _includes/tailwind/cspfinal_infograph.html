@@ -49,6 +49,82 @@
     </section>
   {% endif %}
 
+  <section class="w-full max-w-full space-y-4 rounded-xl shadow-md border border-violet-400/35 bg-violet-900/15 p-6 box-border">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+      <h2 class="text-2xl md:text-3xl font-semibold">Skill B · Program Evidence</h2>
+      <span class="text-base text-violet-100">Input, data abstraction, procedures, and output</span>
+    </div>
+
+    <div class="grid gap-5">
+      {% for topic in data.Topics %}
+        {% if topic.section == 'B' and topic.videoOnly != true %}
+          {% assign descParts = topic.description | split: '```' %}
+          <article class="w-full max-w-full min-w-0 rounded-xl shadow-md border border-violet-300/30 bg-violet-800/15 p-5 space-y-4 box-border">
+            <div>
+              <h3 class="text-xl font-semibold mb-2">{{ topic.title }}</h3>
+              <p class="text-base font-medium mb-2 text-violet-100">{{ topic.subtitle }}</p>
+              <ul class="list-disc list-inside space-y-1 text-base">
+                {% for point in topic.keyPoints %}
+                  <li>{{ point }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+
+            {% if topic.videoEmbed %}
+              <div class="w-full rounded-lg border border-zinc-700 bg-zinc-950 overflow-hidden">
+                <div class="relative w-full" style="padding-top:56.25%;">
+                  <iframe
+                    src="{{ topic.videoEmbed }}"
+                    class="absolute inset-0 h-full w-full"
+                    title="{{ topic.title }} video"
+                    allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+                    allowfullscreen
+                    loading="lazy"
+                    referrerpolicy="strict-origin-when-cross-origin">
+                  </iframe>
+                </div>
+              </div>
+            {% endif %}
+
+            {% for part in descParts %}
+              {% assign chunkType = forloop.index0 | modulo: 2 %}
+              {% if forloop.index0 == 0 %}
+                <div class="max-w-none min-w-0 text-base leading-relaxed csp-markdown">
+                  {{ part | markdownify }}
+                </div>
+              {% elsif chunkType == 1 %}
+                {% assign codeChunk = part %}
+                {% assign codeLanguage = 'plaintext' %}
+                {% if codeChunk contains 'javascript' %}
+                  {% assign codeLanguage = 'javascript' %}
+                {% elsif codeChunk contains 'json' %}
+                  {% assign codeLanguage = 'json' %}
+                {% elsif codeChunk contains 'python' %}
+                  {% assign codeLanguage = 'python' %}
+                {% endif %}
+                {% assign codeBody = codeChunk | replace_first: 'javascript', '' | replace_first: 'json', '' | replace_first: 'python', '' | strip %}
+                {% unless codeBody == '' %}
+                  <div class="w-full max-w-full min-w-0 rounded-lg border border-zinc-700 bg-zinc-950 overflow-hidden box-border">
+                    {% unless codeLanguage == 'plaintext' %}
+                      <div class="px-4 py-2.5 text-sm font-mono text-violet-100 bg-zinc-900 border-b border-zinc-700">
+                        {{ codeLanguage }}
+                      </div>
+                    {% endunless %}
+                    <pre class="w-full max-w-full p-5 text-base font-mono leading-7 whitespace-pre-wrap break-words overflow-x-auto box-border"><code class="block language-{{ codeLanguage }}">{{ codeBody | escape }}</code></pre>
+                  </div>
+                {% endunless %}
+              {% else %}
+                <div class="max-w-none min-w-0 text-base leading-relaxed csp-markdown">
+                  {{ part | markdownify }}
+                </div>
+              {% endif %}
+            {% endfor %}
+          </article>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </section>
+
   <section class="w-full max-w-full space-y-4 rounded-xl shadow-md border border-emerald-500/35 bg-emerald-900/15 p-6 box-border">
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
       <h2 class="text-2xl md:text-3xl font-semibold">Individual Review · GitHub Analytics</h2>
@@ -118,82 +194,6 @@
                   <div class="w-full max-w-full min-w-0 rounded-lg border border-zinc-700 bg-zinc-950 overflow-hidden box-border">
                     {% unless codeLanguage == 'plaintext' %}
                       <div class="px-4 py-2.5 text-sm font-mono text-emerald-100 bg-zinc-900 border-b border-zinc-700">
-                        {{ codeLanguage }}
-                      </div>
-                    {% endunless %}
-                    <pre class="w-full max-w-full p-5 text-base font-mono leading-7 whitespace-pre-wrap break-words overflow-x-auto box-border"><code class="block language-{{ codeLanguage }}">{{ codeBody | escape }}</code></pre>
-                  </div>
-                {% endunless %}
-              {% else %}
-                <div class="max-w-none min-w-0 text-base leading-relaxed csp-markdown">
-                  {{ part | markdownify }}
-                </div>
-              {% endif %}
-            {% endfor %}
-          </article>
-        {% endif %}
-      {% endfor %}
-    </div>
-  </section>
-
-  <section class="w-full max-w-full space-y-4 rounded-xl shadow-md border border-violet-400/35 bg-violet-900/15 p-6 box-border">
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-      <h2 class="text-2xl md:text-3xl font-semibold">Skill B · Program Evidence</h2>
-      <span class="text-base text-violet-100">Input, data abstraction, procedures, and output</span>
-    </div>
-
-    <div class="grid gap-5">
-      {% for topic in data.Topics %}
-        {% if topic.section == 'B' and topic.videoOnly != true %}
-          {% assign descParts = topic.description | split: '```' %}
-          <article class="w-full max-w-full min-w-0 rounded-xl shadow-md border border-violet-300/30 bg-violet-800/15 p-5 space-y-4 box-border">
-            <div>
-              <h3 class="text-xl font-semibold mb-2">{{ topic.title }}</h3>
-              <p class="text-base font-medium mb-2 text-violet-100">{{ topic.subtitle }}</p>
-              <ul class="list-disc list-inside space-y-1 text-base">
-                {% for point in topic.keyPoints %}
-                  <li>{{ point }}</li>
-                {% endfor %}
-              </ul>
-            </div>
-
-            {% if topic.videoEmbed %}
-              <div class="w-full rounded-lg border border-zinc-700 bg-zinc-950 overflow-hidden">
-                <div class="relative w-full" style="padding-top:56.25%;">
-                  <iframe
-                    src="{{ topic.videoEmbed }}"
-                    class="absolute inset-0 h-full w-full"
-                    title="{{ topic.title }} video"
-                    allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
-                    allowfullscreen
-                    loading="lazy"
-                    referrerpolicy="strict-origin-when-cross-origin">
-                  </iframe>
-                </div>
-              </div>
-            {% endif %}
-
-            {% for part in descParts %}
-              {% assign chunkType = forloop.index0 | modulo: 2 %}
-              {% if forloop.index0 == 0 %}
-                <div class="max-w-none min-w-0 text-base leading-relaxed csp-markdown">
-                  {{ part | markdownify }}
-                </div>
-              {% elsif chunkType == 1 %}
-                {% assign codeChunk = part %}
-                {% assign codeLanguage = 'plaintext' %}
-                {% if codeChunk contains 'javascript' %}
-                  {% assign codeLanguage = 'javascript' %}
-                {% elsif codeChunk contains 'json' %}
-                  {% assign codeLanguage = 'json' %}
-                {% elsif codeChunk contains 'python' %}
-                  {% assign codeLanguage = 'python' %}
-                {% endif %}
-                {% assign codeBody = codeChunk | replace_first: 'javascript', '' | replace_first: 'json', '' | replace_first: 'python', '' | strip %}
-                {% unless codeBody == '' %}
-                  <div class="w-full max-w-full min-w-0 rounded-lg border border-zinc-700 bg-zinc-950 overflow-hidden box-border">
-                    {% unless codeLanguage == 'plaintext' %}
-                      <div class="px-4 py-2.5 text-sm font-mono text-violet-100 bg-zinc-900 border-b border-zinc-700">
                         {{ codeLanguage }}
                       </div>
                     {% endunless %}
