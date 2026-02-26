@@ -135,8 +135,8 @@ Topics:
   - title: "Skill A Video Demonstration"
     section: "B"
     image: "/gamify/helpbutton.png"
-    link: "https://drive.google.com/file/d/1JSL6FkfwCdTWgoTAYGSljoQH6vkMw_50/view?usp=sharing"
-    videoEmbed: "https://drive.google.com/file/d/1JSL6FkfwCdTWgoTAYGSljoQH6vkMw_50/preview"
+    link: "https://drive.google.com/file/d/1bt9CF2RMoKzNSBmk2tM-0Q5qy_6B4C-f/view?usp=sharing"
+    videoEmbed: "https://drive.google.com/file/d/1bt9CF2RMoKzNSBmk2tM-0Q5qy_6B4C-f/preview"
     videoOnly: true
     alt: "One-minute Skill A video evidence"
     keyPoints:
@@ -147,7 +147,7 @@ Topics:
     description: |
       1-minute Skill A evidence video:
 
-      [Watch on Google Drive](https://drive.google.com/file/d/1JSL6FkfwCdTWgoTAYGSljoQH6vkMw_50/view?usp=sharing)
+      [Watch on Google Drive](https://drive.google.com/file/d/1bt9CF2RMoKzNSBmk2tM-0Q5qy_6B4C-f/view?usp=sharing)
 
   - title: "Previous Video Demonstration"
     section: "A"
