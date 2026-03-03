@@ -2,65 +2,153 @@
   style="width: 85vw !important; max-width: 1500px !important; margin-left: calc(50% - 44vw) !important; margin-right: calc(50% - 44vw) !important;">
 
   <section class="w-full rounded-xl shadow-md border border-zinc-700/70 bg-zinc-900/60 p-6">
-    <h1 class="text-4xl md:text-5xl font-bold mb-3">Practice MCQ Wrap-Up Overview</h1>
-    <p class="text-xl text-zinc-200">Issue analysis, targeted strategy, and Tuesday presentation plan before the question-by-question review.</p>
+    <h1 class="text-4xl md:text-5xl font-bold mb-3">AP CSP - Practice MCQ Check 3/4/27</h1>
+    <p class="text-xl text-zinc-200">Topic performance, most-missed analysis, study strategy, and question-by-question corrections in one Tailwind post.</p>
   </section>
 
   <section class="w-full max-w-full space-y-4 rounded-xl shadow-md border border-violet-400/35 bg-violet-900/15 p-6 box-border">
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-      <h2 class="text-2xl md:text-3xl font-semibold">Issue Summary</h2>
-      <span class="text-base text-violet-100">Main weakness patterns</span>
+      <h2 class="text-2xl md:text-3xl font-semibold">MCQ Topic Performance Chart</h2>
+      <span class="text-base text-violet-100">Visual performance by AP CSP topic</span>
     </div>
     <article class="w-full rounded-xl border border-violet-300/30 bg-violet-800/15 p-5">
+      <img
+        src="{{ '/images/mcqpriotities.png' | relative_url }}"
+        alt="MCQ topic performance by topic"
+        class="w-full h-auto rounded-lg border border-zinc-700"
+        loading="lazy">
+    </article>
+  </section>
+
+  <section class="w-full max-w-full space-y-4 rounded-xl shadow-md border border-indigo-400/35 bg-indigo-900/15 p-6 box-border">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+      <h2 class="text-2xl md:text-3xl font-semibold">Most Missed Topics + Improvement Plan</h2>
+      <span class="text-base text-indigo-100">Priority by lowest scores</span>
+    </div>
+    <article class="w-full rounded-xl border border-indigo-300/30 bg-indigo-800/15 p-5 space-y-4">
+      <h3 class="text-xl font-semibold">Highest Priority (0%)</h3>
+      <p class="text-sm md:text-base text-violet-100/90 mb-3">Read each item as: <strong>question focus → my choice → correct answer → why I missed it.</strong></p>
+      <ol class="list-decimal pl-6 space-y-3 text-base marker:text-violet-200 [&>li]:rounded-lg [&>li]:border [&>li]:border-violet-300/25 [&>li]:bg-violet-950/25 [&>li]:p-3 [&>li]:leading-relaxed">
+        <li><strong>3.1 Variables and Assignments:</strong> trace variable updates line by line and verify assignment order before selecting.</li>
+        <li><strong>3.3 Mathematical Expressions:</strong> rewrite expressions in words first and run daily order-of-operations drills.</li>
+        <li><strong>3.5 Boolean Expressions:</strong> build mini truth tables and test edge cases before locking answers.</li>
+        <li><strong>3.6 Conditionals:</strong> translate each branch to plain English and test all paths with sample values.</li>
+        <li><strong>3.17 Algorithmic Efficiency:</strong> count operations directly (calls per loop × loops) before comparison.</li>
+      </ol>
+      <h3 class="text-xl font-semibold">Second Priority (Low Performance)</h3>
       <ul class="list-disc list-inside space-y-2 text-base">
-        <li>Most misses cluster in Boolean logic, loop tracing, probability mapping, and runtime estimation.</li>
-        <li>Several mistakes came from prompt precision issues such as <strong>NOT</strong> and <strong>select two</strong>.</li>
-        <li>Some errors were concept confusion (lossless vs secure, linear vs binary search, symmetric vs public-key).</li>
+        <li><strong>2.1 Binary Numbers (40%) + 3.12 Calling Procedures (40%):</strong> do daily decimal/binary drills and procedure-call tracing.</li>
+        <li><strong>2.3, 3.7, 3.9, 3.15, 3.16 (50-57% range):</strong> trace one full example for nested logic/simulations and verify whether prompts ask total, rate, or average.</li>
       </ul>
     </article>
   </section>
 
-  <section class="w-full max-w-full space-y-4 rounded-xl shadow-md border border-emerald-500/35 bg-emerald-900/15 p-6 box-border">
+  <section class="w-full max-w-full space-y-4 rounded-xl shadow-md border border-blue-500/35 bg-blue-900/15 p-6 box-border">
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-      <h2 class="text-2xl md:text-3xl font-semibold">Root-Cause Analysis</h2>
-      <span class="text-base text-emerald-100/90">Why the misses happened</span>
+      <h2 class="text-2xl md:text-3xl font-semibold">Strengthening My AP CSP MCQ Skills</h2>
+      <span class="text-base text-blue-100/90">What I need to do differently</span>
     </div>
-    <article class="w-full rounded-xl border border-emerald-400/30 bg-emerald-900/20 p-5">
-      <ul class="list-disc list-inside space-y-2 text-base">
-        <li>Definition recall gaps on core CSP terms and logic expressions.</li>
-        <li>Insufficient variable tracing for multi-step loops/conditionals.</li>
-        <li>Rushing final checks before submission.</li>
-      </ul>
+    <article class="w-full rounded-xl border border-blue-400/30 bg-blue-900/20 p-5">
+      <ol class="list-decimal list-inside space-y-2 text-base">
+        <li>Slow down on Boolean logic and test values with mini truth tables.</li>
+        <li>Trace algorithms step by step using a variable-change table.</li>
+        <li>Rewrite ranges in plain English before selecting an answer.</li>
+        <li>Practice binary conversions daily and connect to powers of two.</li>
+        <li>Explain list logic in one sentence instead of memorizing patterns.</li>
+        <li>Read graph trends by shape first, then compare values.</li>
+        <li>Review networking vocabulary (TCP/IP, IPv4 vs IPv6, metadata).</li>
+        <li>Compare runtimes by operation counts, not guessing.</li>
+      </ol>
     </article>
   </section>
 
   <section class="w-full max-w-full space-y-4 rounded-xl shadow-md border border-indigo-700/40 bg-indigo-950/30 p-6 box-border">
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-      <h2 class="text-2xl md:text-3xl font-semibold">Improvement Strategy</h2>
-      <span class="text-base text-indigo-100/90">Plan for this week</span>
+      <h2 class="text-2xl md:text-3xl font-semibold">MCQ Wrap-Up Expectations and Plan</h2>
+      <span class="text-base text-indigo-100/90">Pre-MCQ execution plan</span>
     </div>
-    <article class="w-full rounded-xl border border-indigo-500/30 bg-indigo-900/20 p-5">
-      <ol class="list-decimal list-inside space-y-2 text-base">
-        <li>Daily 20-minute block: 5 flashcards + 5 loop/logic traces + 3 probability/modulo drills.</li>
-        <li>Keep an error log with: mistake type, corrected rule, and one parallel practice question.</li>
-        <li>Use a 2-pass answer method: solve first, then verify wording/constraints before finalizing.</li>
-        <li>Complete one timed mini-set and reflect immediately after.</li>
-      </ol>
+    <article class="w-full rounded-xl border border-indigo-500/30 bg-indigo-900/20 p-5 space-y-4 text-base">
+      <div>
+        <h3 class="text-lg font-semibold mb-2">What I need to study more</h3>
+        <ul class="list-disc list-inside space-y-1">
+          <li>Boolean logic and logic gates</li>
+          <li>Algorithm tracing and loop flow</li>
+          <li>Conditionals and range checks</li>
+          <li>Binary, bits, and data representation</li>
+          <li>Lists, duplicates, and formula setup</li>
+          <li>Graph interpretation and rates</li>
+          <li>Internet concepts</li>
+          <li>Efficiency and runtime reasoning</li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="text-lg font-semibold mb-2">How I will improve</h3>
+        <ul class="list-disc list-inside space-y-1">
+          <li>Create mini truth tables and test 2-3 cases.</li>
+          <li>Trace variable old/new values for full loop runs.</li>
+          <li>Do daily binary drills (conversions, RGB, bit capacity).</li>
+          <li>Rewrite formulas in words before selecting.</li>
+          <li>Compare graph shape first, then total vs average target.</li>
+          <li>Use one-page internet vocabulary notes.</li>
+          <li>Count operations explicitly for runtime comparisons.</li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="text-lg font-semibold mb-2">During the next MCQ</h3>
+        <ol class="list-decimal list-inside space-y-1">
+          <li>Annotate each prompt before selecting.</li>
+          <li>Trace one concrete example for logic/algorithm questions.</li>
+          <li>Use quick checkpoints for binary and ranges.</li>
+          <li>Eliminate at least one wrong option with evidence.</li>
+          <li>Finish with a full answer-choice verification check.</li>
+        </ol>
+      </div>
     </article>
   </section>
 
-  <section class="w-full max-w-full space-y-4 rounded-xl shadow-md border border-sky-500/35 bg-sky-900/15 p-6 box-border">
+  <section class="w-full max-w-full space-y-4 rounded-xl shadow-md border border-violet-500/35 bg-violet-900/15 p-6 box-border">
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-      <h2 class="text-2xl md:text-3xl font-semibold">Tuesday Delivery Plan</h2>
-      <span class="text-base text-sky-100/90">2-minute individual + 3-person group</span>
+      <h2 class="text-2xl md:text-3xl font-semibold">MCQ Corrections + Why I Was Wrong</h2>
+      <span class="text-base text-violet-100/90">Question-by-question reflection</span>
     </div>
-    <article class="w-full rounded-xl border border-sky-400/30 bg-sky-900/20 p-5">
-      <ul class="list-disc list-inside space-y-2 text-base">
-        <li><strong>0:00–0:30:</strong> top weakness patterns from this MCQ.</li>
-        <li><strong>0:30–1:30:</strong> root causes and strategy changes.</li>
-        <li><strong>1:30–2:00:</strong> evidence of progress and next target.</li>
-        <li><strong>Group presentation:</strong> share top 3 weaknesses, one strategy that worked, and one team takeaway.</li>
-      </ul>
+    <article class="w-full rounded-xl border border-violet-400/30 bg-violet-900/20 p-5">
+      <ol class="list-decimal list-inside space-y-3 text-base">
+        <li><strong>Logic gates circuit:</strong> “For which input values does the circuit output true?” My choice: A | Correct: C. Why I was wrong: I only checked one branch quickly; with choice A, one input to the final AND is false, so the overall output is false.</li>
+        <li><strong>Robot in a grid (Programs I and II):</strong> “Which statement best describes correctness of both programs?” My choice: A | Correct: not A (Program II works). Why I was wrong: I assumed Program II failed without fully tracing all moves to the gray square.</li>
+        <li><strong>Flight simulation software:</strong> “Which is LEAST likely an advantage for pilot training?” My choice: B | Correct: C. Why I was wrong: I mixed up usefulness with realism; simulations are valuable but not more realistic than real flights.</li>
+        <li><strong>Science museum ticket algorithm:</strong> “Which code segment correctly displays ticket cost using age and includesTour?” My choice: C | Correct: B. Why I was wrong: I treated conditions as a single path, but age surcharge and tour surcharge can both apply independently.</li>
+        <li><strong>RGB color from binary triplet:</strong> “(11111111, 11111111, 11110000) is which color?” My choice: C | Correct: A (Ivory). Why I was wrong: I rushed the match; converting gives (255, 255, 240), which is Ivory.</li>
+        <li><strong>Binary triplet for indigo:</strong> “What is the binary RGB for (75, 0, 130)?” My choice: A | Correct: C. Why I was wrong: my decimal-to-binary conversion for 75 was off; 75 is 01001011.</li>
+        <li><strong>Display digits right-to-left algorithm:</strong> “What should missing step 3 be?” My choice: C | Correct: B. Why I was wrong: I didn’t preserve the proper update order; show remainder, then replace number with integer quotient.</li>
+        <li><strong>Program A vs Program B outputs:</strong> “How do displayed values compare?” My choice: D | Correct: not D. Why I was wrong: I guessed from structure instead of tracing; both programs display ten values.</li>
+        <li><strong>Cloud app registered-user growth graph:</strong> “Best description for years 1–8?” My choice: A | Correct: C. Why I was wrong: I generalized one trend; growth roughly doubles early, then becomes closer to constant-rate later.</li>
+        <li><strong>Average data stored per user graph:</strong> “Best description across years 1–8?” My choice: D | Correct: near constant average. Why I was wrong: I focused on rising totals, but similar graph shapes imply roughly stable per-user average.</li>
+        <li><strong>Spinner simulation:</strong> “Which code segment matches a spinner where Move 1 space is six times each other region?” My choice: C | Correct: different option. Why I was wrong: I didn’t validate all probabilities; intended model is 6/8 for move 1 and 1/8 each for the other outcomes.</li>
+        <li><strong>Image metadata (LEAST likely):</strong> “Which item is least likely metadata?” My choice: C | Correct: D. Why I was wrong: I treated all related file info as metadata, but a duplicate image copy is data, not metadata.</li>
+        <li><strong>Swap alpha and beta using temp:</strong> “Which code segments correctly interchange values?” My choice: A | Correct: B (I and III only). Why I was wrong: I missed that segment II overwrites one value too early, so both variables end up the same.</li>
+        <li><strong>Course grade drop-lowest (version set 1):</strong> “Which code calculates finalGrade correctly?” My choice: B | Correct: D. Why I was wrong: I used the wrong operation order; subtract minimum first, then divide by LENGTH(scores) - 1.</li>
+        <li><strong>Course grade drop-lowest (version set 2):</strong> “Same scoring question repeated.” My choice: B | Correct: D. Why I was wrong: same issue as above; division happened too early before removing the minimum score.</li>
+        <li><strong>DrawLine missing code:</strong> “Which replacement draws the target figure correctly?” My choice: C | Correct: A. Why I was wrong: I updated endY before drawing; correct sequence draws first, then decrements endY.</li>
+        <li><strong>IPv6 vs IPv4 benefit:</strong> “Best benefit of IPv6?” My choice: A | Correct: B. Why I was wrong: I chose a distractor; the core benefit is vastly larger address space.</li>
+        <li><strong>Within 10 points boolean expression:</strong> “Which expression is true iff score is within 10 of target?” My choice: A | Correct: D. Why I was wrong: I failed to write a two-sided bound: target - 10 ≤ score ≤ target + 10.</li>
+        <li><strong>Minimum bits for 100 staff members:</strong> “How many bits are required for unique IDs?” My choice: A | Correct: C (7 bits). Why I was wrong: I didn’t check powers of two carefully; 2^6 is 64, but 2^7 is 128.</li>
+        <li><strong>Reasonable-time algorithms:</strong> “I: 2n accesses, II: n^2 accesses, III: 10 accesses. Which are reasonable?” My choice: A | Correct: D. Why I was wrong: I eliminated quadratic too quickly; in AP CSP framing, all listed runtimes are considered reasonable.</li>
+        <li><strong>Bacteria simulation statements:</strong> “Which statements about loop behavior/output are true?” My choice: D | Correct: A (I only). Why I was wrong: I misread output meaning; it displays net change from start, not average-per-hour and not just final population.</li>
+        <li><strong>GetPrediction execution time:</strong> “How do Version I and II runtimes compare?” My choice: C | Correct: D. Why I was wrong: I compared visually instead of counting calls; Version I makes 4 calls, Version II makes 9.</li>
+        <li><strong>Purpose of TCP/IP:</strong> “What do these protocols do?” My choice: B | Correct: C. Why I was wrong: I confused standards with security; TCP/IP establishes common communication rules between devices.</li>
+        <li><strong>Count distinct values appearing in both lists:</strong> “Which code correctly assigns count?” My choice: B | Correct: D. Why I was wrong: I didn’t remove duplicates at all required stages before length comparison.</li>
+        <li><strong>Perfect numbers program (remove two lines):</strong> “Which two lines must be removed?” My removals: line 5 and line 9 | Correct: line 5 and line 9. Why this works: line 5 incorrectly increments count every loop, and line 9 can skip values by extra incrementing.</li>
+      </ol>
+      <div class="mt-4 pt-4 border-t border-violet-400/30">
+        <h3 class="text-lg font-semibold mb-2">Quick pattern for next time</h3>
+        <ol class="list-decimal list-inside space-y-1 text-base">
+          <li>Translate prompts into tiny test cases first.</li>
+          <li>Verify all conditional combinations and edge values.</li>
+          <li>Track loop variables each iteration to avoid skips/infinite loops.</li>
+          <li>Convert binary/decimal one component at a time.</li>
+          <li>Check operation counts for algorithm comparisons.</li>
+        </ol>
+      </div>
     </article>
   </section>
 </div>
