@@ -27,19 +27,35 @@
     </div>
     <article class="w-full rounded-xl border border-indigo-300/30 bg-indigo-800/15 p-5 space-y-4">
       <h3 class="text-xl font-semibold">Highest Priority (0%)</h3>
-      <p class="text-sm md:text-base text-violet-100/90 mb-3">Read each item as: <strong>question focus → my choice → correct answer → why I missed it.</strong></p>
+      <p class="text-sm md:text-base text-indigo-100/90">Plan format: <strong>what I will do</strong> + <strong>how I will do it consistently</strong> before the next MCQ.</p>
       <ol class="list-decimal pl-6 space-y-3 text-base marker:text-violet-200 [&>li]:rounded-lg [&>li]:border [&>li]:border-violet-300/25 [&>li]:bg-violet-950/25 [&>li]:p-3 [&>li]:leading-relaxed">
-        <li><strong>3.1 Variables and Assignments:</strong> trace variable updates line by line and verify assignment order before selecting.</li>
-        <li><strong>3.3 Mathematical Expressions:</strong> rewrite expressions in words first and run daily order-of-operations drills.</li>
-        <li><strong>3.5 Boolean Expressions:</strong> build mini truth tables and test edge cases before locking answers.</li>
-        <li><strong>3.6 Conditionals:</strong> translate each branch to plain English and test all paths with sample values.</li>
-        <li><strong>3.17 Algorithmic Efficiency:</strong> count operations directly (calls per loop × loops) before comparison.</li>
+        <li><strong>3.1 Variables and Assignments:</strong> I will complete one trace-table drill per day (old value → operation → new value) and circle the exact assignment order before choosing an answer.</li>
+        <li><strong>3.3 Mathematical Expressions:</strong> I will rewrite each expression in plain words first, then solve 5 short order-of-operations practice items daily and check each step, not just the final number.</li>
+        <li><strong>3.5 Boolean Expressions:</strong> I will make a mini truth table for every AND/OR/NOT question, test at least two edge cases, and only submit after verifying which combinations evaluate to true.</li>
+        <li><strong>3.6 Conditionals:</strong> I will translate each IF/ELSE branch into a one-line meaning and run two sample inputs per branch to confirm no path is skipped.</li>
+        <li><strong>3.17 Algorithmic Efficiency:</strong> I will compare algorithms by counting operations explicitly (work per loop × number of loops) and write the count next to each choice before selecting.</li>
       </ol>
       <h3 class="text-xl font-semibold">Second Priority (Low Performance)</h3>
       <ul class="list-disc list-inside space-y-2 text-base">
-        <li><strong>2.1 Binary Numbers (40%) + 3.12 Calling Procedures (40%):</strong> do daily decimal/binary drills and procedure-call tracing.</li>
-        <li><strong>2.3, 3.7, 3.9, 3.15, 3.16 (50-57% range):</strong> trace one full example for nested logic/simulations and verify whether prompts ask total, rate, or average.</li>
+        <li><strong>2.1 Binary Numbers (40%) + 3.12 Calling Procedures (40%):</strong> I will do a 10-minute daily binary conversion set (decimal↔binary + RGB examples) and trace one procedure call stack showing parameters, return value, and final output.</li>
+        <li><strong>2.3, 3.7, 3.9, 3.15, 3.16 (50-57% range):</strong> I will complete one mixed practice problem per topic every two days, then label what the question asks for (total, rate, average, or condition) before solving.</li>
       </ul>
+      <p class="text-sm md:text-base text-indigo-100/90">Execution schedule: highest-priority topics first in each study session, then one second-priority mixed review set to build retention.</p>
+      <div class="rounded-lg border border-indigo-400/30 bg-indigo-950/25 p-4">
+        <h4 class="text-lg font-semibold mb-2">Question-Type Cheatsheet (what to do during MCQ)</h4>
+        <ul class="list-disc list-inside space-y-2 text-sm md:text-base text-indigo-100/95">
+          <li><strong>Boolean logic / logic gates:</strong> make a 2x2 mini truth table (TT, TF, FT, FF), evaluate each gate in order, then check the final output row that matches the answer choice.</li>
+          <li><strong>Conditionals and ranges:</strong> rewrite the condition as a number line (for example, target - 10 to target + 10), then test one value inside and one value outside the range.</li>
+          <li><strong>Variables, assignments, and loops:</strong> use a 3-column trace table (step, variable before, variable after) and do not skip iterations; most errors come from skipped updates.</li>
+          <li><strong>Procedure calls and return values:</strong> write input values next to parameters, compute inside the procedure once, and box the returned value before applying it to the caller.</li>
+          <li><strong>Algorithms and runtime comparison:</strong> count exact work (calls per loop × loop repetitions) for each option, then compare totals instead of relying on code appearance.</li>
+          <li><strong>Lists and duplicates:</strong> list intermediate results after each operation (append/remove/filter), then remove duplicates only when instructed and compare final lengths/contents.</li>
+          <li><strong>Binary, bits, and RGB:</strong> convert one component at a time, check with powers of two (1,2,4,8,16,32,64,128), and verify final decimal triplet before naming the color.</li>
+          <li><strong>Graphs (total vs average vs rate):</strong> first label what the prompt asks, then use graph shape to infer trend and only then compare specific values.</li>
+          <li><strong>Internet concepts (TCP/IP, IPv4/IPv6, metadata):</strong> match each term to its core role (rules/addressing/data-about-data) and eliminate options that describe a different concept.</li>
+          <li><strong>Simulation / probability:</strong> convert each random range into probability fractions, confirm all probabilities add to 1, then match those fractions to the scenario.</li>
+        </ul>
+      </div>
     </article>
   </section>
 
