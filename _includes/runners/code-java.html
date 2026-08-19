@@ -1,0 +1,73 @@
+{% assign code_runner_id = include.runner_id | default: 'code-runner-java' %}
+<div id="{{ code_runner_id }}" class="code-runner" data-language="java">
+  <textarea id="{{ code_runner_id }}-editor" rows="8" spellcheck="false">{{ include.code | escape }}</textarea>
+  <button type="button" id="{{ code_runner_id }}-run">Run code</button>
+  <pre id="{{ code_runner_id }}-output" aria-live="polite"></pre>
+  <p class="code-runner-note">Simulated console: recognizes <code>System.out.println(...)</code> / <code>System.out.print(...)</code> statements only, this is not a real JVM.</p>
+</div>
+
+<style>
+  .code-runner {
+    margin: 1.5rem 0;
+  }
+
+  .code-runner textarea {
+    box-sizing: border-box;
+    display: block;
+    font-family: monospace;
+    margin-bottom: 0.75rem;
+    padding: 0.75rem;
+    width: 100%;
+  }
+
+  .code-runner button {
+    cursor: pointer;
+    padding: 0.5rem 0.9rem;
+  }
+
+  .code-runner pre {
+    min-height: 1.5rem;
+    white-space: pre-wrap;
+  }
+
+  .code-runner-note {
+    color: #6b7280;
+    font-size: 0.8rem;
+    margin: 0.5rem 0 0;
+  }
+</style>
+
+<script>
+  (() => {
+    const editor = document.getElementById('{{ code_runner_id }}-editor');
+    const runButton = document.getElementById('{{ code_runner_id }}-run');
+    const output = document.getElementById('{{ code_runner_id }}-output');
+
+    // resolves a Java print argument made of string literals joined with '+' (e.g. "a" + "b")
+    function resolveArg(argText) {
+      return argText
+        .split('+')
+        .map((part) => {
+          const literal = part.trim().match(/^"([^"]*)"$/);
+          return literal ? literal[1] : part.trim();
+        })
+        .join('');
+    }
+
+    runButton.addEventListener('click', () => {
+      const statementPattern = /System\.out\.(println|print)\s*\(([^)]*)\)\s*;/g;
+      const lines = [''];
+      let match;
+      let found = false;
+
+      while ((match = statementPattern.exec(editor.value)) !== null) {
+        found = true;
+        const [, method, argText] = match;
+        lines[lines.length - 1] += resolveArg(argText);
+        if (method === 'println') lines.push('');
+      }
+
+      output.textContent = found ? lines.join('\n').replace(/\n$/, '') : '[No recognized System.out statements]';
+    });
+  })();
+</script>

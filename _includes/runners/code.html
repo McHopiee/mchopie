@@ -1,0 +1,82 @@
+{% assign code_runner_id = include.runner_id | default: 'code-runner' %}
+{% assign code_runner_language = include.language | default: 'python' %}
+<div id="{{ code_runner_id }}" class="code-runner" data-language="{{ code_runner_language }}">
+  <textarea id="{{ code_runner_id }}-editor" rows="8" spellcheck="false">{{ include.code | escape }}</textarea>
+  <button type="button" id="{{ code_runner_id }}-run">Run code</button>
+  <pre id="{{ code_runner_id }}-output" aria-live="polite"></pre>
+</div>
+
+<style>
+  .code-runner {
+    margin: 1.5rem 0;
+  }
+
+  .code-runner textarea {
+    box-sizing: border-box;
+    display: block;
+    font-family: monospace;
+    margin-bottom: 0.75rem;
+    padding: 0.75rem;
+    width: 100%;
+  }
+
+  .code-runner button {
+    cursor: pointer;
+    padding: 0.5rem 0.9rem;
+  }
+
+  .code-runner pre {
+    min-height: 1.5rem;
+    white-space: pre-wrap;
+  }
+</style>
+
+<script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
+<script>
+  (() => {
+    const runner = document.getElementById('{{ code_runner_id }}');
+    const editor = document.getElementById('{{ code_runner_id }}-editor');
+    const runButton = document.getElementById('{{ code_runner_id }}-run');
+    const output = document.getElementById('{{ code_runner_id }}-output');
+
+    function toText(chunk) {
+      if (typeof chunk === 'number') return String.fromCharCode(chunk);
+      if (typeof chunk === 'string') return chunk;
+      if (chunk instanceof Uint8Array) return new TextDecoder().decode(chunk);
+      return String(chunk);
+    }
+
+    runButton.addEventListener('click', async () => {
+      output.textContent = 'Loading Python runtime...';
+
+      try {
+        window.codeRunnerPyodide = window.codeRunnerPyodide || loadPyodide();
+        const pyodide = await window.codeRunnerPyodide;
+        let text = '';
+
+        // Use raw streams so input prompts (which often omit trailing newlines)
+        // are captured and can be reused in the browser prompt dialog.
+        pyodide.setStdout({ raw: (data) => { text += toText(data); } });
+        pyodide.setStderr({ raw: (data) => { text += toText(data); } });
+        pyodide.setStdin({
+          stdin: () => {
+            const lastLine = text.split('\n').pop();
+            const promptText = (lastLine && lastLine.trim()) ? lastLine.trim() : 'Python input:';
+            const response = window.prompt(promptText, '');
+            if (response === null) {
+              throw new Error('Input cancelled by user.');
+            }
+            return `${response}\n`;
+          },
+          isatty: true,
+        });
+
+        output.textContent = 'Running...';
+        await pyodide.runPythonAsync(editor.value);
+        output.textContent = text || '[No output]';
+      } catch (error) {
+        output.textContent = `Python Error: ${error}`;
+      }
+    });
+  })();
+</script>

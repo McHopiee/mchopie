@@ -17,23 +17,26 @@ Links to easily navigate!
   <button class="btn-md btn-rounded btn-darkblue" onclick="window.location.href='https://github.com/McHopiee/mchopie'">
       ＧＩＴＨＵＢ
   </button>
-  <button class="btn-md btn-rounded btn-darkpurple" onclick="window.location.href='https://mchopiee.github.io/mchopie/'">
+  <button class="btn-md btn-rounded btn-darkpurple" onclick="window.location.href='{{ site.baseurl }}/'">
       ＧＩＴＨＵＢ　ＰＡＧＥＳ
   </button>
-  <button class="btn-md btn-rounded btn-darkpink" onclick="window.location.href='https://mchopiee.github.io/mchopie/about/'">
+  <button class="btn-md btn-rounded btn-darkpink" onclick="window.location.href='{{ site.baseurl }}/about/'">
       ＡＢＯＵＴ
   </button>
-  <button class="btn-md btn-rounded btn-darkcyan" onclick="window.location.href='https://mchopiee.github.io/mchopie/search/'">
+  <button class="btn-md btn-rounded btn-darkcyan" onclick="window.location.href='{{ site.baseurl }}/search/'">
       ＳＥＡＲＣＨ
   </button>
-  <button class="btn-md btn-rounded btn-otherpink" onclick="window.location.href='https://mchopiee.github.io/mchopie/background'">
+  <button class="btn-md btn-rounded btn-otherpink" onclick="window.location.href='{{ site.baseurl }}/background'">
       ＢＡＣＫＧＲＯＵＮＤ
+  </button>
+  <button class="btn-md btn-rounded btn-darkblue" onclick="window.location.href='{{ site.baseurl }}/personal/csa/portfolio'">
+      ＣＳＡ　ＰＯＲＴＦＯＬＩＯ
   </button>
 </div>
 
 <br>
 
-<img src="https://mchopiee.github.io/mchopie/images/about/pikachulol.jpg" alt="pikachulol" width="500">
+<img src="{{ site.baseurl }}/images/about/pikachulol.jpg" alt="pikachulol" width="500">
 
 <style>
 /* size */

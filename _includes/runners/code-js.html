@@ -1,0 +1,58 @@
+{% assign code_runner_id = include.runner_id | default: 'code-runner-js' %}
+<div id="{{ code_runner_id }}" class="code-runner" data-language="javascript">
+  <textarea id="{{ code_runner_id }}-editor" rows="8" spellcheck="false">{{ include.code | escape }}</textarea>
+  <button type="button" id="{{ code_runner_id }}-run">Run code</button>
+  <pre id="{{ code_runner_id }}-output" aria-live="polite"></pre>
+</div>
+
+<style>
+  .code-runner {
+    margin: 1.5rem 0;
+  }
+
+  .code-runner textarea {
+    box-sizing: border-box;
+    display: block;
+    font-family: monospace;
+    margin-bottom: 0.75rem;
+    padding: 0.75rem;
+    width: 100%;
+  }
+
+  .code-runner button {
+    cursor: pointer;
+    padding: 0.5rem 0.9rem;
+  }
+
+  .code-runner pre {
+    min-height: 1.5rem;
+    white-space: pre-wrap;
+  }
+</style>
+
+<script>
+  (() => {
+    const editor = document.getElementById('{{ code_runner_id }}-editor');
+    const runButton = document.getElementById('{{ code_runner_id }}-run');
+    const output = document.getElementById('{{ code_runner_id }}-output');
+
+    runButton.addEventListener('click', () => {
+      // real execution: runs in the browser's native JS engine, console.* is captured instead of going to devtools
+      const lines = [];
+      const fakeConsole = {
+        log: (...args) => lines.push(args.join(' ')),
+        error: (...args) => lines.push(args.join(' ')),
+        warn: (...args) => lines.push(args.join(' ')),
+        info: (...args) => lines.push(args.join(' ')),
+      };
+
+      try {
+        const runner = new Function('console', editor.value);
+        runner(fakeConsole);
+        output.textContent = lines.length ? lines.join('\n') : '[No output]';
+      } catch (error) {
+        output.textContent = `JavaScript Error: ${error}`;
+      }
+    });
+  })();
+</script>
