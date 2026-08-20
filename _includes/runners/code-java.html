@@ -3,7 +3,9 @@
   <textarea id="{{ code_runner_id }}-editor" rows="8" spellcheck="false">{{ include.code | escape }}</textarea>
   <button type="button" id="{{ code_runner_id }}-run">Run code</button>
   <pre id="{{ code_runner_id }}-output" aria-live="polite"></pre>
-  <p class="code-runner-note">Simulated console: recognizes <code>System.out.println(...)</code> / <code>System.out.print(...)</code> statements only, this is not a real JVM.</p>
+  {% if include.success_gif %}
+  <img id="{{ code_runner_id }}-success-gif" class="code-runner-success-gif" src="{{ site.baseurl }}{{ include.success_gif }}" alt="{{ include.success_gif_alt | default: 'Success!' }}" hidden>
+  {% endif %}
 </div>
 
 <style>
@@ -30,10 +32,15 @@
     white-space: pre-wrap;
   }
 
-  .code-runner-note {
-    color: #6b7280;
-    font-size: 0.8rem;
-    margin: 0.5rem 0 0;
+  .code-runner-success-gif {
+    border-radius: .5rem;
+    display: block;
+    margin-top: .75rem;
+    max-width: 200px;
+  }
+
+  .code-runner-success-gif[hidden] {
+    display: none;
   }
 </style>
 
@@ -42,32 +49,433 @@
     const editor = document.getElementById('{{ code_runner_id }}-editor');
     const runButton = document.getElementById('{{ code_runner_id }}-run');
     const output = document.getElementById('{{ code_runner_id }}-output');
+    const successGif = document.getElementById('{{ code_runner_id }}-success-gif');
 
-    // resolves a Java print argument made of string literals joined with '+' (e.g. "a" + "b")
-    function resolveArg(argText) {
-      return argText
-        .split('+')
-        .map((part) => {
-          const literal = part.trim().match(/^"([^"]*)"$/);
-          return literal ? literal[1] : part.trim();
-        })
-        .join('');
+    // ---- Tokenizer ----
+    function tokenize(src) {
+      const tokens = [];
+      let i = 0;
+      const n = src.length;
+      const isDigit = (c) => c >= '0' && c <= '9';
+      const isIdentStart = (c) => /[A-Za-z_$]/.test(c);
+      const isIdentPart = (c) => /[A-Za-z0-9_$]/.test(c);
+
+      while (i < n) {
+        const c = src[i];
+        if (c === ' ' || c === '\t' || c === '\n' || c === '\r') { i++; continue; }
+        if (c === '/' && src[i + 1] === '/') { while (i < n && src[i] !== '\n') i++; continue; }
+        if (c === '/' && src[i + 1] === '*') { i += 2; while (i < n && !(src[i] === '*' && src[i + 1] === '/')) i++; i += 2; continue; }
+        if (c === '"') {
+          let j = i + 1;
+          let s = '';
+          while (j < n && src[j] !== '"') {
+            if (src[j] === '\\' && j + 1 < n) {
+              const esc = src[j + 1];
+              s += esc === 'n' ? '\n' : esc === 't' ? '\t' : esc;
+              j += 2;
+            } else { s += src[j]; j++; }
+          }
+          tokens.push({ type: 'str', value: s });
+          i = j + 1;
+          continue;
+        }
+        if (isDigit(c) || (c === '.' && isDigit(src[i + 1]))) {
+          let j = i;
+          let isFloat = false;
+          while (j < n && (isDigit(src[j]) || (src[j] === '.' && !isFloat && (isFloat = true)))) j++;
+          tokens.push({ type: 'num', value: parseFloat(src.slice(i, j)), isFloat });
+          i = j;
+          continue;
+        }
+        if (isIdentStart(c)) {
+          let j = i + 1;
+          while (j < n && isIdentPart(src[j])) j++;
+          tokens.push({ type: 'id', value: src.slice(i, j) });
+          i = j;
+          continue;
+        }
+        const two = src.slice(i, i + 2);
+        if (['==', '!=', '<=', '>=', '&&', '||', '++', '--', '+=', '-=', '*=', '/='].includes(two)) {
+          tokens.push({ type: 'punct', value: two });
+          i += 2;
+          continue;
+        }
+        if ('+-*/%=<>!(){};,.'.includes(c)) {
+          tokens.push({ type: 'punct', value: c });
+          i++;
+          continue;
+        }
+        throw new Error(`Unexpected character '${c}' in code`);
+      }
+      return tokens;
+    }
+
+    // ---- Parser (recursive descent) ----
+    class Parser {
+      constructor(tokens) { this.tokens = tokens; this.pos = 0; }
+      peek(offset = 0) { return this.tokens[this.pos + offset]; }
+      next() { return this.tokens[this.pos++]; }
+      atEnd() { return this.pos >= this.tokens.length; }
+      isPunct(v, offset = 0) { const t = this.peek(offset); return !!t && t.type === 'punct' && t.value === v; }
+      isKeyword(v, offset = 0) { const t = this.peek(offset); return !!t && t.type === 'id' && t.value === v; }
+      expectPunct(v) {
+        const t = this.next();
+        if (!t || t.type !== 'punct' || t.value !== v) throw new Error(`Expected '${v}'`);
+        return t;
+      }
+
+      parseProgram() {
+        const stmts = [];
+        while (!this.atEnd()) stmts.push(this.parseStatement());
+        return stmts;
+      }
+
+      parseBlock() {
+        if (this.isPunct('{')) {
+          this.next();
+          const stmts = [];
+          while (!this.isPunct('}')) stmts.push(this.parseStatement());
+          this.next();
+          return stmts;
+        }
+        return [this.parseStatement()];
+      }
+
+      parseStatement() {
+        const t = this.peek();
+        if (!t) throw new Error('Unexpected end of code');
+        if (t.type === 'id') {
+          if (t.value === 'if') return this.parseIf();
+          if (t.value === 'while') return this.parseWhile();
+          if (t.value === 'for') return this.parseFor();
+          if (t.value === 'break') { this.next(); this.expectPunct(';'); return { type: 'break' }; }
+          if (t.value === 'System') return this.parsePrint();
+          if (['int', 'double', 'boolean', 'String', 'long', 'float', 'char', 'Scanner'].includes(t.value) && this.peek(1) && this.peek(1).type === 'id') {
+            return this.parseVarDecl();
+          }
+          return this.parseExprOrAssignStatement();
+        }
+        throw new Error(`Unexpected token '${t.value}'`);
+      }
+
+      parseVarDecl() {
+        const varType = this.next().value;
+        const name = this.next().value;
+        if (varType === 'Scanner') {
+          this.expectPunct('=');
+          while (!this.isPunct(';')) this.next();
+          this.next();
+          return { type: 'scannerdecl', name };
+        }
+        let expr = null;
+        if (this.isPunct('=')) { this.next(); expr = this.parseExpression(); }
+        this.expectPunct(';');
+        return { type: 'vardecl', varType, name, expr };
+      }
+
+      parseExprOrAssignStatement() {
+        const name = this.next().value;
+        if (this.isPunct('=')) { this.next(); const expr = this.parseExpression(); this.expectPunct(';'); return { type: 'assign', name, op: '=', expr }; }
+        if (['+=', '-=', '*=', '/='].some((op) => this.isPunct(op))) {
+          const op = this.next().value;
+          const expr = this.parseExpression();
+          this.expectPunct(';');
+          return { type: 'assign', name, op, expr };
+        }
+        if (this.isPunct('++')) { this.next(); this.expectPunct(';'); return { type: 'incdec', name, op: '++' }; }
+        if (this.isPunct('--')) { this.next(); this.expectPunct(';'); return { type: 'incdec', name, op: '--' }; }
+        this.pos--;
+        const expr = this.parseExpression();
+        this.expectPunct(';');
+        return { type: 'exprstmt', expr };
+      }
+
+      parsePrint() {
+        this.next();
+        this.expectPunct('.');
+        const outTok = this.next();
+        if (!outTok || outTok.value !== 'out') throw new Error("Expected 'out' after 'System.'");
+        this.expectPunct('.');
+        const method = this.next().value;
+        if (method !== 'println' && method !== 'print') throw new Error(`Unsupported System.out method '${method}'`);
+        this.expectPunct('(');
+        let expr = null;
+        if (!this.isPunct(')')) expr = this.parseExpression();
+        this.expectPunct(')');
+        this.expectPunct(';');
+        return { type: 'print', method, expr };
+      }
+
+      parseIf() {
+        this.next();
+        this.expectPunct('(');
+        const cond = this.parseExpression();
+        this.expectPunct(')');
+        const body = this.parseBlock();
+        const branches = [{ cond, body }];
+        let elseBody = null;
+        while (this.isKeyword('else')) {
+          this.next();
+          if (this.isKeyword('if')) {
+            this.next();
+            this.expectPunct('(');
+            const c2 = this.parseExpression();
+            this.expectPunct(')');
+            branches.push({ cond: c2, body: this.parseBlock() });
+          } else {
+            elseBody = this.parseBlock();
+            break;
+          }
+        }
+        return { type: 'if', branches, elseBody };
+      }
+
+      parseWhile() {
+        this.next();
+        this.expectPunct('(');
+        const cond = this.parseExpression();
+        this.expectPunct(')');
+        return { type: 'while', cond, body: this.parseBlock() };
+      }
+
+      parseFor() {
+        this.next();
+        this.expectPunct('(');
+        const init = this.isPunct(';') ? null : this.parseForClause();
+        this.expectPunct(';');
+        const cond = this.isPunct(';') ? null : this.parseExpression();
+        this.expectPunct(';');
+        const update = this.isPunct(')') ? null : this.parseForClause();
+        this.expectPunct(')');
+        return { type: 'for', init, cond, update, body: this.parseBlock() };
+      }
+
+      parseForClause() {
+        const t = this.peek();
+        if (['int', 'double', 'boolean', 'String'].includes(t.value) && this.peek(1).type === 'id') {
+          const varType = this.next().value;
+          const name = this.next().value;
+          this.expectPunct('=');
+          return { type: 'vardecl', varType, name, expr: this.parseExpression() };
+        }
+        const name = this.next().value;
+        if (this.isPunct('++')) { this.next(); return { type: 'incdec', name, op: '++' }; }
+        if (this.isPunct('--')) { this.next(); return { type: 'incdec', name, op: '--' }; }
+        this.expectPunct('=');
+        return { type: 'assign', name, op: '=', expr: this.parseExpression() };
+      }
+
+      parseExpression() { return this.parseOr(); }
+      parseOr() {
+        let left = this.parseAnd();
+        while (this.isPunct('||')) { this.next(); left = { type: 'binary', op: '||', left, right: this.parseAnd() }; }
+        return left;
+      }
+      parseAnd() {
+        let left = this.parseEquality();
+        while (this.isPunct('&&')) { this.next(); left = { type: 'binary', op: '&&', left, right: this.parseEquality() }; }
+        return left;
+      }
+      parseEquality() {
+        let left = this.parseRelational();
+        while (this.isPunct('==') || this.isPunct('!=')) { const op = this.next().value; left = { type: 'binary', op, left, right: this.parseRelational() }; }
+        return left;
+      }
+      parseRelational() {
+        let left = this.parseAdditive();
+        while (['<', '>', '<=', '>='].some((o) => this.isPunct(o))) { const op = this.next().value; left = { type: 'binary', op, left, right: this.parseAdditive() }; }
+        return left;
+      }
+      parseAdditive() {
+        let left = this.parseMultiplicative();
+        while (this.isPunct('+') || this.isPunct('-')) { const op = this.next().value; left = { type: 'binary', op, left, right: this.parseMultiplicative() }; }
+        return left;
+      }
+      parseMultiplicative() {
+        let left = this.parseUnary();
+        while (this.isPunct('*') || this.isPunct('/') || this.isPunct('%')) { const op = this.next().value; left = { type: 'binary', op, left, right: this.parseUnary() }; }
+        return left;
+      }
+      parseUnary() {
+        if (this.isPunct('!') || this.isPunct('-')) { const op = this.next().value; return { type: 'unary', op, expr: this.parseUnary() }; }
+        return this.parsePrimary();
+      }
+      parsePrimary() {
+        const t = this.peek();
+        if (!t) throw new Error('Unexpected end of expression');
+        if (t.type === 'num') { this.next(); return { type: 'literal', kind: t.isFloat ? 'double' : 'int', value: t.value }; }
+        if (t.type === 'str') { this.next(); return { type: 'literal', kind: 'string', value: t.value }; }
+        if (t.type === 'punct' && t.value === '(') { this.next(); const e = this.parseExpression(); this.expectPunct(')'); return e; }
+        if (t.type === 'id') {
+          if (t.value === 'true' || t.value === 'false') { this.next(); return { type: 'literal', kind: 'boolean', value: t.value === 'true' }; }
+          const name = this.next().value;
+          if (this.isPunct('.')) {
+            this.next();
+            const method = this.next().value;
+            this.expectPunct('(');
+            const args = [];
+            if (!this.isPunct(')')) {
+              args.push(this.parseExpression());
+              while (this.isPunct(',')) { this.next(); args.push(this.parseExpression()); }
+            }
+            this.expectPunct(')');
+            return { type: 'call', object: name, method, args };
+          }
+          return { type: 'ident', name };
+        }
+        throw new Error(`Unexpected token '${t.value}'`);
+      }
+    }
+
+    // ---- Interpreter ----
+    class BreakSignal {}
+
+    function toDisplay(v) {
+      if (v.kind === 'string') return v.value;
+      if (v.kind === 'boolean') return v.value ? 'true' : 'false';
+      if (v.kind === 'double') return Number.isInteger(v.value) ? v.value.toFixed(1) : String(v.value);
+      return String(v.value);
+    }
+
+    function evalExpr(node, env, promptFn) {
+      switch (node.type) {
+        case 'literal': return { kind: node.kind, value: node.value };
+        case 'ident': {
+          if (!(node.name in env)) throw new Error(`Variable '${node.name}' is not declared`);
+          return env[node.name];
+        }
+        case 'unary': {
+          const v = evalExpr(node.expr, env, promptFn);
+          if (node.op === '!') return { kind: 'boolean', value: !v.value };
+          return { kind: v.kind === 'double' ? 'double' : 'int', value: -v.value };
+        }
+        case 'call': {
+          const scanner = env[node.object];
+          if (!scanner || scanner.kind !== 'scanner') throw new Error(`Unsupported call '${node.object}.${node.method}(...)'`);
+          const labels = { nextInt: 'Enter a whole number:', nextDouble: 'Enter a number:', next: 'Enter a value:', nextLine: 'Enter a value:' };
+          const response = promptFn(labels[node.method] || 'Input:');
+          if (response === null) throw new Error('Input cancelled by user.');
+          if (node.method === 'nextInt') return { kind: 'int', value: parseInt(response, 10) || 0 };
+          if (node.method === 'nextDouble') return { kind: 'double', value: parseFloat(response) || 0 };
+          if (node.method === 'next') return { kind: 'string', value: response.trim().split(/\s+/)[0] || '' };
+          if (node.method === 'nextLine') return { kind: 'string', value: response };
+          throw new Error(`Unsupported Scanner method '${node.method}'`);
+        }
+        case 'binary': {
+          if (node.op === '&&') { const l = evalExpr(node.left, env, promptFn); return l.value ? { kind: 'boolean', value: !!evalExpr(node.right, env, promptFn).value } : { kind: 'boolean', value: false }; }
+          if (node.op === '||') { const l = evalExpr(node.left, env, promptFn); return l.value ? { kind: 'boolean', value: true } : { kind: 'boolean', value: !!evalExpr(node.right, env, promptFn).value }; }
+          const l = evalExpr(node.left, env, promptFn);
+          const r = evalExpr(node.right, env, promptFn);
+          if (node.op === '+' && (l.kind === 'string' || r.kind === 'string')) return { kind: 'string', value: toDisplay(l) + toDisplay(r) };
+          const numKind = (l.kind === 'double' || r.kind === 'double') ? 'double' : 'int';
+          switch (node.op) {
+            case '+': return { kind: numKind, value: l.value + r.value };
+            case '-': return { kind: numKind, value: l.value - r.value };
+            case '*': return { kind: numKind, value: l.value * r.value };
+            case '/': return numKind === 'int' ? { kind: 'int', value: Math.trunc(l.value / r.value) } : { kind: 'double', value: l.value / r.value };
+            case '%': return { kind: numKind, value: l.value % r.value };
+            case '==': return { kind: 'boolean', value: l.value === r.value };
+            case '!=': return { kind: 'boolean', value: l.value !== r.value };
+            case '<': return { kind: 'boolean', value: l.value < r.value };
+            case '>': return { kind: 'boolean', value: l.value > r.value };
+            case '<=': return { kind: 'boolean', value: l.value <= r.value };
+            case '>=': return { kind: 'boolean', value: l.value >= r.value };
+            default: throw new Error(`Unsupported operator '${node.op}'`);
+          }
+        }
+        default: throw new Error('Unable to evaluate expression');
+      }
+    }
+
+    function defaultValue(varType) {
+      if (varType === 'double' || varType === 'float' || varType === 'long') return { kind: 'double', value: 0 };
+      if (varType === 'boolean') return { kind: 'boolean', value: false };
+      if (varType === 'String') return { kind: 'string', value: '' };
+      return { kind: 'int', value: 0 };
+    }
+
+    function execStatement(stmt, env, promptFn, printFn) {
+      switch (stmt.type) {
+        case 'vardecl':
+          env[stmt.name] = stmt.expr ? evalExpr(stmt.expr, env, promptFn) : defaultValue(stmt.varType);
+          return;
+        case 'scannerdecl':
+          env[stmt.name] = { kind: 'scanner', value: null };
+          return;
+        case 'assign': {
+          if (!(stmt.name in env)) throw new Error(`Variable '${stmt.name}' is not declared`);
+          if (stmt.op === '=') { env[stmt.name] = evalExpr(stmt.expr, env, promptFn); return; }
+          const current = env[stmt.name];
+          const rhs = evalExpr(stmt.expr, env, promptFn);
+          const op = stmt.op[0];
+          env[stmt.name] = evalExpr({ type: 'binary', op, left: { type: 'literal', kind: current.kind, value: current.value }, right: { type: 'literal', kind: rhs.kind, value: rhs.value } }, env, promptFn);
+          return;
+        }
+        case 'incdec': {
+          if (!(stmt.name in env)) throw new Error(`Variable '${stmt.name}' is not declared`);
+          const cur = env[stmt.name];
+          env[stmt.name] = { kind: cur.kind, value: cur.value + (stmt.op === '++' ? 1 : -1) };
+          return;
+        }
+        case 'print':
+          printFn(stmt.method, stmt.expr ? toDisplay(evalExpr(stmt.expr, env, promptFn)) : '');
+          return;
+        case 'if': {
+          for (const branch of stmt.branches) {
+            if (evalExpr(branch.cond, env, promptFn).value) { execStatements(branch.body, env, promptFn, printFn); return; }
+          }
+          if (stmt.elseBody) execStatements(stmt.elseBody, env, promptFn, printFn);
+          return;
+        }
+        case 'while': {
+          let guard = 0;
+          while (evalExpr(stmt.cond, env, promptFn).value) {
+            if (++guard > 2000) throw new Error('Loop exceeded 2000 iterations (possible infinite loop).');
+            try { execStatements(stmt.body, env, promptFn, printFn); } catch (e) { if (e instanceof BreakSignal) break; throw e; }
+          }
+          return;
+        }
+        case 'for': {
+          if (stmt.init) execStatement(stmt.init, env, promptFn, printFn);
+          let guard = 0;
+          while (!stmt.cond || evalExpr(stmt.cond, env, promptFn).value) {
+            if (++guard > 2000) throw new Error('Loop exceeded 2000 iterations (possible infinite loop).');
+            try { execStatements(stmt.body, env, promptFn, printFn); } catch (e) { if (e instanceof BreakSignal) break; throw e; }
+            if (stmt.update) execStatement(stmt.update, env, promptFn, printFn);
+          }
+          return;
+        }
+        case 'break': throw new BreakSignal();
+        case 'exprstmt': evalExpr(stmt.expr, env, promptFn); return;
+        default: throw new Error(`Unsupported statement '${stmt.type}'`);
+      }
+    }
+
+    function execStatements(stmts, env, promptFn, printFn) {
+      for (const s of stmts) execStatement(s, env, promptFn, printFn);
     }
 
     runButton.addEventListener('click', () => {
-      const statementPattern = /System\.out\.(println|print)\s*\(([^)]*)\)\s*;/g;
       const lines = [''];
-      let match;
-      let found = false;
-
-      while ((match = statementPattern.exec(editor.value)) !== null) {
-        found = true;
-        const [, method, argText] = match;
-        lines[lines.length - 1] += resolveArg(argText);
+      const render = () => { output.textContent = lines.join('\n') || '[No output]'; };
+      const printFn = (method, text) => {
+        lines[lines.length - 1] += text;
         if (method === 'println') lines.push('');
-      }
+        render();
+      };
+      // show console output so far as context above the prompt, so battles read like a real console
+      const promptFn = (label) => window.prompt(`${lines.join('\n')}\n\n${label}`, '');
 
-      output.textContent = found ? lines.join('\n').replace(/\n$/, '') : '[No recognized System.out statements]';
+      output.textContent = '';
+      if (successGif) successGif.hidden = true;
+      try {
+        const ast = new Parser(tokenize(editor.value)).parseProgram();
+        execStatements(ast, {}, promptFn, printFn);
+        render();
+        if (successGif) successGif.hidden = false;
+      } catch (error) {
+        output.textContent = `Simulation Error: ${error.message}`;
+      }
     });
   })();
 </script>
