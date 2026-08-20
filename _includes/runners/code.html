@@ -4,6 +4,9 @@
   <textarea id="{{ code_runner_id }}-editor" rows="8" spellcheck="false">{{ include.code | escape }}</textarea>
   <button type="button" id="{{ code_runner_id }}-run">Run code</button>
   <pre id="{{ code_runner_id }}-output" aria-live="polite"></pre>
+  {% if include.success_gif %}
+  <img id="{{ code_runner_id }}-success-gif" class="code-runner-success-gif" src="{{ site.baseurl }}{{ include.success_gif }}" alt="{{ include.success_gif_alt | default: 'Success!' }}" hidden>
+  {% endif %}
 </div>
 
 <style>
@@ -29,6 +32,17 @@
     min-height: 1.5rem;
     white-space: pre-wrap;
   }
+
+  .code-runner-success-gif {
+    border-radius: .5rem;
+    display: block;
+    margin-top: .75rem;
+    max-width: 200px;
+  }
+
+  .code-runner-success-gif[hidden] {
+    display: none;
+  }
 </style>
 
 <script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
@@ -38,6 +52,7 @@
     const editor = document.getElementById('{{ code_runner_id }}-editor');
     const runButton = document.getElementById('{{ code_runner_id }}-run');
     const output = document.getElementById('{{ code_runner_id }}-output');
+    const successGif = document.getElementById('{{ code_runner_id }}-success-gif');
 
     function toText(chunk) {
       if (typeof chunk === 'number') return String.fromCharCode(chunk);
@@ -48,6 +63,7 @@
 
     runButton.addEventListener('click', async () => {
       output.textContent = 'Loading Python runtime...';
+      if (successGif) successGif.hidden = true;
 
       try {
         window.codeRunnerPyodide = window.codeRunnerPyodide || loadPyodide();
@@ -74,6 +90,7 @@
         output.textContent = 'Running...';
         await pyodide.runPythonAsync(editor.value);
         output.textContent = text || '[No output]';
+        if (successGif) successGif.hidden = false;
       } catch (error) {
         output.textContent = `Python Error: ${error}`;
       }
