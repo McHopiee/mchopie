@@ -10,8 +10,17 @@
 </div>
 
 <style>
+  .pokedex:has(.code-runner) {
+    background: #0f172a !important;
+    color: #e2e8f0 !important;
+  }
+
   .code-runner {
+    background: #111827 !important;
+    border: 1px solid #334155;
+    border-radius: 0.75rem;
     margin: 1.5rem 0;
+    padding: 1rem;
   }
 
   .code-runner textarea {
@@ -21,15 +30,30 @@
     margin-bottom: 0.75rem;
     padding: 0.75rem;
     width: 100%;
+    background: #1e293b !important;
+    border: 1px solid #475569;
+    border-radius: 0.5rem;
+    color: #263d2b !important;
+    -webkit-text-fill-color: #263d2b;
+    caret-color: #263d2b;
   }
 
   .code-runner button {
+    background: #2563eb;
+    border: 1px solid #60a5fa;
+    border-radius: 0.5rem;
+    color: #f8fafc;
     cursor: pointer;
     padding: 0.5rem 0.9rem;
   }
 
   .code-runner pre {
+    background: #0b1220 !important;
+    border: 1px solid #334155;
+    border-radius: 0.5rem;
+    color: #304b35 !important;
     min-height: 1.5rem;
+    padding: 0.75rem;
     white-space: pre-wrap;
   }
 
@@ -42,6 +66,34 @@
 
   .code-runner-success-gif[hidden] {
     display: none;
+  }
+
+  .code-runner[data-language="python"] {
+    background: #cfead2 !important;
+    border-color: #6fae7d;
+  }
+
+  .pokedex:has(.code-runner[data-language="python"]) {
+    background: #b9dfc0 !important;
+  }
+
+  .code-runner[data-language="python"] textarea {
+    background: #e6f6e7 !important;
+    border-color: #79b985;
+    color: #21452b !important;
+    -webkit-text-fill-color: #21452b;
+    caret-color: #21452b;
+  }
+
+  .code-runner[data-language="python"] pre {
+    background: #dcefe0 !important;
+    border-color: #79b985;
+    color: #285332 !important;
+  }
+
+  .code-runner[data-language="python"] button {
+    background: #5a9f68;
+    border-color: #3f7f52;
   }
 </style>
 

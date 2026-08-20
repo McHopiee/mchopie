@@ -3,11 +3,23 @@
   <textarea id="{{ code_runner_id }}-editor" rows="8" spellcheck="false">{{ include.code | escape }}</textarea>
   <button type="button" id="{{ code_runner_id }}-run">Run code</button>
   <pre id="{{ code_runner_id }}-output" aria-live="polite"></pre>
+  {% if include.success_gif %}
+  <img id="{{ code_runner_id }}-success-gif" class="code-runner-success-gif" src="{{ site.baseurl }}{{ include.success_gif }}" alt="{{ include.success_gif_alt | default: 'Success!' }}" hidden>
+  {% endif %}
 </div>
 
 <style>
+  .pokedex:has(.code-runner) {
+    background: #0f172a !important;
+    color: #e2e8f0 !important;
+  }
+
   .code-runner {
+    background: #111827 !important;
+    border: 1px solid #334155;
+    border-radius: 0.75rem;
     margin: 1.5rem 0;
+    padding: 1rem;
   }
 
   .code-runner textarea {
@@ -17,16 +29,70 @@
     margin-bottom: 0.75rem;
     padding: 0.75rem;
     width: 100%;
+    background: #1e293b !important;
+    border: 1px solid #475569;
+    border-radius: 0.5rem;
+    color: #26324a !important;
+    -webkit-text-fill-color: #26324a;
+    caret-color: #26324a;
   }
 
   .code-runner button {
+    background: #2563eb;
+    border: 1px solid #60a5fa;
+    border-radius: 0.5rem;
+    color: #f8fafc;
     cursor: pointer;
     padding: 0.5rem 0.9rem;
   }
 
   .code-runner pre {
+    background: #0b1220 !important;
+    border: 1px solid #334155;
+    border-radius: 0.5rem;
+    color: #26324a !important;
     min-height: 1.5rem;
+    padding: 0.75rem;
     white-space: pre-wrap;
+  }
+
+  .pokedex:has(.code-runner[data-language="javascript"]) {
+    background: #d7f7fc !important;
+  }
+
+  .code-runner[data-language="javascript"] {
+    background: #e1f9fc !important;
+    border-color: #82d4e2;
+  }
+
+  .code-runner[data-language="javascript"] textarea {
+    background: #f4fdff !important;
+    border-color: #82d4e2;
+    color: #164253 !important;
+    -webkit-text-fill-color: #164253;
+    caret-color: #164253;
+  }
+
+  .code-runner[data-language="javascript"] pre {
+    background: #ebfbfe !important;
+    border-color: #82d4e2;
+    color: #164253 !important;
+  }
+
+  .code-runner[data-language="javascript"] button {
+    background: #58bfcf !important;
+    border-color: #3193a6;
+  }
+
+  .code-runner-success-gif {
+    border-radius: .5rem;
+    display: block;
+    margin-top: .75rem;
+    max-width: 200px;
+  }
+
+  .code-runner-success-gif[hidden] {
+    display: none;
   }
 </style>
 
@@ -35,8 +101,10 @@
     const editor = document.getElementById('{{ code_runner_id }}-editor');
     const runButton = document.getElementById('{{ code_runner_id }}-run');
     const output = document.getElementById('{{ code_runner_id }}-output');
+    const successGif = document.getElementById('{{ code_runner_id }}-success-gif');
 
     runButton.addEventListener('click', () => {
+      if (successGif) successGif.hidden = true;
       // real execution: runs in the browser's native JS engine, console.* is captured instead of going to devtools
       const lines = [];
       const fakeConsole = {
@@ -50,6 +118,7 @@
         const runner = new Function('console', editor.value);
         runner(fakeConsole);
         output.textContent = lines.length ? lines.join('\n') : '[No output]';
+        if (successGif) successGif.hidden = false;
       } catch (error) {
         output.textContent = `JavaScript Error: ${error}`;
       }
