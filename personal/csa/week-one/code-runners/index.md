@@ -1,22 +1,22 @@
 ---
 layout: post
-title: Week One / Foundations
-permalink: /personal/csa/week-one/
+title: Week One / Code Runners
+permalink: /personal/csa/week-one/code-runners/
 author: Hope Fune
 categories: [CSA Portfolio]
 ---
 
 <style>
 	.csa-folder {
-		--folder-bg: #0a1420;
-		--folder-panel: #0f1e2f;
-		--folder-panel-2: #14283d;
-		--folder-line: #223650;
-		--folder-text: #e8f0f7;
-		--folder-muted: #93a9bd;
-		--folder-blue: #3f8bc4;
-		--folder-blue-soft: #8fc3ea;
-		background: radial-gradient(circle at 85% 0%, #123249 0, transparent 34rem), var(--folder-bg);
+		--folder-bg: #0f1720;
+		--folder-panel: #152533;
+		--folder-panel-2: #1a3043;
+		--folder-line: #2a425a;
+		--folder-text: #e9f2fa;
+		--folder-muted: #9bb4c9;
+		--folder-blue: #4a98cb;
+		--folder-blue-soft: #99ceef;
+		background: radial-gradient(circle at 85% 0%, #17364a 0, transparent 34rem), var(--folder-bg);
 		border: 1px solid var(--folder-line);
 		color: var(--folder-text);
 		font-family: Georgia, 'Times New Roman', serif;
@@ -28,8 +28,8 @@ categories: [CSA Portfolio]
 
 	.csa-folder a { color: inherit; text-decoration: none; }
 	.folder-kicker { animation: folder-fade-up .5s both; color: var(--folder-blue-soft); font: 700 .72rem/1.2 monospace; letter-spacing: .16em; text-transform: uppercase; }
-	.folder-title { animation: folder-fade-up .6s .1s both; font-size: clamp(2.3rem, 7vw, 5rem); letter-spacing: -.05em; line-height: .95; margin: .65rem 0 1rem; max-width: 8em; }
-	.folder-intro { animation: folder-fade-up .6s .2s both; color: var(--folder-muted); font: 1rem/1.65 system-ui, sans-serif; margin: 0; max-width: 38rem; }
+	.folder-title { animation: folder-fade-up .6s .1s both; font-size: clamp(2.3rem, 7vw, 5rem); letter-spacing: -.05em; line-height: .95; margin: .65rem 0 1rem; max-width: 10em; }
+	.folder-intro { animation: folder-fade-up .6s .2s both; color: var(--folder-muted); font: 1rem/1.65 system-ui, sans-serif; margin: 0; max-width: 42rem; }
 	.folder-top { align-items: end; display: flex; gap: 2rem; justify-content: space-between; margin-bottom: clamp(2rem, 7vw, 5rem); }
 	.folder-orbit { animation: folder-spin 14s linear infinite; border: 1px solid var(--folder-blue); border-radius: 50%; height: 5.5rem; opacity: .75; position: relative; width: 5.5rem; }
 	.folder-orbit::after { animation: folder-pulse 2.2s ease-in-out infinite; background: var(--folder-blue-soft); border-radius: 50%; content: ''; height: .55rem; position: absolute; right: .2rem; top: .9rem; width: .55rem; }
@@ -50,6 +50,7 @@ categories: [CSA Portfolio]
 	.folder-reveal { animation: folder-rise .55s both; }
 	.folder-reveal:nth-child(2) { animation-delay: .08s; }
 	.folder-reveal:nth-child(3) { animation-delay: .16s; }
+	.folder-reveal:nth-child(4) { animation-delay: .24s; }
 	@keyframes folder-rise { from { opacity: 0; transform: translateY(.7rem); } to { opacity: 1; transform: translateY(0); } }
 	@keyframes folder-fade-up { from { opacity: 0; transform: translateY(.5rem); } to { opacity: 1; transform: translateY(0); } }
 	@keyframes folder-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
@@ -59,20 +60,20 @@ categories: [CSA Portfolio]
 </style>
 
 <div class="csa-folder">
-	<a class="folder-back" href="{{ site.baseurl }}/personal/csa/portfolio">&larr; Back</a>
+	<a class="folder-back" href="{{ site.baseurl }}/personal/csa/week-one/">&larr; Back</a>
 	<div class="folder-top folder-reveal">
 		<div>
 			<div class="folder-kicker">WEEK 01 / APCSA</div>
-			<h1 class="folder-title">AP Introduction</h1>
-			<p class="folder-intro">Lessons/Mini projects for the first week of CSA.</p>
+			<h1 class="folder-title">Code Runners</h1>
+			<p class="folder-intro">All Week One code runner pages in one folder.</p>
 		</div>
 		<div class="folder-orbit" aria-hidden="true"></div>
 	</div>
 
-	<div class="folder-section-label">01 / choose a folder</div>
+	<div class="folder-section-label">01 / choose a runner</div>
 	<div class="folder-grid">
-		<a class="folder-card folder-reveal" href="{{ site.baseurl }}/personal/csa/week-one/code-runners/"><span class="folder-card-number">FOLDER 01</span><span class="folder-icon" aria-hidden="true"></span><h2>Code Runners</h2></a>
-		<a class="folder-card folder-reveal" href="{{ site.baseurl }}/personal/csa/week-one/units/"><span class="folder-card-number">FOLDER 02</span><span class="folder-icon" aria-hidden="true"></span><h2>Units</h2></a>
+		<a class="folder-card folder-reveal" href="{{ site.baseurl }}/personal/csa/coderunner"><span class="folder-card-number">RUNNER 01</span><span class="folder-icon" aria-hidden="true"></span><h2>Code Runner - Raw MD</h2></a>
+		<a class="folder-card folder-reveal" href="{{ site.baseurl }}/personal/csa/coderunner-java"><span class="folder-card-number">RUNNER 02</span><span class="folder-icon" aria-hidden="true"></span><h2>Code Runner - JAVA</h2></a>
+		<a class="folder-card folder-reveal" href="{{ site.baseurl }}/personal/csa/coderunner-javascript"><span class="folder-card-number">RUNNER 03</span><span class="folder-icon" aria-hidden="true"></span><h2>Code Runner - JAVASCRIPT</h2></a>
 	</div>
 </div>
-
