@@ -82,7 +82,11 @@ layout: base
       {%- include submenu.html -%}
     {%- endif -%}
 
-    {{ content }}
+    {% if page.interactive_checklists %}
+      {{ content | replace: ' disabled="disabled"', '' }}
+    {% else %}
+      {{ content }}
+    {% endif %}
   </div>
   {%- if page.comments -%}
     {%- include utterances.html -%}

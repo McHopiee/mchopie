@@ -75,5 +75,6 @@ categories: [CSA Portfolio]
 		<a class="studio-week studio-reveal" href="week-one/"><span class="studio-week-number">WEEK 01</span><span class="studio-folder-icon" aria-hidden="true"></span><h2>AP Introduction</h2></a>
 		<a class="studio-week studio-reveal" href="week-two/"><span class="studio-week-number">WEEK 02</span><span class="studio-folder-icon" aria-hidden="true"></span><h2>Week Two</h2></a>
 		<a class="studio-week studio-reveal" href="week-three/"><span class="studio-week-number">WEEK 03</span><span class="studio-folder-icon" aria-hidden="true"></span><h2>Week Three</h2></a>
+		<a class="studio-week studio-reveal" href="week-four/"><span class="studio-week-number">WEEK 04</span><span class="studio-folder-icon" aria-hidden="true"></span><h2>Week Four</h2></a>
 	</div>
 </div>
